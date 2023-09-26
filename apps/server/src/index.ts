@@ -3,6 +3,7 @@ import cors from "cors";
 import { router as teacherRouter } from "./routes/teacher";
 import { router as studentRouter } from "./routes/student";
 import path from "path";
+import {PrismaClient} from '@prisma/client';
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(
   })
 );
 app.use(express.json());
+export const prisma = new PrismaClient();
 app.use("/teacher", teacherRouter);
 app.use("/student", studentRouter);
 app.use(express.static("public"));
