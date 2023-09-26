@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
+model Student {
+  id        Int       @id @default(autoincrement())
+  firstname String
+  lastname  String
+  username  String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  attempts  Attempt[]
+}
+
+model Teacher {
+  id        Int        @id @default(autoincrement())
+  firstname String
+  lastname  String
+  username  String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+  quetions  Question[]
+}
+
+model Question {
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  title       String
+  description String
+  question    String
+  option1     String
+  option2     String
+  option3     String
+  option4     String
+  answer      String // selects the correct answer
+  attemtedBy  Attempt[]
+  teacher     Teacher   @relation(fields: [creatorId], references: [id])
+  creatorId   Int
+}
+
+model Attempt {
+  // id Int @id @default(autoincrement())
+  studentId  Int
+  questionId Int
+  createdAt  DateTime @default(now())
+  answer     String // stores which option value was selected by student
+  student    Student  @relation(fields: [studentId], references: [id])
+  question   Question @relation(fields: [questionId], references: [id])
+
+  @@id([studentId, questionId])
+}
