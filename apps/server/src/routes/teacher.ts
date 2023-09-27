@@ -10,6 +10,8 @@ export const router = express.Router();
 import jwt from "jsonwebtoken";
 import Cookies from "cookies";
 import { authenticateJwt } from "../middlewares/auth";
+import dotenv from 'dotenv';
+dotenv.config();
 const secret: string = process.env.SECRET || "";
 // signup route
 router.post("/signup", async (req: Request, res: Response) => {
@@ -103,7 +105,7 @@ router.post(
                 ...questionData,
               },
             });
-            res.json(200).json({ message: "Question created" });
+            res.json({ message: "Question created" });
           }
         } else {
           res.status(403).json({ message: "Teacher not found" });
@@ -168,8 +170,10 @@ router.get(
   "/questions",
   authenticateJwt,
   async (req: Request, res: Response) => {
-    if (req.headers["teacher"] === "string") {
+    // console.log(req.headers['teacher']);
+    if (typeof req.headers["teacher"] === "string") {
       const username: string = req.headers["teacher"];
+      console.log(',',username);
       try {
         const teacher = await prisma.teacher.findUnique({
           where: {
@@ -197,7 +201,7 @@ router.get(
   "/questions/me",
   authenticateJwt,
   async (req: Request, res: Response) => {
-    if (req.headers["teacher"] === "string") {
+    if (typeof req.headers["teacher"] === "string") {
       const username: string = req.headers["teacher"];
       try {
         const teacher = await prisma.teacher.findUnique({
@@ -228,7 +232,7 @@ router.get(
   "/questions/:teacherId",
   authenticateJwt,
   async (req: Request, res: Response) => {
-    if (req.headers["teacher"] === "string") {
+    if (typeof req.headers["teacher"] === "string") {
       const username: string = req.headers["teacher"];
       const teacherId = parseInt(req.params.teacherId);
       try {
@@ -253,7 +257,7 @@ router.get(
 
 // me route
 router.get("/me", authenticateJwt, async (req: Request, res: Response) => {
-  if (req.headers["teacher"] === "string") {
+  if (typeof req.headers["teacher"] === "string") {
     const username: string = req.headers["teacher"];
     try {
       const teacher = await prisma.teacher.findUnique({ where: { username } });
