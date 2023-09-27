@@ -251,3 +251,22 @@ router.get(
   }
 );
 
+// me route
+router.get("/me", authenticateJwt, async (req: Request, res: Response) => {
+  if (req.headers["teacher"] === "string") {
+    const username: string = req.headers["teacher"];
+    try {
+      const teacher = await prisma.teacher.findUnique({ where: { username } });
+      if (teacher) {
+        res.json({ username: teacher.username });
+      } else {
+        res.status(403).json({ message: "Teacher dose not exists" });
+      }
+    } catch (e) {
+      console.log(e);
+      res.status(404).json({ message: "db error" });
+    }
+  } else {
+    res.status(403).json({ message: "Teacher does not exists" });
+  }
+});
