@@ -34,4 +34,4 @@ export type questionParams = z.infer<typeof questionTypes>;
 export type studentSignupParams = z.infer<typeof studentSignupTypes>;
 export type teacherSignupParams = z.infer<typeof teacherSignupTypes>;
 export type studentLoginParams = z.infer<typeof studentLoginTypes>;
-export type teacherLoginTypes = z.infer<typeof teacherLoginTypes>;
+export type teacherLoginParams = z.infer<typeof teacherLoginTypes>;
