@@ -4,7 +4,8 @@ import { router as teacherRouter } from "./routes/teacher";
 import { router as studentRouter } from "./routes/student";
 import path from "path";
 import {PrismaClient} from '@prisma/client';
-
+import dotenv from 'dotenv'
+dotenv.config();
 const app = express();
 
 app.use(
