@@ -10,7 +10,7 @@ export const router = express.Router();
 import jwt from "jsonwebtoken";
 import Cookies from "cookies";
 import { authenticateJwt } from "../middlewares/auth";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 const secret: string = process.env.SECRET || "";
 // signup route
@@ -105,7 +105,10 @@ router.post(
                 ...questionData,
               },
             });
-            res.json({ message: "Question created", questionId: newQuestion.id});
+            res.json({
+              message: "Question created",
+              questionId: newQuestion.id,
+            });
           }
         } else {
           res.status(403).json({ message: "Teacher not found" });
@@ -173,7 +176,7 @@ router.get(
     // console.log(req.headers['teacher']);
     if (typeof req.headers["teacher"] === "string") {
       const username: string = req.headers["teacher"];
-      console.log(',',username);
+      console.log(",", username);
       try {
         const teacher = await prisma.teacher.findUnique({
           where: {
@@ -274,3 +277,39 @@ router.get("/me", authenticateJwt, async (req: Request, res: Response) => {
     res.status(403).json({ message: "Teacher does not exists" });
   }
 });
+
+// get particular question
+router.get(
+  "/questions/:questionId",
+  authenticateJwt,
+  async (req: Request, res: Response) => {
+    if (typeof req.headers["teacher"] === "string") {
+      const username: string = req.headers["teacher"];
+      try {
+        const teacher = await prisma.teacher.findUnique({
+          where: { username },
+        });
+        const questionId = parseInt(req.params.questionId);
+        if (teacher) {
+          const question = await prisma.question.findUnique({
+            where: {
+              id: questionId,
+            },
+          });
+          if (question) {
+            res.json({ question });
+          } else {
+            res.status(403).json({ message: "Question dose not exists" });
+          }
+        } else {
+          res.status(403).json({ message: "Teacher dose not exists" });
+        }
+      } catch (e) {
+        console.log(e);
+        res.status(404).json({ message: "db error" });
+      }
+    } else {
+      res.status(403).json({ message: "Teacher dose not exists" });
+    }
+  }
+);
