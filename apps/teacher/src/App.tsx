@@ -8,6 +8,9 @@ import { Appbar } from "./Components/Appbar";
 import { Signup } from "./Components/Signup";
 import { Landing } from "./Components/Landing";
 import { Login } from "./Components/Login";
+import { Questions } from "./Components/Questions";
+import { Question } from "./Components/Question";
+import { AddQuestion } from "./Components/AddQuestion";
 
 function App() {
   axios.defaults.withCredentials = true;
@@ -21,6 +24,9 @@ function App() {
             <Route path={"/"} element={<Landing />} />
             <Route path={"/signup"} element={<Signup />} />
             <Route path={"/login"} element={<Login />} />
+            <Route path={"/questions"} element={<Questions/>}/>
+            <Route path={'/questions/:questionId'} element={<Question/>}/>
+            <Route path={'/addQuestion'} element={<AddQuestion/>}/>
           </Routes>
         </Router>
       </RecoilRoot>
