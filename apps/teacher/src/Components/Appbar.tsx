@@ -24,6 +24,15 @@ export const Appbar = () => {
         }}
       >
         <Typography variant="h4">Teacher</Typography>
+        <Button variant="outlined" size="large" onClick={() => {
+            navigate('/questions');
+        }}>Questions</Button>
+        <Button variant="outlined" size='large' onClick={()=>{
+            navigate('/questions/me');
+        }}>My Questions</Button>
+        <Button variant='outlined' size='large' onClick={() => {
+            navigate('/addQuestion')
+        }}>Add question</Button>
         <div
           style={{
             display: "flex",

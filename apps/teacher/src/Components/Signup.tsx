@@ -5,12 +5,14 @@ import axios from "axios";
 import { BASE_URL } from "../config";
 import { teacherSignupParams } from "types";
 import { Button, Card, TextField } from "@mui/material";
+import {useNavigate} from 'react-router-dom';
 export const Signup = () => {
   const [firstname, setFirstname] = useState<string>("");
   const [lastname, setLastname] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const setUser = useSetRecoilState(teacherState);
+  const navigate = useNavigate();
   const handleOnClick = async () => {
     const signupInputs: teacherSignupParams = {
       firstname,
@@ -34,6 +36,7 @@ export const Signup = () => {
           isLoading: false,
           userEmail: username,
         });
+        navigate('/questions');
       }
     } catch (e) {
       setUser({
