@@ -105,7 +105,7 @@ router.post(
                 ...questionData,
               },
             });
-            res.json({ message: "Question created" });
+            res.json({ message: "Question created", questionId: newQuestion.id});
           }
         } else {
           res.status(403).json({ message: "Teacher not found" });
@@ -229,7 +229,7 @@ router.get(
 
 // get questions from particular given id teacher
 router.get(
-  "/questions/:teacherId",
+  "/:teacherId/questions",
   authenticateJwt,
   async (req: Request, res: Response) => {
     if (typeof req.headers["teacher"] === "string") {
