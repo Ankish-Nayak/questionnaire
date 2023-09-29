@@ -3,7 +3,15 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL } from "../config";
 import { questionParams } from "types";
-import { Grid, Card, Typography, Button } from "@mui/material";
+import {
+  Grid,
+  Card,
+  Typography,
+  Button,
+  CardContent,
+  CardActionArea,
+  CardActions,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 type question = questionParams & { id: Number } & { creatorId: Number };
 export const Question = () => {
@@ -71,10 +79,21 @@ export const Question = () => {
     return <>404</>;
   }
   return (
-    <Grid container>
-      <Grid item xl={6}>
+    <Grid
+      container
+      style={{
+        padding: "10vh 10vw",
+      }}
+    >
+      <Grid
+        item
+        xl={6}
+        style={{
+          padding: " 0 3vw",
+        }}
+      >
         <img
-          src="./question-mark.webp"
+          src="/question-mark.webp"
           style={{
             maxWidth: "100%",
             maxHeight: "100%",
@@ -82,35 +101,66 @@ export const Question = () => {
           }}
         />
       </Grid>
-      <Grid item xl={6}>
-        <Card variant="outlined">
-          <Typography variant="h4">{question.title}</Typography>
-          <Typography variant="body1">{question.description}</Typography>
-          <Typography variant="h5">{question.question}</Typography>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-evenly",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant={"h6"}>{question.option1}</Typography>
-            <Typography variant={"h6"}>{question.option2}</Typography>
-            <Typography variant={"h6"}>{question.option3}</Typography>
-            <Typography variant={"h6"}>{question.option4}</Typography>
-          </div>
-          <Typography variant={"h6"}>{question.answer}</Typography>
-          {show && (
-            <Button
-              variant="contained"
-              onClick={() => {
-                navigate(`/questions/edit/${question.id}`);
-              }}
+      <Grid
+        item
+        xl={6}
+        style={{
+          padding: "0 4vw",
+        }}
+      >
+        <Card
+          variant="outlined"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            border: "1px solid black",
+          }}
+        >
+          <CardContent>
+            <Typography variant="h4">Title: {question.title}</Typography>
+            <Typography variant="body1">
+              Description: {question.description}
+            </Typography>
+            <Typography variant="h5">Question: {question.question}</Typography>
+
+            <div
+              style={
+                {
+                  // display: "flex",
+                  // flexDirection: "row",
+                }
+              }
             >
-              Edit
-            </Button>
-          )}
+              <Typography variant="h6">{"Options:"}</Typography>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-evenly",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant={"h6"}>{question.option1}</Typography>
+                <Typography variant={"h6"}>{question.option2}</Typography>
+                <Typography variant={"h6"}>{question.option3}</Typography>
+                <Typography variant={"h6"}>{question.option4}</Typography>
+              </div>
+            </div>
+            <Typography variant={"h6"}>Answer: {question.answer}</Typography>
+          </CardContent>
+          <CardActions>
+            {show && (
+              <Button
+                variant="contained"
+                onClick={() => {
+                  navigate(`/questions/edit/${question.id}`);
+                }}
+              >
+                Edit
+              </Button>
+            )}
+          </CardActions>
         </Card>
       </Grid>
     </Grid>
