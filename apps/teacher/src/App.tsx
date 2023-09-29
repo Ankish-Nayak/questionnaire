@@ -11,6 +11,8 @@ import { Login } from "./Components/Login";
 import { Questions } from "./Components/Questions";
 import { Question } from "./Components/Question";
 import { AddQuestion } from "./Components/AddQuestion";
+import { EditQuestion } from "./Components/EditQuestion";
+import { MyQuestions } from "./Components/MyQuestions";
 
 function App() {
   axios.defaults.withCredentials = true;
@@ -24,9 +26,17 @@ function App() {
             <Route path={"/"} element={<Landing />} />
             <Route path={"/signup"} element={<Signup />} />
             <Route path={"/login"} element={<Login />} />
-            <Route path={"/questions"} element={<Questions/>}/>
-            <Route path={'/questions/:questionId'} element={<Question/>}/>
-            <Route path={'/addQuestion'} element={<AddQuestion/>}/>
+            <Route path={"/questions"} element={<Questions />} />
+            <Route
+              path={"/questions/view/:questionId"}
+              element={<Question />}
+            />
+            <Route
+              path={"/questions/edit/:questionId"}
+              element={<EditQuestion />}
+            />
+            <Route path={'/questions/me'} element={<MyQuestions/>}/>
+            <Route path={"/addQuestion"} element={<AddQuestion />} />
           </Routes>
         </Router>
       </RecoilRoot>
@@ -48,17 +58,17 @@ export const Init = () => {
           isLoading: false,
           userEmail: data.username,
         });
-      }else{
+      } else {
         setTeacher({
           isLoading: false,
-          userEmail: null
-        })
+          userEmail: null,
+        });
       }
     } catch (e) {
       setTeacher({
         isLoading: false,
-        userEmail: null
-      })
+        userEmail: null,
+      });
       console.log(e);
     }
   };

@@ -5,7 +5,7 @@ import {
 } from "../store/selectors/teacher";
 import { teacherState } from "../store/atoms/teacher";
 import { Typography, Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 export const Appbar = () => {
   const teacherLoading = useRecoilValue(isTeacherLoading);
   const teacherName = useRecoilValue(teacherEmailState);
@@ -23,16 +23,36 @@ export const Appbar = () => {
           justifyContent: "space-between",
         }}
       >
-        <Typography variant="h4">Teacher</Typography>
-        <Button variant="outlined" size="large" onClick={() => {
-            navigate('/questions');
-        }}>Questions</Button>
-        <Button variant="outlined" size='large' onClick={()=>{
-            navigate('/questions/me');
-        }}>My Questions</Button>
-        <Button variant='outlined' size='large' onClick={() => {
-            navigate('/addQuestion')
-        }}>Add question</Button>
+        <Typography variant="h4">
+          <Link to={"/"} style={{textDecoration: "none"}}>Teacher</Link>
+        </Typography>
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() => {
+            navigate("/questions");
+          }}
+        >
+          Questions
+        </Button>
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() => {
+            navigate("/questions/me");
+          }}
+        >
+          My Questions
+        </Button>
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() => {
+            navigate("/addQuestion");
+          }}
+        >
+          Add question
+        </Button>
         <div
           style={{
             display: "flex",
@@ -69,7 +89,9 @@ export const Appbar = () => {
         justifyContent: "space-between",
       }}
     >
-      <Typography variant="h4">Teacher</Typography>
+      <Typography variant="h4">
+        <Link to={"/"} style={{textDecoration: 'none'}}>Teacher</Link>
+      </Typography>
       <div
         style={{
           display: "flex",
