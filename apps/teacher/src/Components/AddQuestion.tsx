@@ -2,7 +2,7 @@ import { useState } from "react";
 import { questionParams } from "types";
 import { BASE_URL } from "../config";
 import axios from "axios";
-import { Card, TextField, Button } from "@mui/material";
+import { Card, TextField, Button, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 export const AddQuestion = () => {
   const [title, setTitle] = useState<string>("");
@@ -30,7 +30,7 @@ export const AddQuestion = () => {
     if (optionArray.includes(answer)) {
       try {
         const response = await axios.post(
-          `${BASE_URL}/questions`,
+          `${BASE_URL}/teacher/questions`,
           JSON.stringify(questionInput),
           {
             headers: {
@@ -52,68 +52,143 @@ export const AddQuestion = () => {
   };
 
   return (
-    <div>
-      <Card variant="outlined">
-        <TextField
-          variant="outlined"
-          label="title"
-          value={title}
-          onChange={(e) => {
-            setTitle(e.target.value);
+    <div
+      style={{
+        padding: "5vh 10vw 0 10vw",
+      }}
+    >
+      <Grid
+        container
+        style={{
+          // border: "1px solid black",
+        }}
+      >
+        <Grid
+          xl={5}
+          style={{
+            padding: '4vw 3vw'
+            // border: "1px solid black",
           }}
-        />
-        <TextField
-          variant="outlined"
-          label="description"
-          value={description}
-          onChange={(e) => {
-            setDescription(e.target.value);
-          }}
-        />
-        <TextField
-          variant="outlined"
-          label="option1"
-          value={option1}
-          onChange={(e) => {
-            setOption1(e.target.value);
-          }}
-        />
-        <TextField
-          variant="outlined"
-          label="option2"
-          value={option2}
-          onChange={(e) => {
-            setOption2(e.target.value);
-          }}
-        />
-        <TextField
-          variant="outlined"
-          label="Option3"
-          value={option3}
-          onChange={(e) => {
-            setOption3(e.target.value);
-          }}
-        />
-        <TextField
-          variant="outlined"
-          label="Option4"
-          value={option4}
-          onChange={(e) => {
-            setOption4(e.target.value);
-          }}
-        />
-        <TextField
-          variant="outlined"
-          label="answer"
-          value={answer}
-          onChange={(e) => {
-            setDescription(e.target.value);
-          }}
-        />
-        <Button variant="contained" size="medium" onClick={handleOnClick}>
-          Create Question
-        </Button>
-      </Card>
+        >
+          <img
+            src="./question-mark.webp"
+            style={{
+              maxWidth: "100%",
+              maxHeight: "100%",
+              // padding: 'auto'
+            }}
+          />
+        </Grid>
+        <Grid xl={7}>
+          <Card
+            variant="outlined"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "1vh 5vw",
+              margin: "auto",
+            }}
+          >
+            <TextField
+              variant="outlined"
+              label="Enter tag"
+              value={title}
+              fullWidth={true}
+              margin="dense"
+              onChange={(e) => {
+                setTitle(e.target.value);
+              }}
+            />
+            <TextField
+              id="outlined-multiline-flexible"
+              label="Enter question"
+              value={question}
+              fullWidth={true}
+              margin="dense"
+              onChange={(e) => {
+                setQuestion(e.target.value);
+              }}
+              multiline
+              maxRows={4}
+            />
+            <TextField
+              variant="outlined"
+              margin="dense"
+              label="Describe question"
+              multiline
+              maxRows={4}
+              fullWidth={true}
+              value={description}
+              onChange={(e) => {
+                setDescription(e.target.value);
+              }}
+            />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                padding: "1vw 0 1vw 0",
+              }}
+            >
+              <TextField
+                variant="outlined"
+                label="First option"
+                margin="dense"
+                value={option1}
+                fullWidth={true}
+                onChange={(e) => {
+                  setOption1(e.target.value);
+                }}
+              />
+              <TextField
+                variant="outlined"
+                label="Second option"
+                value={option2}
+                margin="dense"
+                fullWidth={true}
+                onChange={(e) => {
+                  setOption2(e.target.value);
+                }}
+              />
+              <TextField
+                margin="dense"
+                variant="outlined"
+                label="Third option"
+                value={option3}
+                fullWidth={true}
+                onChange={(e) => {
+                  setOption3(e.target.value);
+                }}
+              />
+              <TextField
+                margin="dense"
+                variant="outlined"
+                label="Fourth option"
+                value={option4}
+                fullWidth={true}
+                onChange={(e) => {
+                  setOption4(e.target.value);
+                }}
+              />
+            </div>
+            <TextField
+              variant="outlined"
+              label="answer"
+              value={answer}
+              helperText={"Enter answer"}
+              fullWidth={true}
+              onChange={(e) => {
+                setAnswer(e.target.value);
+              }}
+            />
+            <Button variant="contained" size="medium" onClick={handleOnClick}>
+              Create Question
+            </Button>
+          </Card>
+        </Grid>
+      </Grid>
     </div>
   );
 };
