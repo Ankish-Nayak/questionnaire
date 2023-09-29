@@ -3,13 +3,14 @@ import { questionParams } from "types";
 import { Card, Typography, Button } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../config";
 type question = questionParams & { id: Number };
 export const Questions = () => {
   const [questions, setQuestions] = useState<question[]>();
 
   const init = async () => {
     try {
-      const response = await axios.get("/questions", {
+      const response = await axios.get(`${BASE_URL}/teacher/questions`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -33,13 +34,18 @@ export const Questions = () => {
       style={{
         display: "flex",
         flexDirection: "row",
-        justifyContent: "space-between",
+        padding: "10vh 10vw",
+        justifyContent: "space-evenly",
       }}
     >
-      {questions &&
+      {(questions &&
         questions.map((question) => {
           return <Question question={question} />;
-        })}
+        })) || (
+        <Typography variant="h4" textAlign={"center"}>
+          No Questions
+        </Typography>
+      )}
     </div>
   );
 };
@@ -47,7 +53,7 @@ export const Questions = () => {
 export const Question = ({ question }: { question: question }) => {
   const navigate = useNavigate();
   const handleOnClick = async () => {
-    navigate(`/${question.id}`);
+    navigate(`/questions/view/${question.id}`);
   };
   return (
     <Card variant={"outlined"}>
