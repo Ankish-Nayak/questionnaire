@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { questionParams } from "types";
 import axios from "axios";
 import { BASE_URL } from "../config";
-import { Card, Button, Typography } from "@mui/material";
+import {
+  Card,
+  Button,
+  Typography,
+  CardContent,
+  CardActions,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 type question = questionParams & { id: number; creatorId: number };
 export const MyQuestions = () => {
@@ -31,7 +37,7 @@ export const MyQuestions = () => {
       style={{
         display: "flex",
         flexDirection: "row",
-        padding: "10vh 10vw",
+        padding: "15vh 10vw",
         justifyContent: "space-evenly",
       }}
     >
@@ -54,12 +60,35 @@ export const Question = ({ question }: { question: question }) => {
   };
   return (
     <Card variant={"outlined"}>
-      <Typography variant="h5">{question.title}</Typography>
-      <Typography variant="body1">{question.description}</Typography>
+      <CardContent>
+        <Typography variant="h5">{question.title}</Typography>
+        <Typography variant="body1">{question.description}</Typography>
+      </CardContent>
       {/* <Typography variant="">Created by:{question.}</Typography> */}
-      <Button variant={"contained"} size="medium" onClick={handleOnClick}>
-        Show more
-      </Button>
+      <CardActions>
+        <Button
+          variant={"text"}
+          size="small"
+          sx={{
+            fontWeight: "bold",
+          }}
+          onClick={handleOnClick}
+        >
+          Show more
+        </Button>
+        <Button
+          variant={"text"}
+          size="small"
+          sx={{
+            fontWeight: "bold",
+          }}
+          onClick={() => {
+            navigate(`/questions/edit/${question.id}`);
+          }}
+        >
+          Edit
+        </Button>
+      </CardActions>
     </Card>
   );
 };

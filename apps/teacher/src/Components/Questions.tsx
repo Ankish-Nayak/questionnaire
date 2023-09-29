@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { questionParams } from "types";
-import { Card, Typography, Button } from "@mui/material";
+import {
+  Card,
+  Typography,
+  Button,
+  CardContent,
+  CardActions,
+} from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../config";
@@ -34,7 +40,7 @@ export const Questions = () => {
       style={{
         display: "flex",
         flexDirection: "row",
-        padding: "10vh 10vw",
+        padding: "15vh 10vw",
         justifyContent: "space-evenly",
       }}
     >
@@ -57,12 +63,22 @@ export const Question = ({ question }: { question: question }) => {
   };
   return (
     <Card variant={"outlined"}>
-      <Typography variant="h5">{question.title}</Typography>
-      <Typography variant="body1">{question.description}</Typography>
-      {/* <Typography variant="">Created by:{question.}</Typography> */}
-      <Button variant={"contained"} size="medium" onClick={handleOnClick}>
-        Show more
-      </Button>
+      <CardContent>
+        <Typography variant="h5">{question.title}</Typography>
+        <Typography variant="body1">{question.description}</Typography>
+      </CardContent>
+      <CardActions>
+        <Button
+          variant={"text"}
+          size="small"
+          sx={{
+            fontWeight: "bold",
+          }}
+          onClick={handleOnClick}
+        >
+          Show more
+        </Button>
+      </CardActions>
     </Card>
   );
 };
