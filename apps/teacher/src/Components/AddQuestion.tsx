@@ -2,7 +2,14 @@ import { useState } from "react";
 import { questionParams } from "types";
 import { BASE_URL } from "../config";
 import axios from "axios";
-import { Card, TextField, Button, Grid } from "@mui/material";
+import {
+  Card,
+  TextField,
+  Button,
+  Grid,
+  CardContent,
+  CardActions,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 export const AddQuestion = () => {
   const [title, setTitle] = useState<string>("");
@@ -59,14 +66,16 @@ export const AddQuestion = () => {
     >
       <Grid
         container
-        style={{
-          // border: "1px solid black",
-        }}
+        style={
+          {
+            // border: "1px solid black",
+          }
+        }
       >
         <Grid
           xl={5}
           style={{
-            padding: '4vw 3vw'
+            padding: "4vw 3vw",
             // border: "1px solid black",
           }}
         >
@@ -91,101 +100,121 @@ export const AddQuestion = () => {
               margin: "auto",
             }}
           >
-            <TextField
-              variant="outlined"
-              label="Enter tag"
-              value={title}
-              fullWidth={true}
-              margin="dense"
-              onChange={(e) => {
-                setTitle(e.target.value);
-              }}
-            />
-            <TextField
-              id="outlined-multiline-flexible"
-              label="Enter question"
-              value={question}
-              fullWidth={true}
-              margin="dense"
-              onChange={(e) => {
-                setQuestion(e.target.value);
-              }}
-              multiline
-              maxRows={4}
-            />
-            <TextField
-              variant="outlined"
-              margin="dense"
-              label="Describe question"
-              multiline
-              maxRows={4}
-              fullWidth={true}
-              value={description}
-              onChange={(e) => {
-                setDescription(e.target.value);
-              }}
-            />
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                padding: "1vw 0 1vw 0",
-              }}
-            >
+            <CardContent>
               <TextField
                 variant="outlined"
-                label="First option"
-                margin="dense"
-                value={option1}
+                label="Enter tag"
+                value={title}
                 fullWidth={true}
+                margin="dense"
                 onChange={(e) => {
-                  setOption1(e.target.value);
+                  setTitle(e.target.value);
                 }}
               />
               <TextField
-                variant="outlined"
-                label="Second option"
-                value={option2}
-                margin="dense"
+                id="outlined-multiline-flexible"
+                label="Enter question"
+                value={question}
                 fullWidth={true}
+                margin="dense"
                 onChange={(e) => {
-                  setOption2(e.target.value);
+                  setQuestion(e.target.value);
                 }}
+                multiline
+                maxRows={4}
               />
               <TextField
-                margin="dense"
                 variant="outlined"
-                label="Third option"
-                value={option3}
+                margin="dense"
+                label="Describe question"
+                multiline
+                maxRows={4}
                 fullWidth={true}
+                value={description}
                 onChange={(e) => {
-                  setOption3(e.target.value);
+                  setDescription(e.target.value);
                 }}
               />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  padding: "1vw 0 1vw 0",
+                }}
+              >
+                <TextField
+                  variant="outlined"
+                  label="First option"
+                  margin="dense"
+                  value={option1}
+                  fullWidth={true}
+                  onChange={(e) => {
+                    setOption1(e.target.value);
+                  }}
+                />
+                <TextField
+                  variant="outlined"
+                  label="Second option"
+                  value={option2}
+                  margin="dense"
+                  fullWidth={true}
+                  onChange={(e) => {
+                    setOption2(e.target.value);
+                  }}
+                />
+                <TextField
+                  margin="dense"
+                  variant="outlined"
+                  label="Third option"
+                  value={option3}
+                  fullWidth={true}
+                  onChange={(e) => {
+                    setOption3(e.target.value);
+                  }}
+                />
+                <TextField
+                  margin="dense"
+                  variant="outlined"
+                  label="Fourth option"
+                  value={option4}
+                  fullWidth={true}
+                  onChange={(e) => {
+                    setOption4(e.target.value);
+                  }}
+                />
+              </div>
               <TextField
-                margin="dense"
                 variant="outlined"
-                label="Fourth option"
-                value={option4}
+                label="answer"
+                value={answer}
+                helperText={"Enter answer"}
                 fullWidth={true}
                 onChange={(e) => {
-                  setOption4(e.target.value);
+                  setAnswer(e.target.value);
                 }}
               />
-            </div>
-            <TextField
-              variant="outlined"
-              label="answer"
-              value={answer}
-              helperText={"Enter answer"}
-              fullWidth={true}
-              onChange={(e) => {
-                setAnswer(e.target.value);
-              }}
-            />
-            <Button variant="contained" size="medium" onClick={handleOnClick}>
-              Create Question
-            </Button>
+            </CardContent>
+            <CardActions>
+              <Button variant="contained" size="medium" onClick={handleOnClick}>
+                Create Question
+              </Button>
+              <Button
+                variant={"contained"}
+                size="medium"
+                onClick={() => {
+                  setTitle("");
+                  setDescription("");
+                  setAnswer("");
+                  setQuestion("");
+                  setOption1("");
+                  setOption2("");
+                  setOption3("");
+                  setOption4("");
+                }}
+              >
+                Clear Inputs
+              </Button>
+            </CardActions>
           </Card>
         </Grid>
       </Grid>
