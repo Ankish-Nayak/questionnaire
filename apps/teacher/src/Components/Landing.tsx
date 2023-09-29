@@ -1,6 +1,9 @@
 import { Grid, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import { teacherEmailState } from "../store/selectors/teacher";
 export const Landing = () => {
+  const teacherName = useRecoilValue(teacherEmailState);
   const navigate = useNavigate();
   return (
     <div
@@ -24,34 +27,36 @@ export const Landing = () => {
           <Typography variant="h4">
             Place, where questions is to be solved.
           </Typography>
-          <div
-            style={{
-              paddingTop: "4vh",
-              paddingLeft: "3vw",
-              display: "flex",
-              justifyContent: "space-between",
-              width: "30%",
-            }}
-          >
-            <Button
-              variant="contained"
-              size="medium"
-              onClick={() => {
-                navigate("/login");
+          {!teacherName && (
+            <div
+              style={{
+                paddingTop: "4vh",
+                paddingLeft: "3vw",
+                display: "flex",
+                justifyContent: "space-between",
+                width: "30%",
               }}
             >
-              Login
-            </Button>
-            <Button
-              variant="contained"
-              size="medium"
-              onClick={() => {
-                navigate("/signup");
-              }}
-            >
-              Signup
-            </Button>
-          </div>
+              <Button
+                variant="contained"
+                size="medium"
+                onClick={() => {
+                  navigate("/login");
+                }}
+              >
+                Login
+              </Button>
+              <Button
+                variant="contained"
+                size="medium"
+                onClick={() => {
+                  navigate("/signup");
+                }}
+              >
+                Signup
+              </Button>
+            </div>
+          )}
         </Grid>
         <Grid
           item
