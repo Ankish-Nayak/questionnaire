@@ -3,12 +3,14 @@ import { teacherLoginParams } from "types";
 import { BASE_URL } from "../config";
 import { useSetRecoilState } from "recoil";
 import axios from "axios";
+import {useNavigate} from 'react-router-dom';
 import { teacherState } from "../store/atoms/teacher";
 import { Card, TextField, Button } from "@mui/material";
 export const Login = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const setTeacher = useSetRecoilState(teacherState);
+  const navigate = useNavigate();
   const handleOnClick = async () => {
     const loginInputs: teacherLoginParams = {
       username,
@@ -30,6 +32,7 @@ export const Login = () => {
           isLoading: false,
           userEmail: username,
         });
+        navigate('/questions')
       } else {
         setTeacher({
           isLoading: false,
@@ -61,11 +64,12 @@ export const Login = () => {
           justifyContent: "center",
           alignItems: "center",
           padding: "2vw",
-          width: "30vw",
+          width: "25vw",
         }}
       >
         <TextField
           label="username"
+          margin="dense"
           value={username}
           fullWidth={true}
           onChange={(e) => {
@@ -75,6 +79,7 @@ export const Login = () => {
         <TextField
           label="password"
           value={password}
+          margin="dense"
           type={"password"}
           fullWidth={true}
           onChange={(e) => {

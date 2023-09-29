@@ -5,7 +5,7 @@ import axios from "axios";
 import { BASE_URL } from "../config";
 import { teacherSignupParams } from "types";
 import { Button, Card, TextField } from "@mui/material";
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 export const Signup = () => {
   const [firstname, setFirstname] = useState<string>("");
   const [lastname, setLastname] = useState<string>("");
@@ -31,12 +31,14 @@ export const Signup = () => {
         }
       );
       const data = response.data;
+      console.log(data);
       if (data.token) {
         setUser({
           isLoading: false,
           userEmail: username,
         });
-        navigate('/questions');
+        console.log('d');
+        navigate("/questions");
       }
     } catch (e) {
       setUser({
@@ -70,6 +72,7 @@ export const Signup = () => {
           label="firstname"
           value={firstname}
           fullWidth={true}
+          margin={"dense"}
           onChange={(e) => {
             setFirstname(e.target.value);
           }}
@@ -77,6 +80,7 @@ export const Signup = () => {
         <TextField
           label="lastname"
           value={lastname}
+          margin={"dense"}
           fullWidth={true}
           onChange={(e) => {
             setLastname(e.target.value);
@@ -85,6 +89,7 @@ export const Signup = () => {
         <TextField
           label="username"
           value={username}
+          margin={"dense"}
           fullWidth={true}
           onChange={(e) => {
             setUsername(e.target.value);
@@ -94,6 +99,7 @@ export const Signup = () => {
           label="password"
           value={password}
           type={"password"}
+          margin="dense"
           fullWidth={true}
           onChange={(e) => {
             setPassword(e.target.value);
