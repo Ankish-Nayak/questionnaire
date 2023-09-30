@@ -48,7 +48,7 @@ router.post("/signup", async (req: Request, res: Response) => {
 });
 
 // login route
-router.post("/student", async (req: Request, res: Response) => {
+router.post("/login", async (req: Request, res: Response) => {
   const parsedInput = studentLoginTypes.safeParse(req.body);
   if (!parsedInput.success) {
     return res.status(411).json({ error: parsedInput.error });
@@ -81,7 +81,7 @@ router.get("/me", authenticateJwt, async (req: Request, res: Response) => {
     try {
       const student = await prisma.student.findUnique({ where: { username } });
       if (student) {
-        res.json({ username });
+        res.json({ username: student.firstname });
       } else {
         res.status(403).json({ message: "Student dose not exists" });
       }
@@ -121,5 +121,38 @@ router.get(
   }
 );
 
+// route for getting particular question
+router.get(
+  "/questions/:questionId",
+  authenticateJwt,
+  async (req: Request, res: Response) => {
+    if (typeof req.headers["student"] === "string") {
+      const username: string = req.headers["student"];
+      const questionId = parseInt(req.params.questionId);
+      try {
+        const student = await prisma.student.findUnique({
+          where: { username },
+        });
+        if (student) {
+          const question = await prisma.question.findUnique({
+            where: { id: questionId },
+          });
+          if (question) {
+            res.json({ question });
+          } else {
+            res.status(403).json({ message: "Question dose not exists" });
+          }
+        } else {
+          res.status(403).json({ message: "Student dose not exists" });
+        }
+      } catch (e) {
+        console.log(e);
+        res.status(404).json({ message: "db error" });
+      }
+    } else {
+      res.status(403).json({ message: "Student dose not exists" });
+    }
+  }
+);
 
 // route for storing attempted questions
