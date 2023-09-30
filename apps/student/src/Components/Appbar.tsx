@@ -1,15 +1,17 @@
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { Typography, Button } from "@mui/material";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useRevalidator } from "react-router-dom";
 import {
   isStudentLoading,
   studentEmailState,
 } from "../store/selectors/student";
 import { studentState } from "../store/atoms/student";
+import { questionCartArray } from "../store/selectors/questionCart";
 export const Appbar = () => {
   const studentLoading = useRecoilValue(isStudentLoading);
   const studentName = useRecoilValue(studentEmailState);
   const setStudent = useSetRecoilState(studentState);
+  const testQuestions = useRecoilValue(questionCartArray);
   const navigate = useNavigate();
   if (studentLoading) {
     return <div>Loading...</div>;
@@ -32,11 +34,31 @@ export const Appbar = () => {
           variant="outlined"
           size="large"
           onClick={() => {
-            navigate("/questions");
+            navigate("/testQuestions/view");
+          }}
+        >
+          Test Questions {(testQuestions && testQuestions.length) || 0}
+        </Button>
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() => {
+            navigate("/questions/view");
           }}
         >
           Questions
         </Button>
+        {testQuestions && testQuestions.length && (
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={() => {
+              navigate("/startTest");
+            }}
+          >
+            Start Test
+          </Button>
+        )}
         <div
           style={{
             display: "flex",
@@ -47,7 +69,7 @@ export const Appbar = () => {
           }}
         >
           <Typography variant="h5" style={{}}>
-            {"ankish"}
+            {studentName}
           </Typography>
           <Button
             variant="contained"
