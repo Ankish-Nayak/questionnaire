@@ -10,10 +10,11 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../config";
+import { useRecoilState } from "recoil";
+import { questionCart } from "../store/atoms/questionCart";
 type question = questionParams & { id: Number };
 export const Questions = () => {
   const [questions, setQuestions] = useState<question[]>();
-
   const init = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/student/questions`, {
@@ -58,9 +59,21 @@ export const Questions = () => {
 
 export const Question = ({ question }: { question: question }) => {
   const navigate = useNavigate();
+  const [add, setAdd] = useState<boolean>(false);
+  const [testQuestions, setTestQuestions] = useRecoilState(questionCart);
   const handleOnClick = async () => {
     navigate(`/questions/view/${question.id}`);
   };
+  useEffect(() => {
+    if (
+      testQuestions.questions &&
+      testQuestions.questions.find((e) => e.id === question.id)
+    ) {
+      setAdd(true);
+    } else {
+      setAdd(false);
+    }
+  });
   return (
     <Card variant={"outlined"}>
       <CardContent>
@@ -77,6 +90,43 @@ export const Question = ({ question }: { question: question }) => {
           onClick={handleOnClick}
         >
           Show more
+        </Button>
+        <Button
+          variant={"text"}
+          size="small"
+          sx={{
+            fontWeight: "bold",
+          }}
+          onClick={() => {
+            setAdd((add) => {
+              return !add;
+            });
+            if (add) {
+              const newTestQuestions: { id: Number }[] = [];
+              if (testQuestions.questions)
+                testQuestions.questions.forEach((element) => {
+                  if (question.id !== element.id)
+                    newTestQuestions.push(element);
+                });
+              setTestQuestions({
+                isLoading: false,
+                questions: newTestQuestions,
+              });
+            } else {
+              const newTestQuestions: { id: Number }[] = [];
+              if (testQuestions.questions)
+                testQuestions.questions.forEach((element) => {
+                  newTestQuestions.push(element);
+                });
+              newTestQuestions.push({ id: question.id });
+              setTestQuestions({
+                isLoading: false,
+                questions: newTestQuestions,
+              });
+            }
+          }}
+        >
+          {add ? "remove" : "add"}
         </Button>
       </CardActions>
     </Card>
