@@ -5,10 +5,12 @@ import { BASE_URL } from "../config";
 import { useSetRecoilState } from "recoil";
 import { studentState } from "../store/atoms/student";
 import { Card, Button, TextField } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 export const Login = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const setStudent = useSetRecoilState(studentState);
+  const navigate = useNavigate();
   const handleOnClick = async () => {
     const parsedInputs: studentLoginParams = {
       username,
@@ -31,6 +33,7 @@ export const Login = () => {
           isLoading: false,
           userEmail: username,
         });
+        navigate('/questions/view');
       } else {
         setStudent({
           isLoading: false,
