@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { useRecoilState } from "recoil";
 import { questionCart } from "../store/atoms/questionCart";
-type question = questionParams & { id: Number } & { creatorId: Number };
+type question = questionParams & { id: number } & { creatorId: number };
 export const Question = () => {
   const { questionId } = useParams();
   const [question, setQuestion] = useState<question>();
@@ -163,7 +163,7 @@ export const Question = () => {
                   return !add;
                 });
                 if (add) {
-                  const newTestQuestions: Number[] = [];
+                  const newTestQuestions: number[] = [];
                   if (testQuestions.questions)
                     testQuestions.questions.forEach((questionId) => {
                       if (question.id !== questionId)
@@ -174,7 +174,7 @@ export const Question = () => {
                     questions: newTestQuestions,
                   });
                 } else {
-                  const newTestQuestions: Number[] = [];
+                  const newTestQuestions: number[] = [];
                   if (testQuestions.questions)
                     testQuestions.questions.forEach((questionId) => {
                       newTestQuestions.push(questionId);

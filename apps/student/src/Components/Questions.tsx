@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../config";
 import { useRecoilState } from "recoil";
 import { questionCart } from "../store/atoms/questionCart";
-type question = questionParams & { id: Number };
+type question = questionParams & { id: number };
 export const Questions = () => {
   const [questions, setQuestions] = useState<question[]>();
   const init = async () => {
@@ -102,7 +102,7 @@ export const Question = ({ question }: { question: question }) => {
               return !add;
             });
             if (add) {
-              const newTestQuestions: Number[] = [];
+              const newTestQuestions: number[] = [];
               if (testQuestions.questions)
                 testQuestions.questions.forEach((questionId) => {
                   if (question.id !== questionId)
@@ -114,7 +114,7 @@ export const Question = ({ question }: { question: question }) => {
               });
               // setPersistedQuestionCart(newTestQuestions);
             } else {
-              const newTestQuestions: Number[] = [];
+              const newTestQuestions: number[] = [];
               if (testQuestions.questions)
                 testQuestions.questions.forEach((questionId) => {
                   newTestQuestions.push(questionId);

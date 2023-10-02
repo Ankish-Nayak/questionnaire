@@ -1,8 +1,8 @@
 import { atom } from "recoil";
 
 export const questionCart = atom<{
-  isLoading: Boolean;
-  questions: Number[];
+  isLoading: boolean;
+  questions: number[];
 }>({
   key: "questionCart",
   default: {

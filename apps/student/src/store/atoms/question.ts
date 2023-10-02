@@ -10,7 +10,7 @@ type questionType = {
   option4: string;
 };
 export const questionState = atom<{
-  isLoading: Boolean;
+  isLoading: boolean;
   question: questionType | null;
 }>({
   key: "questionState",
