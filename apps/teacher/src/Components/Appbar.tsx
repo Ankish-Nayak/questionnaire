@@ -24,7 +24,9 @@ export const Appbar = () => {
         }}
       >
         <Typography variant="h4">
-          <Link to={"/"} style={{textDecoration: "none"}}>Teacher</Link>
+          <Link to={"/"} style={{ textDecoration: "none" }}>
+            Teacher
+          </Link>
         </Typography>
         <Button
           variant="outlined"
@@ -63,7 +65,7 @@ export const Appbar = () => {
           }}
         >
           <Typography variant="h5" style={{}}>
-            {"ankish"}
+            {teacherName}
           </Typography>
           <Button
             variant="contained"
@@ -72,7 +74,7 @@ export const Appbar = () => {
                 isLoading: false,
                 userEmail: null,
               });
-              console.log("logout");
+              navigate("/");
             }}
           >
             Logout
@@ -90,7 +92,9 @@ export const Appbar = () => {
       }}
     >
       <Typography variant="h4">
-        <Link to={"/"} style={{textDecoration: 'none'}}>Teacher</Link>
+        <Link to={"/"} style={{ textDecoration: "none" }}>
+          Teacher
+        </Link>
       </Typography>
       <div
         style={{

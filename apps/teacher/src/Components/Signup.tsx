@@ -31,13 +31,11 @@ export const Signup = () => {
         }
       );
       const data = response.data;
-      console.log(data);
-      if (data.token) {
+      if (data.firstname) {
         setUser({
           isLoading: false,
-          userEmail: username,
+          userEmail: data.firstname,
         });
-        console.log('d');
         navigate("/questions");
       }
     } catch (e) {

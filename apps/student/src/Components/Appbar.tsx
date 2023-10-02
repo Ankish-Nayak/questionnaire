@@ -78,7 +78,7 @@ export const Appbar = () => {
                 isLoading: false,
                 userEmail: null,
               });
-              console.log("logout");
+              navigate("/");
             }}
           >
             Logout

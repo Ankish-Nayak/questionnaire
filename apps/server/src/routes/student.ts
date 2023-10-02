@@ -36,7 +36,10 @@ router.post("/signup", async (req: Request, res: Response) => {
           expiresIn: "1h",
         });
         cookie.set("student-token", token);
-        res.json({ message: "Student registered successfully", token });
+        res.json({
+          message: "Student registered successfully",
+          username: firstname,
+        });
       } else {
         res.status(403).json({ message: "Failed to register" });
       }
@@ -64,7 +67,10 @@ router.post("/login", async (req: Request, res: Response) => {
       });
       const cookie = new Cookies(req, res);
       cookie.set("student-token", token);
-      res.json({ message: "Student logged in successfully", token });
+      res.json({
+        message: "Student logged in successfully",
+        firstname: student.firstname,
+      });
     } else {
       res.status(403).json({ message: "Student dose not exists" });
     }
@@ -81,7 +87,7 @@ router.get("/me", authenticateJwt, async (req: Request, res: Response) => {
     try {
       const student = await prisma.student.findUnique({ where: { username } });
       if (student) {
-        res.json({ username: student.firstname });
+        res.json({ firstname: student.firstname });
       } else {
         res.status(403).json({ message: "Student dose not exists" });
       }

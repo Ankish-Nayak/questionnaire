@@ -3,7 +3,7 @@ import { teacherLoginParams } from "types";
 import { BASE_URL } from "../config";
 import { useSetRecoilState } from "recoil";
 import axios from "axios";
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { teacherState } from "../store/atoms/teacher";
 import { Card, TextField, Button } from "@mui/material";
 export const Login = () => {
@@ -27,12 +27,12 @@ export const Login = () => {
         }
       );
       const data = response.data;
-      if (data.token) {
+      if (data.firstname) {
         setTeacher({
           isLoading: false,
-          userEmail: username,
+          userEmail: data.firstname,
         });
-        navigate('/questions')
+        navigate("/questions");
       } else {
         setTeacher({
           isLoading: false,

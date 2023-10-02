@@ -32,10 +32,10 @@ export const Signup = () => {
         }
       );
       const data = response.data;
-      if (data.token) {
+      if (data.firstname) {
         setStudent({
           isLoading: false,
-          userEmail: username,
+          userEmail: data.firstname,
         });
       } else {
         setStudent({
