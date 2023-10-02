@@ -1,6 +1,6 @@
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { Typography, Button } from "@mui/material";
-import { useNavigate, Link, useRevalidator } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
   isStudentLoading,
   studentEmailState,
@@ -37,7 +37,7 @@ export const Appbar = () => {
             navigate("/testQuestions/view");
           }}
         >
-          Test Questions {(testQuestions && testQuestions.length) || 0}
+          Test Questions {(testQuestions && testQuestions.length) || ""}
         </Button>
         <Button
           variant="outlined"
@@ -48,7 +48,7 @@ export const Appbar = () => {
         >
           Questions
         </Button>
-        {testQuestions && testQuestions.length && (
+        {testQuestions && testQuestions.length > 0 && (
           <Button
             variant="outlined"
             size="large"

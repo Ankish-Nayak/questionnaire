@@ -12,10 +12,13 @@ import { Questions } from "./Components/Questions";
 import { Question } from "./Components/Question";
 import { TestQuestions } from "./Components/TestQuestions";
 import { StartTest } from "./Components/StartTest";
+// import { initState, usePersistStorage } from "./hooks/usePersistedStorage";
 function App() {
   axios.defaults.withCredentials = true;
   return (
-    <RecoilRoot>
+    <RecoilRoot
+    // initializeState={initState}
+    >
       <Router>
         <Init />
         <Appbar />
@@ -23,10 +26,10 @@ function App() {
           <Route path={"/"} element={<Landing />} />
           <Route path={"/signup"} element={<Signup />} />
           <Route path={"/login"} element={<Login />} />
-          <Route path={'/questions/view'} element={<Questions/>}/>
-          <Route path={`/questions/view/:questionId`} element={<Question/>} />
-          <Route path={`/testQuestions/view`} element={<TestQuestions/>}/>
-          <Route path={`/startTest`} element={<StartTest/>}/>
+          <Route path={"/questions/view"} element={<Questions />} />
+          <Route path={`/questions/view/:questionId`} element={<Question />} />
+          <Route path={`/testQuestions/view`} element={<TestQuestions />} />
+          <Route path={`/startTest`} element={<StartTest />} />
         </Routes>
       </Router>
     </RecoilRoot>
@@ -37,7 +40,7 @@ export default App;
 
 export const Init = () => {
   const setStudent = useSetRecoilState(studentState);
-
+  // usePersistStorage();
   const init = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/student/me`, {
