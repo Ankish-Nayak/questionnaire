@@ -33,8 +33,8 @@ export const TestQuestions = () => {
       }}
     >
       {testQuestions &&
-        testQuestions.map((question) => {
-          return <TestQuestion questionId={question.id} />;
+        testQuestions.map((questionId) => {
+          return <TestQuestion questionId={questionId} />;
         })}
       <Button
         variant="contained"

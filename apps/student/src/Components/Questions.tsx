@@ -67,13 +67,13 @@ export const Question = ({ question }: { question: question }) => {
   useEffect(() => {
     if (
       testQuestions.questions &&
-      testQuestions.questions.find((e) => e.id === question.id)
+      testQuestions.questions.find((questionId) => questionId === question.id)
     ) {
       setAdd(true);
     } else {
       setAdd(false);
     }
-  });
+  }, []);
   return (
     <Card variant={"outlined"}>
       <CardContent>
@@ -102,27 +102,29 @@ export const Question = ({ question }: { question: question }) => {
               return !add;
             });
             if (add) {
-              const newTestQuestions: { id: Number }[] = [];
+              const newTestQuestions: Number[] = [];
               if (testQuestions.questions)
-                testQuestions.questions.forEach((element) => {
-                  if (question.id !== element.id)
-                    newTestQuestions.push(element);
+                testQuestions.questions.forEach((questionId) => {
+                  if (question.id !== questionId)
+                    newTestQuestions.push(questionId);
                 });
               setTestQuestions({
                 isLoading: false,
                 questions: newTestQuestions,
               });
+              // setPersistedQuestionCart(newTestQuestions);
             } else {
-              const newTestQuestions: { id: Number }[] = [];
+              const newTestQuestions: Number[] = [];
               if (testQuestions.questions)
-                testQuestions.questions.forEach((element) => {
-                  newTestQuestions.push(element);
+                testQuestions.questions.forEach((questionId) => {
+                  newTestQuestions.push(questionId);
                 });
-              newTestQuestions.push({ id: question.id });
+              newTestQuestions.push(question.id);
               setTestQuestions({
                 isLoading: false,
                 questions: newTestQuestions,
               });
+              // setPersistedQuestionCart(newTestQuestions);
             }
           }}
         >
