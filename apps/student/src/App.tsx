@@ -12,12 +12,12 @@ import { Questions } from "./Components/Questions";
 import { Question } from "./Components/Question";
 import { TestQuestions } from "./Components/TestQuestions";
 import { StartTest } from "./Components/StartTest";
-// import { initState, usePersistStorage } from "./hooks/usePersistedStorage";
+import { initState, usePersistStorage } from "./hooks/usePersistedStorage";
 function App() {
   axios.defaults.withCredentials = true;
   return (
     <RecoilRoot
-    // initializeState={initState}
+    initializeState={initState}
     >
       <Router>
         <Init />
@@ -40,7 +40,7 @@ export default App;
 
 export const Init = () => {
   const setStudent = useSetRecoilState(studentState);
-  // usePersistStorage();
+  usePersistStorage();
   const init = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/student/me`, {
