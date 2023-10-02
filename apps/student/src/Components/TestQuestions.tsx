@@ -33,8 +33,8 @@ export const TestQuestions = () => {
       }}
     >
       {testQuestions &&
-        testQuestions.map((questionId) => {
-          return <TestQuestion questionId={questionId} />;
+        testQuestions.map((questionId, idx) => {
+          return <TestQuestion key={idx} questionId={questionId} />;
         })}
       <div style={{ alignSelf: "center" }}>
         <StartTestDialog buttonSize="large" buttonVariant="outlined" />

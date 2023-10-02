@@ -46,8 +46,8 @@ export const Questions = () => {
       }}
     >
       {(questions &&
-        questions.map((question) => {
-          return <Question question={question} />;
+        questions.map((question, idx) => {
+          return <Question key={idx} question={question} />;
         })) || (
         <Typography variant="h4" textAlign={"center"}>
           No Questions
