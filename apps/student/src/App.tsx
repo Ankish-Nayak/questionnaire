@@ -16,9 +16,7 @@ import { initState, usePersistStorage } from "./hooks/usePersistedStorage";
 function App() {
   axios.defaults.withCredentials = true;
   return (
-    <RecoilRoot
-    initializeState={initState}
-    >
+    <RecoilRoot initializeState={initState}>
       <Router>
         <Init />
         <Appbar />
@@ -49,10 +47,10 @@ export const Init = () => {
         },
       });
       const data = response.data;
-      if (data.username) {
+      if (data.firstname) {
         setStudent({
           isLoading: false,
-          userEmail: data.username,
+          userEmail: data.firstname,
         });
       } else {
         setStudent({

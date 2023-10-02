@@ -38,7 +38,7 @@ router.post("/signup", async (req: Request, res: Response) => {
         cookie.set("student-token", token);
         res.json({
           message: "Student registered successfully",
-          username: firstname,
+          firstname: firstname,
         });
       } else {
         res.status(403).json({ message: "Failed to register" });

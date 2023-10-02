@@ -35,7 +35,7 @@ function App() {
               path={"/questions/edit/:questionId"}
               element={<EditQuestion />}
             />
-            <Route path={'/questions/me'} element={<MyQuestions/>}/>
+            <Route path={"/questions/me"} element={<MyQuestions />} />
             <Route path={"/addQuestion"} element={<AddQuestion />} />
           </Routes>
         </Router>
@@ -53,10 +53,10 @@ export const Init = () => {
     try {
       const response = await axios.get(`${BASE_URL}/teacher/me`);
       const data = response.data;
-      if (data.username) {
+      if (data.firstname) {
         setTeacher({
           isLoading: false,
-          userEmail: data.username,
+          userEmail: data.firstname,
         });
       } else {
         setTeacher({
