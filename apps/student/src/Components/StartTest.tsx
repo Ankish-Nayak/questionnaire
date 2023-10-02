@@ -1,16 +1,24 @@
 import { useRecoilValue } from "recoil";
 import { questionCartArray } from "../store/selectors/questionCart";
-import { Stack, Card, CardContent, Typography, Paper } from "@mui/material";
+import {
+  Stack,
+  Card,
+  CardContent,
+  Typography,
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormControlLabel,
+} from "@mui/material";
 import { questionParams } from "types";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../config";
-import { styled } from "@mui/material/styles";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 // introducing save state using localstorage
 export const StartTest = () => {
   const testQuestions = useRecoilValue(questionCartArray);
-
   return (
     <Stack
       direction={"column"}
@@ -57,22 +65,70 @@ export const TestQuestion = ({ questionId }: { questionId: Number }) => {
   return (
     <Card>
       <CardContent>
-        <Typography variant="h5">{question.question}</Typography>
-        <Stack direction="row" justifyContent={"space-evenly"}>
-          <Item>{question.option1}</Item>
-          <Item>{question.option2}</Item>
-          <Item>{question.option3}</Item>
-          <Item>{question.option4}</Item>
-        </Stack>
+        <Question
+          questionId={question.id}
+          question={question.question}
+          options={[
+            question.option1,
+            question.option2,
+            question.option3,
+            question.option4,
+          ]}
+        />
       </CardContent>
     </Card>
   );
 };
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-}));
+const Question = ({
+  options,
+  question,
+  questionId,
+}: {
+  options: string[];
+  question: string;
+  questionId: Number;
+}) => {
+  const [selected, setSelected] = useState<string | null>(null);
+  const [persistedSelected, setPersistedSelected] = useLocalStorage(
+    `test_question_${questionId}`,
+    null
+  );
+
+  useEffect(() => {
+    setSelected(persistedSelected);
+  }, [selected]);
+  return (
+    <FormControl sx={{ width: "100%" }}>
+      <Typography variant="h5">{question}</Typography>
+      <RadioGroup
+        onChange={(e) => {
+          e.preventDefault();
+          setPersistedSelected(e.target.value);
+          setSelected(e.target.value);
+          console.log(e.target.value);
+        }}
+        value={selected}
+        row
+      >
+        <Stack
+          direction="row"
+          justifyContent={"space-evenly"}
+          sx={{ width: "100%" }}
+        >
+          {options.map((option, idx) => {
+            return (
+              <div key={idx}>
+                <FormControlLabel
+                  value={option}
+                  control={<Radio />}
+                  label={option}
+                />
+              </div>
+            );
+          })}
+        </Stack>
+      </RadioGroup>
+    </FormControl>
+  );
+};

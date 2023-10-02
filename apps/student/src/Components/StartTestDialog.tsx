@@ -51,8 +51,6 @@ export const StartTestDialog = ({
       <Dialog
         open={open}
         onClose={handleClose}
-        aria-labelledby="start-test"
-        aria-aria-describedby="consent to start test"
       >
         <DialogTitle>{"Want to start test?"}</DialogTitle>
         <DialogContent>
