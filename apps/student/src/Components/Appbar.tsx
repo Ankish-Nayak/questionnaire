@@ -7,6 +7,7 @@ import {
 } from "../store/selectors/student";
 import { studentState } from "../store/atoms/student";
 import { questionCartArray } from "../store/selectors/questionCart";
+import { StartTestDialog } from "./StartTestDialog";
 export const Appbar = () => {
   const studentLoading = useRecoilValue(isStudentLoading);
   const studentName = useRecoilValue(studentEmailState);
@@ -49,15 +50,7 @@ export const Appbar = () => {
           Questions
         </Button>
         {testQuestions && testQuestions.length > 0 && (
-          <Button
-            variant="outlined"
-            size="large"
-            onClick={() => {
-              navigate("/startTest");
-            }}
-          >
-            Start Test
-          </Button>
+          <StartTestDialog buttonVariant="outlined" buttonSize="large" />
         )}
         <div
           style={{

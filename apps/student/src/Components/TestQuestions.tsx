@@ -6,14 +6,14 @@ import { BASE_URL } from "../config";
 import {
   Card,
   Typography,
-  Button,
   CardContent,
   CardActions,
   Stack,
   Paper,
 } from "@mui/material";
-import {  questionParams } from "types";
+import { questionParams } from "types";
 import { styled } from "@mui/material/styles";
+import { StartTestDialog } from "./StartTestDialog";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -36,15 +36,9 @@ export const TestQuestions = () => {
         testQuestions.map((questionId) => {
           return <TestQuestion questionId={questionId} />;
         })}
-      <Button
-        variant="contained"
-        size="medium"
-        sx={{
-          alignSelf: "center",
-        }}
-      >
-        Start Test
-      </Button>
+      <div style={{ alignSelf: "center" }}>
+        <StartTestDialog buttonSize="large" buttonVariant="outlined" />
+      </div>
     </Stack>
   );
 };
