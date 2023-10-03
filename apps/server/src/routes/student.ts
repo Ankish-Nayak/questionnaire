@@ -228,3 +228,72 @@ router.put("/profile", authenticateJwt, async (req: Request, res: Response) => {
     res.status(403).json({ message: "Student dose not exists" });
   }
 });
+
+// attempted question route
+router.post(
+  `/attempt`,
+  authenticateJwt,
+  async (req: Request, res: Response) => {
+    if (typeof req.headers["student"] === "string") {
+      const username: string = req.headers["student"];
+      try {
+        const student = await prisma.student.findUnique({
+          where: { username },
+        });
+        if (student) {
+          const attempts: { questionId: number; answer: string }[] = req.body;
+          const answers: { questionId: number; correct: boolean }[] = [];
+          const promises = attempts.map(
+            async ({ questionId, answer }): Promise<void> => {
+              // const updatedStudent = await prisma.student.update({
+              //   where: {
+              //     username,
+              //   },
+              //   data: {
+              //     attempts: {
+              //       create: [
+              //         {
+              //           answer: answer,
+              //           question: {
+              //             connect: {
+              //               id: questionId,
+              //             },
+              //           },
+              //         },
+              //       ],
+              //     },
+              //   },
+              // });
+              // if (!updatedStudent) {
+              //   res.status(403).json({ message: "Failed to updated" });
+              // }
+              return new Promise(async (resolve, rej) => {
+                const question = await prisma.question.findUnique({
+                  where: { id: questionId },
+                });
+                if (question) {
+                  answers.push({
+                    questionId,
+                    correct: question.answer === answer,
+                  });
+                } else {
+                  res.status(403).json({ message: "Failed to check" });
+                }
+                resolve();
+              });
+            }
+          );
+          Promise.all(promises).then(() =>
+            res.json({ message: "success", answers })
+          );
+        } else {
+          res.status(403).json({ message: "Student dose not exists" });
+        }
+      } catch (e) {
+        console.log(e);
+        res.status(404).json({ message: "db error" });
+      }
+    } else {
+    }
+  }
+);
