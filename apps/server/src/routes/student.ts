@@ -161,4 +161,70 @@ router.get(
   }
 );
 
-// route for storing attempted questions
+// route for fetching profile
+router.get("/profile", authenticateJwt, async (req: Request, res: Response) => {
+  if (typeof req.headers["student"] === "string") {
+    const username: string = req.headers["student"];
+    try {
+      const student = await prisma.student.findUnique({
+        where: { username },
+      });
+      if (student) {
+        res.json({
+          firstname: student.firstname,
+          lastname: student.lastname,
+          createdAt: student.createdAt,
+          username: student.username,
+        });
+      } else {
+        res.status(403).json({ message: "student dose not exists" });
+      }
+    } catch (e) {
+      console.log(e);
+      res.status(404).json({ message: "db error" });
+    }
+  } else {
+    res.status(403).json({ message: "student dose not exists" });
+  }
+});
+
+// route for updating profile
+
+router.put("/profile", authenticateJwt, async (req: Request, res: Response) => {
+  if (typeof req.headers["student"] === "string") {
+    const username: string = req.headers["student"];
+    try {
+      const student = await prisma.student.findUnique({ where: { username } });
+      if (student) {
+        const data: { firstname: string; lastname: string; username: string } =
+          req.body;
+        const updatedStudent = await prisma.student.update({
+          where: { id: student.id },
+          data: {
+            ...data,
+          },
+        });
+        if (updatedStudent) {
+          const token: string = jwt.sign(
+            { username: updatedStudent.username, role: "student" },
+            secret,
+            { expiresIn: "1h" }
+          );
+          const cookies = new Cookies(req, res);
+          cookies.set("student-token", token);
+          res.json({
+            message: "updated successfully",
+            firstname: updatedStudent.firstname,
+          });
+        } else {
+          res.status(403).json({ message: "Failed to update" });
+        }
+      }
+    } catch (e) {
+      console.log(e);
+      res.status(404).json({ message: "db error" });
+    }
+  } else {
+    res.status(403).json({ message: "Student dose not exists" });
+  }
+});

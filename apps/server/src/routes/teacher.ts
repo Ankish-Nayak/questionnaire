@@ -268,7 +268,7 @@ router.get("/me", authenticateJwt, async (req: Request, res: Response) => {
     try {
       const teacher = await prisma.teacher.findUnique({ where: { username } });
       if (teacher) {
-        res.json({ username: teacher.firstname });
+        res.json({ firstname: teacher.firstname });
       } else {
         res.status(403).json({ message: "Teacher dose not exists" });
       }
@@ -316,3 +316,70 @@ router.get(
     }
   }
 );
+
+// fetch teacher profile
+router.get("/profile", authenticateJwt, async (req: Request, res: Response) => {
+  if (typeof req.headers["teacher"] === "string") {
+    const username: string = req.headers["teacher"];
+    try {
+      const teacher = await prisma.teacher.findUnique({ where: { username } });
+      if (teacher) {
+        res.json({
+          firstname: teacher.firstname,
+          lastname: teacher.lastname,
+          createdAt: teacher.createdAt,
+          username: teacher.username,
+        });
+      } else {
+        res.status(403).json({ message: "Student dose not exists" });
+      }
+    } catch (e) {
+      console.log(e);
+      res.status(404).json({ message: "db error" });
+    }
+  } else {
+    res.status(403).json({ message: "Teacher dose not exists" });
+  }
+});
+
+// update teacher profile
+router.put("/profile", authenticateJwt, async (req: Request, res: Response) => {
+  if (typeof req.headers["teacher"] === "string") {
+    const username: string = req.headers["teacher"];
+    const data: { firstname: string; lastname: string; username: string } =
+      req.body;
+    try {
+      const teacher = await prisma.teacher.findUnique({ where: { username } });
+      if (teacher) {
+        const updatedTeacher = await prisma.teacher.update({
+          where: { id: teacher.id },
+          data: {
+            ...data,
+          },
+        });
+        if (updatedTeacher) {
+          const token: string = jwt.sign(
+            { username: updatedTeacher.username, role: "teacher" },
+            secret,
+            { expiresIn: "1h" }
+          );
+          const cookie = new Cookies(req, res);
+          cookie.set("teacher-token", token);
+          res.json({
+            message: "Updated successfully",
+            firstname: updatedTeacher.firstname,
+          });
+        } else {
+          res.status(403).json({ message: "Failed to update" });
+        }
+      } else {
+        res.status(403).json({ message: "Teacher dose not exists" });
+      }
+    } catch (e) {
+      console.log(e);
+      res.status(404).json({ message: "db error" });
+    }
+  } else {
+    res.status(403).json({ message: "Teacher dose not exists" });
+  }
+});
