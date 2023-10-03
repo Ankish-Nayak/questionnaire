@@ -1,4 +1,4 @@
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { Typography, Button } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
 import {
@@ -8,12 +8,21 @@ import {
 import { studentState } from "../store/atoms/student";
 import { questionCartArray } from "../store/selectors/questionCart";
 import { StartTestDialog } from "./StartTestDialog";
+import TimerChip from "./TimerChip";
+import { timer as _timer } from "../store/atoms/timer";
 export const Appbar = () => {
   const studentLoading = useRecoilValue(isStudentLoading);
   const studentName = useRecoilValue(studentEmailState);
   const setStudent = useSetRecoilState(studentState);
   const testQuestions = useRecoilValue(questionCartArray);
   const navigate = useNavigate();
+  const [timer, setTimer] = useRecoilState(_timer);
+  const handleOnClick = () => {
+    setTimer({
+      isLoading: false,
+      show: true,
+    });
+  };
   if (studentLoading) {
     return <div>Loading...</div>;
   }
@@ -49,9 +58,14 @@ export const Appbar = () => {
         >
           Questions
         </Button>
-        {testQuestions && testQuestions.length > 0 && (
-          <StartTestDialog buttonVariant="outlined" buttonSize="large" />
+        {testQuestions && testQuestions.length > 0 && !timer.show && (
+          <StartTestDialog
+            buttonVariant="outlined"
+            buttonSize="large"
+            handleOnClick={handleOnClick}
+          />
         )}
+        {timer.show && <TimerChip seconds={testQuestions.length * 60} />}
         <div
           style={{
             display: "flex",

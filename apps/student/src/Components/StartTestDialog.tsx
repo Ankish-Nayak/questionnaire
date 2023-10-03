@@ -8,20 +8,24 @@ import {
   DialogContentText,
   Typography,
 } from "@mui/material";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { questionCartArray } from "../store/selectors/questionCart";
 import { useNavigate } from "react-router-dom";
+import { timer } from "../store/atoms/timer";
 
 interface startDialogProps {
   buttonSize?: "large" | "medium" | "small" | undefined;
   buttonVariant?: "text" | "outlined" | "contained" | undefined;
+  handleOnClick: () => void;
 }
 export const StartTestDialog = ({
   buttonSize,
   buttonVariant,
+  handleOnClick,
 }: startDialogProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const testQuestions = useRecoilValue(questionCartArray);
+  const setTimer = useSetRecoilState(timer);
   const navigate = useNavigate();
   const handleClickOpen = () => {
     setOpen(true);
@@ -32,6 +36,7 @@ export const StartTestDialog = ({
   };
 
   const handleAgree = () => {
+    handleOnClick();
     setOpen(false);
     navigate("/startTest");
   };
@@ -48,10 +53,7 @@ export const StartTestDialog = ({
       >
         Start Test
       </Button>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-      >
+      <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{"Want to start test?"}</DialogTitle>
         <DialogContent>
           <DialogContentText>

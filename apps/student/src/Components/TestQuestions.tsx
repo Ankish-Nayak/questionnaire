@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { questionCartArray } from "../store/selectors/questionCart";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -14,6 +14,7 @@ import {
 import { questionParams } from "types";
 import { styled } from "@mui/material/styles";
 import { StartTestDialog } from "./StartTestDialog";
+import { timer } from "../store/atoms/timer";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -24,6 +25,13 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 export const TestQuestions = () => {
   const testQuestions = useRecoilValue(questionCartArray);
+  const setTimer = useSetRecoilState(timer);
+  const handleOnClick = () => {
+    setTimer({
+      isLoading: false,
+      show: true,
+    });
+  };
   return (
     <Stack
       direction={"column"}
@@ -37,7 +45,11 @@ export const TestQuestions = () => {
           return <TestQuestion key={idx} questionId={questionId} />;
         })}
       <div style={{ alignSelf: "center" }}>
-        <StartTestDialog buttonSize="large" buttonVariant="outlined" />
+        <StartTestDialog
+          buttonSize="large"
+          buttonVariant="outlined"
+          handleOnClick={handleOnClick}
+        />
       </div>
     </Stack>
   );

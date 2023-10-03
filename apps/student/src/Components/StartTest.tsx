@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { questionCartArray } from "../store/selectors/questionCart";
 import {
   Stack,
@@ -16,13 +16,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../config";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-
+import { timer as _timer } from "../store/atoms/timer";
 type selectedOption = Map<number, string>;
 export const StartTest = () => {
   const testQuestions = useRecoilValue(questionCartArray);
   const [selectedOptions, setSelectedOptions] = useState<selectedOption>(
     new Map()
   );
+  const [timer, setTimer] = useRecoilState(_timer);
 
   const handleOnClick = async () => {
     const answers: { questionId: number; answer: string }[] = [];
@@ -30,9 +31,29 @@ export const StartTest = () => {
       answers.push({ questionId, answer });
     });
     console.log(answers);
+    setTimer({
+      isLoading: false,
+      show: false,
+    });
     // make request to backend
-    
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/student/attempt`,
+        JSON.stringify(answers),
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = response.data;
+      console.log(data.answers);
+    } catch (e) {
+      console.log(e);
+    }
   };
+
+  useEffect(() => {}, []);
   return (
     <Stack
       direction={"column"}
