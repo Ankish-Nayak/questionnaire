@@ -16,25 +16,36 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../config";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { timer as _timer } from "../store/atoms/timer";
+import {
+  timer as _timer,
+  timeInterval as _timeInterval,
+  timeOut as _timeOut,
+} from "../store/atoms/timer";
 type selectedOption = Map<number, string>;
 export const StartTest = () => {
   const testQuestions = useRecoilValue(questionCartArray);
   const [selectedOptions, setSelectedOptions] = useState<selectedOption>(
     new Map()
   );
+  const [submit, setSubmit] = useState<boolean>(false);
   const [timer, setTimer] = useRecoilState(_timer);
-
+  const timeOut = useRecoilValue(_timeOut);
+  const timeInterval = useRecoilValue(_timeInterval);
   const handleOnClick = async () => {
     const answers: { questionId: number; answer: string }[] = [];
     selectedOptions.forEach((answer, questionId) => {
       answers.push({ questionId, answer });
     });
     console.log(answers);
+
     setTimer({
       isLoading: false,
       show: false,
+      startTime: timer.startTime,
+      endTime: timer.endTime,
     });
+    clearInterval(timeOut);
+    clearInterval(timeInterval);
     // make request to backend
     try {
       const response = await axios.post(
@@ -47,6 +58,10 @@ export const StartTest = () => {
         }
       );
       const data = response.data;
+      if (data.answers) {
+        console.log("d");
+        setSubmit(true);
+      }
       console.log(data.answers);
     } catch (e) {
       console.log(e);
@@ -69,6 +84,7 @@ export const StartTest = () => {
               key={idx}
               questionId={questionId}
               selectedOptions={selectedOptions}
+              submit={submit}
             />
           );
         })}
@@ -89,9 +105,11 @@ type question = questionParams & { id: number; creatorId: string };
 export const TestQuestion = ({
   questionId,
   selectedOptions,
+  submit,
 }: {
   questionId: number;
   selectedOptions: selectedOption;
+  submit: boolean;
 }) => {
   const [question, setQuestion] = useState<question>();
   const [selectedOption, setSelectedOption] = useState<string>("");
@@ -136,6 +154,7 @@ export const TestQuestion = ({
             question.option4,
           ]}
           onSelectedOptionChange={onSelectedOptionChange}
+          submit={submit}
         />
       </CardContent>
     </Card>
@@ -147,18 +166,21 @@ const Question = ({
   question,
   questionId,
   onSelectedOptionChange,
+  submit,
 }: {
   options: string[];
   question: string;
   questionId: Number;
   onSelectedOptionChange: (newSelectedOption: string) => void;
+  submit: boolean;
 }) => {
   const [selected, setSelected] = useState<string | null>(null);
-  const [persistedSelected, setPersistedSelected] = useLocalStorage(
-    `test_question_${questionId}`,
-    null
-  );
+  const key = `test_question_${questionId}`;
+  const [persistedSelected, setPersistedSelected] = useLocalStorage(key, null);
 
+  if (submit) {
+    localStorage.removeItem(key);
+  }
   useEffect(() => {
     setSelected(persistedSelected);
     onSelectedOptionChange(persistedSelected);

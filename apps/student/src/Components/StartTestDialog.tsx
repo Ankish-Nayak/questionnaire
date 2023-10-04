@@ -8,10 +8,9 @@ import {
   DialogContentText,
   Typography,
 } from "@mui/material";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { questionCartArray } from "../store/selectors/questionCart";
 import { useNavigate } from "react-router-dom";
-import { timer } from "../store/atoms/timer";
 
 interface startDialogProps {
   buttonSize?: "large" | "medium" | "small" | undefined;
@@ -25,7 +24,6 @@ export const StartTestDialog = ({
 }: startDialogProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const testQuestions = useRecoilValue(questionCartArray);
-  const setTimer = useSetRecoilState(timer);
   const navigate = useNavigate();
   const handleClickOpen = () => {
     setOpen(true);

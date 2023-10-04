@@ -1,35 +1,35 @@
 import Chip from "@mui/material/Chip";
 import { useState, useEffect } from "react";
-import { useSetRecoilState } from "recoil";
-import { timer } from "../store/atoms/timer";
+import { useRecoilState } from "recoil";
+import { timer as _timer } from "../store/atoms/timer";
+import {
+  timeInterval as _timeInterval,
+  timeOut as _timeOut,
+} from "../store/atoms/timer";
+import { toAnalog } from "../helpers/toAnalog";
 
 export default function TimerChip({ seconds }: { seconds: number }) {
   const [time, setTime] = useState<number>(seconds);
-  const displayText = (t: number) => {
-    let minutes: number = Math.floor(t / 60);
-    let seconds: number = Math.floor(t % 60);
-    const leadingZero = (s: string) => {
-      return s.length == 1 ? "0" + s : s;
-    };
-    return (
-      leadingZero(minutes.toString()) + ":" + leadingZero(seconds.toString())
-    );
-  };
-  const [text, setText] = useState<string>(displayText(seconds));
-  const setTimer = useSetRecoilState(timer);
+  const [timer, setTimer] = useRecoilState(_timer);
+  const [text, setText] = useState<string>(toAnalog(seconds));
   useEffect(() => {
     const timeInterval = setInterval(() => {
-      setTime((time) => time - 1);
+      setTime(timer.endTime - new Date().getTime() / 1000);
       console.log(time);
     }, 1000);
-    const timeOut = setTimeout(() => {
-      console.log("cleared");
-      clearInterval(timeInterval);
-      setTimer({
-        isLoading: false,
-        show: false,
-      });
-    }, seconds * 1000);
+    const timeOut = setTimeout(
+      () => {
+        console.log("cleared");
+        clearInterval(timeInterval);
+        setTimer({
+          isLoading: false,
+          show: false,
+          startTime: timer.startTime,
+          endTime: timer.endTime,
+        });
+      },
+      (timer.endTime - timer.startTime) * 1000
+    );
     console.log("a");
     return () => {
       console.log("cleared");
@@ -39,7 +39,7 @@ export default function TimerChip({ seconds }: { seconds: number }) {
   }, []);
 
   useEffect(() => {
-    setText(displayText(time));
+    setText(toAnalog(time));
   }, [time]);
   return (
     <Chip

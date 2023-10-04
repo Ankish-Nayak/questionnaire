@@ -30,6 +30,8 @@ export const TestQuestions = () => {
     setTimer({
       isLoading: false,
       show: true,
+      startTime: new Date().getTime() / 1000,
+      endTime: new Date().getTime() / 1000 + testQuestions.length * 60,
     });
   };
   return (
