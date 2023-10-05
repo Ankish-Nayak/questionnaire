@@ -6,11 +6,31 @@ import {
 import { teacherState } from "../store/atoms/teacher";
 import { Typography, Button } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
+import { BASE_URL } from "../config";
+import axios from "axios";
 export const Appbar = () => {
   const teacherLoading = useRecoilValue(isTeacherLoading);
   const teacherName = useRecoilValue(teacherEmailState);
   const setTeacher = useSetRecoilState(teacherState);
   const navigate = useNavigate();
+  const handleLogout = async () => {
+    setTeacher({
+      isLoading: false,
+      userEmail: null,
+    });
+    navigate("/");
+    try {
+      const response = await axios.post(`${BASE_URL}/teacher/logout`);
+      const data = response.data;
+      console.log(data.message);
+      setTeacher({
+        isLoading: false,
+        userEmail: null,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
   if (teacherLoading) {
     return <div>Loading...</div>;
   }
@@ -67,16 +87,7 @@ export const Appbar = () => {
           <Typography variant="h5" style={{}}>
             {teacherName}
           </Typography>
-          <Button
-            variant="contained"
-            onClick={() => {
-              setTeacher({
-                isLoading: false,
-                userEmail: null,
-              });
-              navigate("/");
-            }}
-          >
+          <Button variant="contained" onClick={handleLogout}>
             Logout
           </Button>
         </div>
