@@ -8,9 +8,12 @@ import {
   DialogContentText,
   Typography,
 } from "@mui/material";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { questionCartArray } from "../store/selectors/questionCart";
 import { useNavigate } from "react-router-dom";
+import { submit } from "../store/atoms/submit";
+import { testActive as _testActive } from "../store/atoms/testActive";
+import { selectedOptionsStorageKeys as _selectedOptionsStorageKeys } from "../store/atoms/selectedOptions";
 
 interface startDialogProps {
   buttonSize?: "large" | "medium" | "small" | undefined;
@@ -25,7 +28,12 @@ export const StartTestDialog = ({
   const [open, setOpen] = useState<boolean>(false);
   const testQuestions = useRecoilValue(questionCartArray);
   const navigate = useNavigate();
+  const setSubmit = useSetRecoilState(submit);
+  const setTestActive = useSetRecoilState(_testActive);
+  const [selectedOptionsStorageKeys, setSelectedOptionsStorageKeys] =
+    useRecoilState(_selectedOptionsStorageKeys);
   const handleClickOpen = () => {
+    setSubmit(false);
     setOpen(true);
   };
 
@@ -36,6 +44,7 @@ export const StartTestDialog = ({
   const handleAgree = () => {
     handleOnClick();
     setOpen(false);
+    setTestActive(true);
     navigate("/startTest");
   };
   const handleClose = () => {

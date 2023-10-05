@@ -9,7 +9,18 @@ import { studentState } from "../store/atoms/student";
 import { questionCartArray } from "../store/selectors/questionCart";
 import { StartTestDialog } from "./StartTestDialog";
 import TimerChip from "./TimerChip";
-import { timer as _timer } from "../store/atoms/timer";
+import {
+  timer as _timer,
+  timeInterval as _timeInterval,
+  timeOut as _timeOut,
+} from "../store/atoms/timer";
+import { submit as _submit } from "../store/atoms/submit";
+import { testActive as _testActive } from "../store/atoms/testActive";
+import {
+  selectedOptionsStorageKeys as _selectedOptionsStorageKeys,
+} from "../store/atoms/selectedOptions";
+import axios from "axios";
+import { BASE_URL } from "../config";
 export const Appbar = () => {
   const studentLoading = useRecoilValue(isStudentLoading);
   const studentName = useRecoilValue(studentEmailState);
@@ -17,7 +28,40 @@ export const Appbar = () => {
   const testQuestions = useRecoilValue(questionCartArray);
   const navigate = useNavigate();
   const [timer, setTimer] = useRecoilState(_timer);
+  const [submit, setSubmit] = useRecoilState(_submit);
+  const [testActive, setTestActive] = useRecoilState(_testActive);
+  const [selectedOptionsStorageKeys, setSelectedOptionsStorageKeys] =
+    useRecoilState(_selectedOptionsStorageKeys);
+  const [timeInterval, setTimeInterval] = useRecoilState(_timeInterval);
+  const [timeOut, setTimeOut] = useRecoilState(_timeOut);
+  const handleLogout = async () => {
+    setStudent({
+      isLoading: false,
+      userEmail: null,
+    });
+    navigate("/");
+    try {
+      const response = await axios.post(`${BASE_URL}/student/logout`);
+      const data = response.data;
+      console.log(data.message);
+    } catch (e) {
+      console.log(e);
+      setStudent({
+        isLoading: false,
+        userEmail: null,
+      });
+    }
+  };
+
   const handleOnClick = () => {
+    selectedOptionsStorageKeys.forEach((key) => {
+      localStorage.removeItem(key);
+    });
+    setSelectedOptionsStorageKeys([]);
+    clearInterval(timeInterval);
+    clearTimeout(timeOut);
+    setSubmit(false);
+    setTestActive(true);
     setTimer({
       isLoading: false,
       show: true,
@@ -42,31 +86,38 @@ export const Appbar = () => {
             Student
           </Link>
         </Typography>
-        <Button
-          variant="outlined"
-          size="large"
-          onClick={() => {
-            navigate("/testQuestions/view");
-          }}
-        >
-          Test Questions {(testQuestions && testQuestions.length) || ""}
-        </Button>
-        <Button
-          variant="outlined"
-          size="large"
-          onClick={() => {
-            navigate("/questions/view");
-          }}
-        >
-          Questions
-        </Button>
-        {testQuestions && testQuestions.length > 0 && !timer.show && (
-          <StartTestDialog
-            buttonVariant="outlined"
-            buttonSize="large"
-            handleOnClick={handleOnClick}
-          />
+        {!testActive && (
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={() => {
+              navigate("/testQuestions/view");
+            }}
+          >
+            Test Questions {(testQuestions && testQuestions.length) || ""}
+          </Button>
         )}
+        {!testActive && (
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={() => {
+              navigate("/questions/view");
+            }}
+          >
+            Questions
+          </Button>
+        )}
+        {!testActive &&
+          testQuestions &&
+          testQuestions.length > 0 &&
+          !timer.show && (
+            <StartTestDialog
+              buttonVariant="outlined"
+              buttonSize="large"
+              handleOnClick={handleOnClick}
+            />
+          )}
         {timer.show && <TimerChip seconds={testQuestions.length * 60} />}
         <div
           style={{
@@ -80,16 +131,7 @@ export const Appbar = () => {
           <Typography variant="h5" style={{}}>
             {studentName}
           </Typography>
-          <Button
-            variant="contained"
-            onClick={() => {
-              setStudent({
-                isLoading: false,
-                userEmail: null,
-              });
-              navigate("/");
-            }}
-          >
+          <Button variant="contained" onClick={handleLogout}>
             Logout
           </Button>
         </div>

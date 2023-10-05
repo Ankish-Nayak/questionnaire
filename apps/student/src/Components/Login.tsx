@@ -2,15 +2,17 @@ import axios from "axios";
 import { useState } from "react";
 import { studentLoginParams } from "types";
 import { BASE_URL } from "../config";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { studentState } from "../store/atoms/student";
 import { Card, Button, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { testActive as _testActive } from "../store/atoms/testActive";
 export const Login = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const setStudent = useSetRecoilState(studentState);
   const navigate = useNavigate();
+  const testActive = useRecoilValue(_testActive);
   const handleOnClick = async () => {
     const parsedInputs: studentLoginParams = {
       username,
@@ -33,7 +35,7 @@ export const Login = () => {
           isLoading: false,
           userEmail: data.firstname,
         });
-        navigate('/questions/view');
+        testActive ? navigate("/startTest") : navigate("/questions/view");
       } else {
         setStudent({
           isLoading: false,
