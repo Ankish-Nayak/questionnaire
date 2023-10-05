@@ -1,5 +1,10 @@
 import express, { Request, Response } from "express";
-import { studentLoginTypes, studentSignupTypes } from "types";
+import {
+  answerParams,
+  answersTypes,
+  studentLoginTypes,
+  studentSignupTypes,
+} from "types";
 import { prisma } from "..";
 import Cookies from "cookies";
 export const router = express.Router();
@@ -241,8 +246,14 @@ router.post(
           where: { username },
         });
         if (student) {
-          const attempts: { questionId: number; answer: string }[] = req.body;
-          const answers: { questionId: number; correct: boolean }[] = [];
+          const parsedInputs = answersTypes.safeParse(req.body);
+          if (!parsedInputs.success) {
+            return res.status(411).json({ error: parsedInputs.error });
+          }
+          const attempts: { questionId: number; answer: string }[] =
+            parsedInputs.data;
+          const answers: answerParams[] = [];
+
           const promises = attempts.map(
             async ({ questionId, answer }): Promise<void> => {
               // const updatedStudent = await prisma.student.update({
@@ -274,7 +285,7 @@ router.post(
                 if (question) {
                   answers.push({
                     questionId,
-                    correct: question.answer === answer,
+                    answer: question.answer,
                   });
                 } else {
                   res.status(403).json({ message: "Failed to check" });
@@ -297,3 +308,24 @@ router.post(
     }
   }
 );
+
+router.post("/logout", authenticateJwt, async (req: Request, res: Response) => {
+  if (typeof req.headers["student"] === "string") {
+    const username = req.headers["student"];
+    try {
+      const student = await prisma.student.findUnique({ where: { username } });
+      if (student) {
+        const cookie = new Cookies(req, res);
+        cookie.set("student-token", null);
+        res.json({ message: "Student logged out" });
+      } else {
+        res.status(403).json({ message: "Student dose not exists" });
+      }
+    } catch (e) {
+      console.log(e);
+      res.status(404).json({ error: "db error" });
+    }
+  } else {
+    res.status(403).json({ message: "student dose not exists" });
+  }
+});

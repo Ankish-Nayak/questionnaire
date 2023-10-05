@@ -383,3 +383,25 @@ router.put("/profile", authenticateJwt, async (req: Request, res: Response) => {
     res.status(403).json({ message: "Teacher dose not exists" });
   }
 });
+
+// logout router
+router.post("/logout", authenticateJwt, async (req: Request, res: Response) => {
+  if (typeof req.headers["teacher"] === "string") {
+    const username: string = req.headers["teacher"];
+    try {
+      const teacher = await prisma.teacher.findUnique({ where: { username } });
+      if (teacher) {
+        const cookie = new Cookies(req, res);
+        cookie.set("teacher-token", null);
+        res.json({ message: "Teacher logout successfully" });
+      } else {
+        res.status(403).json({ message: "Teacher dose not exists" });
+      }
+    } catch (e) {
+      console.log(e);
+      res.status(404).json({ message: "db error" });
+    }
+  } else {
+    res.status(403).json({ message: "Teacher dose not exists" });
+  }
+});
