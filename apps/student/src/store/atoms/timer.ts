@@ -5,6 +5,7 @@ export const timer = atom<{
   show: boolean;
   startTime: number;
   endTime: number;
+  submitTime: number;
 }>({
   key: "timer",
   default: {
@@ -12,6 +13,7 @@ export const timer = atom<{
     show: false,
     startTime: 0,
     endTime: 0,
+    submitTime: 0,
   },
 });
 

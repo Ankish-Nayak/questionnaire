@@ -18,6 +18,7 @@ import { questionCart as _testQuestions } from "../store/atoms/questionCart";
 import { selectedOptionsStorageKeys } from "../store/atoms/selectedOptions";
 import { clearTimeouts } from "../helpers/clearTimeouts";
 import { clearIntervals } from "../helpers/clearIntervals";
+import { testCompleteDialog as _testCompleteDialog } from "../store/atoms/testCompleteDialog";
 export default function TimerChip({ seconds }: { seconds: number }) {
   const [timer, setTimer] = useRecoilState(_timer);
   const [time, setTime] = useState<number>(
@@ -33,17 +34,19 @@ export default function TimerChip({ seconds }: { seconds: number }) {
   const [timeOuts, setTimeOuts] = useRecoilState(_timeOuts);
   const useRefTimeOuts = useRef<NodeJS.Timer[]>([]);
   const useRefTimeIntervals = useRef<NodeJS.Timeout[]>([]);
-
+  const setTestCompleteDialog = useSetRecoilState(_testCompleteDialog);
   const setSubmit = useSetRecoilState(_submit);
   const autoSubmit = async () => {
     console.log(selectedAnswers);
     console.log("autosubmit");
+    setTestCompleteDialog(true);
     setTestActive(false);
     setTimer({
       isLoading: false,
       show: false,
       startTime: timer.startTime,
       endTime: timer.endTime,
+      submitTime: new Date().getTime() / 1000,
     });
     Promise.all(clearTimeouts(timeOuts)).then((msgs) => console.log(msgs));
     Promise.all(clearIntervals(timeIntervals)).then((msgs) =>
@@ -99,7 +102,7 @@ export default function TimerChip({ seconds }: { seconds: number }) {
     useRefTimeOuts.current.push(
       setTimeout(
         () => {
-          // console.log("cleared");
+          console.log("cleared");
           Promise.all(clearIntervals(timeIntervals)).then((msgs) =>
             console.log(msgs)
           );
@@ -108,6 +111,7 @@ export default function TimerChip({ seconds }: { seconds: number }) {
             show: false,
             startTime: timer.startTime,
             endTime: timer.endTime,
+            submitTime: new Date().getTime() / 1000,
           });
           autoSubmit();
           setTestActive(false);

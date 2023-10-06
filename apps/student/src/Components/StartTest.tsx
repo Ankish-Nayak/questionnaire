@@ -28,6 +28,8 @@ import { testActive as _testActive } from "../store/atoms/testActive";
 import { selectedOptionsStorageKeys as _selectedOptionsStorageKeys } from "../store/atoms/selectedOptions";
 import { clearTimeouts } from "../helpers/clearTimeouts";
 import { clearIntervals } from "../helpers/clearIntervals";
+import CustomizedDialogs from "./TestCompleteDialog";
+import { testCompleteDialog as _testCompleteDialog } from "../store/atoms/testCompleteDialog";
 export const StartTest = () => {
   const testQuestions = useRecoilValue(questionCartArray);
   const [submit, setSubmit] = useRecoilState(_submit);
@@ -44,6 +46,10 @@ export const StartTest = () => {
     setTimeIntervals([]);
   };
   const setTestActive = useSetRecoilState(_testActive);
+  // const [open, setOpen] = useState<boolean>(false);
+  const setTestCompleteDialog = useSetRecoilState(_testCompleteDialog);
+  const [correctAnswersCount, setCorrectAnswersCount] = useState<number>(0);
+
   const handleSubmit = async () => {
     const selectedAnswers: answerParams[] = [];
     selectedOptionsStorageKeys.forEach((key) => {
@@ -57,6 +63,7 @@ export const StartTest = () => {
       show: false,
       startTime: timer.startTime,
       endTime: timer.endTime,
+      submitTime: new Date().getTime() / 1000,
     });
     Promise.all(clearTimeouts(timeOuts)).then((msgs) => console.log(msgs));
     Promise.all(clearIntervals(timeIntervals)).then((msgs) =>
@@ -75,6 +82,18 @@ export const StartTest = () => {
       );
       const data = response.data;
       if (data.answers) {
+        // setOpen(true);
+        setTestCompleteDialog(true);
+
+        const calculateCorrectAnswerCount = () => {
+          let res = 0;
+          selectedAnswers.forEach(({ questionId, answer }) => {
+            res += answers?.get(questionId) === answer ? 1 : 0;
+          });
+          return res;
+        };
+        setCorrectAnswersCount(calculateCorrectAnswerCount());
+        // CustomizedDialogs({value:true});
         console.log("answers");
         console.log(data.answers);
         setSubmit(true);
@@ -124,6 +143,10 @@ export const StartTest = () => {
       >
         {submit ? "show answers" : "submit"}
       </Button>
+      <CustomizedDialogs
+        correctAnswersCount={correctAnswersCount}
+        totalQuestionCount={testQuestions.length}
+      />
     </Stack>
   );
 };

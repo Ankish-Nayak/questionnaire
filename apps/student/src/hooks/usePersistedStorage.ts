@@ -80,6 +80,7 @@ export const setData = (data: any, set: MutableSnapshot["set"]) => {
       show: persistedTimer.show,
       startTime: persistedTimer.startTime,
       endTime: persistedTimer.endTime,
+      submitTime: persistedTimer.endTime,
     });
   // check for iterable introduced
   if (
