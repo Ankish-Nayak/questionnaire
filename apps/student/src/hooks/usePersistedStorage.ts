@@ -1,6 +1,6 @@
 import { MutableSnapshot, useRecoilTransactionObserver_UNSTABLE } from "recoil";
 import { questionCart } from "../store/atoms/questionCart";
-import { timeInterval, timeOut, timer } from "../store/atoms/timer";
+import { timeIntervals, timeOuts, timer } from "../store/atoms/timer";
 import { answers } from "../store/atoms/answers";
 import { submit } from "../store/atoms/submit";
 import { selectedOptionsStorageKeys } from "../store/atoms/selectedOptions";
@@ -23,8 +23,8 @@ const generateData = async (snapshot) => {
   const persistedTimer = await snapshot.getPromise(timer);
   const persistedAnswers = await snapshot.getPromise(answers);
   const persistedSubmit = await snapshot.getPromise(submit);
-  const persistedTimeOut = await snapshot.getPromise(timeOut);
-  const persistedTimeInterval = await snapshot.getPromise(timeInterval);
+  const persistedTimeOuts = await snapshot.getPromise(timeOuts);
+  const persistedTimeIntervals = await snapshot.getPromise(timeIntervals);
   const persistedSelectedOptionsStorageKeys = await snapshot.getPromise(
     selectedOptionsStorageKeys
   );
@@ -36,8 +36,8 @@ const generateData = async (snapshot) => {
     submit: persistedSubmit,
     selectedOptionsStorageKeys: persistedSelectedOptionsStorageKeys,
     testActive: persistedTestActive,
-    timeInterval: persistedTimeInterval,
-    timeOut: persistedTimeOut,
+    timeIntervals: persistedTimeIntervals,
+    timeOuts: persistedTimeOuts,
   };
 };
 const processSnapshot = async (snapshot: any) => {
@@ -61,8 +61,8 @@ export const setData = (data: any, set: MutableSnapshot["set"]) => {
     submit: persistedSubmit,
     testActive: persistedTestActive,
     selectedOptionsStorageKeys: persistedSelectedOptionsStorageKeys,
-    timeInterval: persistedTimeInterval,
-    timeOut: persistedTimeOut,
+    timeIntervals: persistedTimeIntervals,
+    timeOuts: persistedTimeOuts,
   } = data;
   if (persistedQuestion && persistedQuestion.questions)
     set(questionCart, {
@@ -72,8 +72,8 @@ export const setData = (data: any, set: MutableSnapshot["set"]) => {
       }),
     });
   set(testActive, persistedTestActive);
-  set(timeInterval, persistedTimeInterval);
-  set(timeOut, persistedTimeOut);
+  set(timeIntervals, [...persistedTimeIntervals]);
+  set(timeOuts, [...persistedTimeOuts]);
   if (persistedTimer && persistedTimer.show)
     set(timer, {
       isLoading: false,

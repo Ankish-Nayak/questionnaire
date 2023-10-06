@@ -19,27 +19,30 @@ import { BASE_URL } from "../config";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import {
   timer as _timer,
-  timeInterval as _timeInterval,
-  timeOut as _timeOut,
+  timeIntervals as _timeIntervals,
+  timeOuts as _timeOuts,
 } from "../store/atoms/timer";
 import { answers as _answers } from "../store/atoms/answers";
 import { submit as _submit } from "../store/atoms/submit";
-import {
-  testActive as _testActive,
-} from "../store/atoms/testActive";
-import {
-  selectedOptionsStorageKeys as _selectedOptionsStorageKeys,
-} from "../store/atoms/selectedOptions";
+import { testActive as _testActive } from "../store/atoms/testActive";
+import { selectedOptionsStorageKeys as _selectedOptionsStorageKeys } from "../store/atoms/selectedOptions";
+import { clearTimeouts } from "../helpers/clearTimeouts";
+import { clearIntervals } from "../helpers/clearIntervals";
 export const StartTest = () => {
   const testQuestions = useRecoilValue(questionCartArray);
   const [submit, setSubmit] = useRecoilState(_submit);
   const [timer, setTimer] = useRecoilState(_timer);
-  const timeOut = useRecoilValue(_timeOut);
-  const timeInterval = useRecoilValue(_timeInterval);
+  const [timeOuts, setTimeOuts] = useRecoilState(_timeOuts);
+  const [timeIntervals, setTimeIntervals] = useRecoilState(_timeIntervals);
   const [selectedOptionsStorageKeys, setSelectedOptionsStorageKeys] =
     useRecoilState(_selectedOptionsStorageKeys);
   const [answers, setAnswers] = useRecoilState(_answers);
-  const handleShowAnswers = async () => {};
+  const handleShowAnswers = async () => {
+    Promise.all(clearIntervals(timeOuts)).then((msgs) => console.log(msgs));
+    Promise.all(clearTimeouts(timeIntervals)).then((msgs) => console.log(msgs));
+    setTimeOuts([]);
+    setTimeIntervals([]);
+  };
   const setTestActive = useSetRecoilState(_testActive);
   const handleSubmit = async () => {
     const selectedAnswers: answerParams[] = [];
@@ -55,8 +58,10 @@ export const StartTest = () => {
       startTime: timer.startTime,
       endTime: timer.endTime,
     });
-    clearTimeout(timeOut);
-    clearInterval(timeInterval);
+    Promise.all(clearTimeouts(timeOuts)).then((msgs) => console.log(msgs));
+    Promise.all(clearIntervals(timeIntervals)).then((msgs) =>
+      console.log(msgs)
+    );
     // make request to backend
     try {
       const response = await axios.post(

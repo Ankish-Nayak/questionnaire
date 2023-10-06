@@ -15,12 +15,12 @@ export const timer = atom<{
   },
 });
 
-export const timeOut = atom<NodeJS.Timeout | undefined>({
+export const timeOuts = atom<NodeJS.Timeout[]>({
   key: "timeOut",
-  default: undefined,
+  default: [],
 });
 
-export const timeInterval = atom<NodeJS.Timer | undefined>({
+export const timeIntervals = atom<NodeJS.Timer[]>({
   key: "timeInterval",
-  default: undefined,
+  default: [],
 });

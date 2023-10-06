@@ -11,16 +11,16 @@ import { StartTestDialog } from "./StartTestDialog";
 import TimerChip from "./TimerChip";
 import {
   timer as _timer,
-  timeInterval as _timeInterval,
-  timeOut as _timeOut,
+  timeIntervals as _timeIntervals,
+  timeOuts as _timeOuts,
 } from "../store/atoms/timer";
 import { submit as _submit } from "../store/atoms/submit";
 import { testActive as _testActive } from "../store/atoms/testActive";
-import {
-  selectedOptionsStorageKeys as _selectedOptionsStorageKeys,
-} from "../store/atoms/selectedOptions";
+import { selectedOptionsStorageKeys as _selectedOptionsStorageKeys } from "../store/atoms/selectedOptions";
 import axios from "axios";
 import { BASE_URL } from "../config";
+import { clearIntervals } from "../helpers/clearIntervals";
+import { clearTimeouts } from "../helpers/clearTimeouts";
 export const Appbar = () => {
   const studentLoading = useRecoilValue(isStudentLoading);
   const studentName = useRecoilValue(studentEmailState);
@@ -32,8 +32,8 @@ export const Appbar = () => {
   const [testActive, setTestActive] = useRecoilState(_testActive);
   const [selectedOptionsStorageKeys, setSelectedOptionsStorageKeys] =
     useRecoilState(_selectedOptionsStorageKeys);
-  const [timeInterval, setTimeInterval] = useRecoilState(_timeInterval);
-  const [timeOut, setTimeOut] = useRecoilState(_timeOut);
+  const [timeIntervals, setTimeIntervals] = useRecoilState(_timeIntervals);
+  const [timeOuts, setTimeOuts] = useRecoilState(_timeOuts);
   const handleLogout = async () => {
     setStudent({
       isLoading: false,
@@ -53,13 +53,17 @@ export const Appbar = () => {
     }
   };
 
-  const handleOnClick = () => {
+  const handleStartTestDialog = () => {
     selectedOptionsStorageKeys.forEach((key) => {
       localStorage.removeItem(key);
     });
     setSelectedOptionsStorageKeys([]);
-    clearInterval(timeInterval);
-    clearTimeout(timeOut);
+    Promise.all(clearIntervals(timeIntervals)).then((msgs) =>
+      console.log(msgs)
+    );
+    Promise.all(clearTimeouts(timeOuts)).then((msgs) => console.log(msgs));
+    setTimeIntervals([]);
+    setTimeOuts([]);
     setSubmit(false);
     setTestActive(true);
     setTimer({
@@ -115,7 +119,7 @@ export const Appbar = () => {
             <StartTestDialog
               buttonVariant="outlined"
               buttonSize="large"
-              handleOnClick={handleOnClick}
+              handleOnClick={handleStartTestDialog}
             />
           )}
         {timer.show && <TimerChip seconds={testQuestions.length * 60} />}
