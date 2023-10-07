@@ -1,4 +1,9 @@
-import { MutableSnapshot, useRecoilCallback, useRecoilTransactionObserver_UNSTABLE } from "recoil";
+import {
+  MutableSnapshot,
+  Snapshot,
+  useRecoilCallback,
+  useRecoilTransactionObserver_UNSTABLE,
+} from "recoil";
 import { questionCart } from "../store/atoms/questionCart";
 import { timeIntervals, timeOuts, timer } from "../store/atoms/timer";
 import { answers } from "../store/atoms/answers";
@@ -41,7 +46,7 @@ const generateData = async (snapshot) => {
     timeOuts: persistedTimeOuts,
   };
 };
-const processSnapshot = async (snapshot: any) => {
+const processSnapshot = async (snapshot: Snapshot) => {
   const data = await generateData(snapshot);
   console.log(data);
   localStorage.setItem("questionnaire", JSON.stringify(data));
@@ -89,7 +94,7 @@ export const setData = (data: any, set: MutableSnapshot["set"]) => {
     persistedAnswers &&
     typeof persistedAnswers[Symbol.iterator] === "function"
   ) {
-    console.log("persistedAnswers",persistedAnswers);
+    console.log("persistedAnswers", persistedAnswers);
     const newMap = new Map<number, string>(persistedAnswers);
     // console.log("Persisted Storage", newMap);
     set(answers, newMap);

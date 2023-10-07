@@ -15,10 +15,11 @@ import { BASE_URL } from "../config";
 import axios from "axios";
 import { submit as _submit } from "../store/atoms/submit";
 import { questionCart as _testQuestions } from "../store/atoms/questionCart";
-import { selectedOptionsStorageKeys } from "../store/atoms/selectedOptions";
+import { selectedOptionsStorageKeys as _selectedOptionsStorageKeys } from "../store/atoms/selectedOptions";
 import { clearTimeouts } from "../helpers/clearTimeouts";
 import { clearIntervals } from "../helpers/clearIntervals";
-import { testCompleteDialog as _testCompleteDialog } from "../store/atoms/testCompleteDialog";
+import { testSummaryDialog as _testSummaryDialog } from "../store/atoms/testSummaryDialog";
+import { calculateCorrectAnswerCount } from "../helpers/calculateCorrectAnswerCount";
 export default function TimerChip({ seconds }: { seconds: number }) {
   const [timer, setTimer] = useRecoilState(_timer);
   const [time, setTime] = useState<number>(
@@ -28,67 +29,104 @@ export default function TimerChip({ seconds }: { seconds: number }) {
   const navigate = useNavigate();
   const testQuestions = useRecoilValue(_testQuestions);
   const setTestActive = useSetRecoilState(_testActive);
-  const selectedAnswers: answerParams[] = [];
+  // const selectedAnswers: answerParams[] = [];
   const setAnswers = useSetRecoilState(_answers);
   const [timeIntervals, setTimeIntervals] = useRecoilState(_timeIntervals);
   const [timeOuts, setTimeOuts] = useRecoilState(_timeOuts);
   const useRefTimeOuts = useRef<NodeJS.Timer[]>([]);
   const useRefTimeIntervals = useRef<NodeJS.Timeout[]>([]);
-  const setTestCompleteDialog = useSetRecoilState(_testCompleteDialog);
+  const setTestSummaryDialog = useSetRecoilState(_testSummaryDialog);
   const setSubmit = useSetRecoilState(_submit);
-  const autoSubmit = async () => {
-    console.log(selectedAnswers);
-    console.log("autosubmit");
-    setTestCompleteDialog(true);
-    setTestActive(false);
-    setTimer({
-      isLoading: false,
-      show: false,
-      startTime: timer.startTime,
-      endTime: timer.endTime,
-      submitTime: new Date().getTime() / 1000,
+  const selectedOptionsStorageKeys = useRecoilValue(
+    _selectedOptionsStorageKeys
+  );
+  const getStoredSelectedOptions = () => {
+    return new Promise<answerParams[]>((res) => {
+      const promises = selectedOptionsStorageKeys.map((key) => {
+        return new Promise<answerParams>((res1) => {
+          const value: answerParams = JSON.parse(
+            localStorage.getItem(key) || ""
+          );
+          res1(value);
+        });
+      });
+      Promise.all(promises).then((results) => {
+        res(results);
+      });
     });
-    Promise.all(clearTimeouts(timeOuts)).then((msgs) => console.log(msgs));
-    Promise.all(clearIntervals(timeIntervals)).then((msgs) =>
-      console.log(msgs)
-    );
-    // make request to backend
-    try {
-      const response = await axios.post(
-        `${BASE_URL}/student/attempt`,
-        JSON.stringify(selectedAnswers),
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+  };
+  const autoSubmit = (
+    selectedAnswers: answerParams[]
+  ): Promise<Map<number, string>> => {
+    return new Promise<Map<number, string>>(async (res, rej) => {
+      console.log("autosubmit");
+      setTestActive(false);
+      setTimer({
+        isLoading: false,
+        show: false,
+        startTime: timer.startTime,
+        endTime: timer.endTime,
+        submitTime: new Date().getTime() / 1000,
+      });
+      Promise.all(clearTimeouts(timeOuts)).then((msgs) => console.log(msgs));
+      Promise.all(clearIntervals(timeIntervals)).then((msgs) =>
+        console.log(msgs)
       );
-      const data = response.data;
-      if (data.answers) {
-        console.log("answers");
-        console.log(data.answers);
-        setSubmit(true);
-        const results: answerParams[] = data.answers;
-        const generateMap = (): Promise<Map<number, string>> => {
-          return new Promise((res, rej) => {
-            const map = new Map<number, string>();
-            results.forEach(({ questionId, answer }) => {
-              console.log(questionId, answer);
-              map.set(questionId, answer);
+      // make request to backend
+      try {
+        const response = await axios.post(
+          `${BASE_URL}/student/attempt`,
+          JSON.stringify(selectedAnswers),
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const data = response.data;
+        if (data.answers) {
+          console.log("answers");
+          console.log(data.answers);
+          setSubmit(true);
+          const results: answerParams[] = data.answers;
+          const generateMap = (
+            map: Map<number, string>
+          ): Promise<Map<number, string>> => {
+            return new Promise<Map<number, string>>((res, rej) => {
+              const promises = results.map(({ questionId, answer }) => {
+                return new Promise<void>((res1) => {
+                  map.set(questionId, answer);
+                  res1();
+                });
+              });
+              Promise.all(promises).then(() => {
+                setAnswers(() => {
+                  return map;
+                });
+                res(map);
+              });
             });
+          };
+          generateMap(new Map<number, string>()).then((map) => {
+            calculateCorrectAnswerCount(map, selectedAnswers)
+              .then((result) => {
+                setTestSummaryDialog({
+                  show: true,
+                  correctAnswersCount: result,
+                });
+              })
+              .catch((e) => {
+                console.log(e);
+              });
+            console.log("genrate Map: ", map);
             res(map);
           });
-        };
-        generateMap()
-          .then((map) => {
-            console.log(JSON.stringify(map));
-            setAnswers(map);
-          })
-          .catch((e) => console.log(e));
+        }
+      } catch (e) {
+        console.log(e);
+        rej(e);
       }
-    } catch (e) {
-      console.log(e);
-    }
+    });
   };
   useEffect(() => {
     // adding these gives us liberty to clear timeIntervals from any where
@@ -113,8 +151,13 @@ export default function TimerChip({ seconds }: { seconds: number }) {
             endTime: timer.endTime,
             submitTime: new Date().getTime() / 1000,
           });
-          autoSubmit();
-          setTestActive(false);
+          getStoredSelectedOptions().then((selectedAnswers) => {
+            console.log(selectedAnswers);
+            autoSubmit(selectedAnswers)
+              .then((res) => console.log("Generate map", res))
+              .catch((e) => console.log(e));
+            setTestActive(false);
+          });
         },
         (timer.endTime - timer.startTime) * 1000
       )

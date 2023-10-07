@@ -16,9 +16,10 @@ import { testActive as _testActive } from "../../store/atoms/testActive";
 import { selectedOptionsStorageKeys as _selectedOptionsStorageKeys } from "../../store/atoms/selectedOptions";
 import { clearTimeouts } from "../../helpers/clearTimeouts";
 import { clearIntervals } from "../../helpers/clearIntervals";
-import CustomizedDialogs from "../TestCompleteDialog";
-import { testCompleteDialog as _testCompleteDialog } from "../../store/atoms/testCompleteDialog";
+import CustomizedDialogs from "../TestSummaryDialog";
+import { testSummaryDialog as _testSummaryDialog } from "../../store/atoms/testSummaryDialog";
 import { TestQuestion } from "./TestQuestion";
+import { calculateCorrectAnswerCount } from "../../helpers/calculateCorrectAnswerCount";
 // import { saveState } from "../hooks/usePersistedStorage";
 export const StartTest = () => {
   const testQuestions = useRecoilValue(questionCartArray);
@@ -35,10 +36,12 @@ export const StartTest = () => {
     setTimeOuts([]);
     setTimeIntervals([]);
     console.log(answers);
+    setRender(new Date().getTime());
   };
   const setTestActive = useSetRecoilState(_testActive);
-  const setTestCompleteDialog = useSetRecoilState(_testCompleteDialog);
-  const [correctAnswersCount, setCorrectAnswersCount] = useState<number>(0);
+  const setTestStestSummaryDialog = useSetRecoilState(_testSummaryDialog);
+
+  const [render, setRender] = useState<number>(new Date().getTime());
 
   const handleSubmit = async () => {
     const selectedAnswers: answerParams[] = [];
@@ -72,18 +75,6 @@ export const StartTest = () => {
       );
       const data = response.data;
       if (data.answers) {
-        // below line will leads to rerendering too there component will also rerender
-        // hence we can take adavantage of this to show answers in its child compoent
-        setTestCompleteDialog(true);
-        const calculateCorrectAnswerCount = () => {
-          let res = 0;
-          selectedAnswers.forEach(({ questionId, answer }) => {
-            res += answers?.get(questionId) === answer ? 1 : 0;
-          });
-          return res;
-        };
-        setCorrectAnswersCount(calculateCorrectAnswerCount());
-        // CustomizedDialogs({value:true});
         console.log("answers");
         console.log(data.answers);
         setSubmit(true);
@@ -92,8 +83,7 @@ export const StartTest = () => {
         const generateMap = (
           map: Map<number, string>
         ): Promise<Map<number, string>> => {
-          return new Promise((res, rej) => {
-            // const map = new Map<number, string>();
+          return new Promise<Map<number, string>>((res, rej) => {
             const promises = results.map(({ questionId, answer }) => {
               return new Promise<void>((res1) => {
                 console.log(questionId, answer);
@@ -107,21 +97,27 @@ export const StartTest = () => {
                 console.log("set answers", map);
                 return map;
               });
-              // setRender(new Date().getTime());
+              setRender(new Date().getTime());
               res(map);
             });
           });
         };
         // const answerMap = new Map<number, string>();
-        generateMap(new Map<number, string>());
-        // .then((map) => {
-        //   console.log(JSON.stringify(map));
-        //   // setAnswers(() => {
-        //   //   return map;
-        //   // });
-        //   console.log("answers map", JSON.stringify(map));
-        // })
-        // .catch((e) => console.log(e));
+        generateMap(new Map<number, string>()).then((map) => {
+          calculateCorrectAnswerCount(map, selectedAnswers)
+            .then((result) => {
+              // below line will leads to rerendering too there component will also rerender
+              // hence we can take adavantage of this to show answers in its child compoent
+              setTestStestSummaryDialog({
+                show: true,
+                correctAnswersCount: result,
+              });
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+          console.log("generateMap", map);
+        });
       }
     } catch (e) {
       console.log(e);
@@ -142,6 +138,7 @@ export const StartTest = () => {
               key={idx}
               questionId={questionId}
               submit={submit}
+              render={render}
             />
           );
         })}
@@ -155,10 +152,7 @@ export const StartTest = () => {
       >
         {submit ? "show answers" : "submit"}
       </Button>
-      <CustomizedDialogs
-        correctAnswersCount={correctAnswersCount}
-        totalQuestionCount={testQuestions.length}
-      />
+      <CustomizedDialogs />
     </Stack>
   );
 };

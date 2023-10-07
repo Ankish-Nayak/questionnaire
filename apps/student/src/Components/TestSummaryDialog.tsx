@@ -12,9 +12,10 @@ import { timeOuts as _timeOuts, timer as _timer } from "../store/atoms/timer";
 import { timeIntervals as _timeIntervals } from "../store/atoms/timer";
 import { clearIntervals } from "../helpers/clearIntervals";
 import { clearTimeouts } from "../helpers/clearTimeouts";
-import { testCompleteDialog as _testCompleteDialog } from "../store/atoms/testCompleteDialog";
+import { testSummaryDialog as _testSummaryDialog } from "../store/atoms/testSummaryDialog";
 import { useEffect, useState } from "react";
 import { testActive as _testActive } from "../store/atoms/testActive";
+import { questionCartArray } from "../store/selectors/questionCart";
 
 const timeTaken = (time: { minutes: number; seconds: number }): string => {
   const plural = (n: number, s: string): string => {
@@ -42,16 +43,17 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function CustomizedDialogs({
-  correctAnswersCount,
-  totalQuestionCount,
-}: {
-  correctAnswersCount: number;
-  totalQuestionCount: number;
+export default function CustomizedDialogs({} // correctAnswersCount,
+// totalQuestionCount,
+: {
+  // correctAnswersCount: number;
+  // totalQuestionCount: number;
 }) {
-  const [open, setOpen] = useRecoilState(_testCompleteDialog);
+  const [testSummaryDialog, setTestSummaryDialog] =
+    useRecoilState(_testSummaryDialog);
   const [timeIntervals, setTimeIntervals] = useRecoilState(_timeIntervals);
   const [timeOuts, setTimeOuts] = useRecoilState(_timeOuts);
+  const totalQuestionCount = useRecoilValue(questionCartArray);
   const handleClose = () => {
     Promise.all(clearIntervals(timeIntervals)).then((msgs) =>
       console.log(msgs)
@@ -59,7 +61,11 @@ export default function CustomizedDialogs({
     Promise.all(clearTimeouts(timeOuts)).then((msgs) => console.log(msgs));
     setTimeIntervals([]);
     setTimeOuts([]);
-    setOpen(false);
+    setTestSummaryDialog({
+      show: false,
+      correctAnswersCount: testSummaryDialog.correctAnswersCount,
+    });
+    // setOpen(testSummaryDialog.show);
   };
   const timer = useRecoilValue(_timer);
   const [time, setTime] = useState<{ minutes: number; seconds: number }>({
@@ -73,13 +79,18 @@ export default function CustomizedDialogs({
       seconds: Math.round((timer.submitTime - timer.startTime) % 60),
     });
   }, [testActive]);
+  useEffect(() => {
+    if (typeof testSummaryDialog.correctAnswersCount === "undefined") {
+      console.log("error", testSummaryDialog);
+    }
+  }, []);
 
   return (
     <div>
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
-        open={open}
+        open={testSummaryDialog.show}
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
           Test Summary
@@ -98,9 +109,12 @@ export default function CustomizedDialogs({
         </IconButton>
         <DialogContent dividers>
           <Typography gutterBottom>
-            {`${correctAnswersCount} question${
-              correctAnswersCount > 1 ? "s were " : " was "
-            } correct out of ${totalQuestionCount}.`}
+            {`${testSummaryDialog.correctAnswersCount} question${
+              testSummaryDialog.correctAnswersCount &&
+              testSummaryDialog.correctAnswersCount > 1
+                ? "s were "
+                : " was "
+            } correct out of ${totalQuestionCount.length}.`}
           </Typography>
           <Typography gutterBottom>{timeTaken(time)}</Typography>
         </DialogContent>

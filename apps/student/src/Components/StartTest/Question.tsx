@@ -10,11 +10,13 @@ export const Question = ({
   options,
   question,
   questionId,
+  render,
 }: {
   options: string[];
   question: string;
   questionId: number;
   submit: boolean;
+  render: number;
 }) => {
   const [selected, setSelected] = useState<string | null>(null);
   const key = `test_question_${questionId}`;
@@ -23,27 +25,24 @@ export const Question = ({
     useRecoilState(_selectedOptionsStorageKeys);
   const answers = useRecoilValue(_answers);
   const testActive = useRecoilValue(_testActive);
-  const [answerCorrect, setAnswerCorrect] = useState<boolean>(false);
-  useEffect(() => {
-    if (selectedOption && selectedOption.answer)
-      setSelected(selectedOption.answer);
-    if (
-      answers &&
-      selectedOption &&
-      answers.get(questionId) === selectedOption.answer
-    ) {
-      setAnswerCorrect(true);
-    }
-  }, []);
-  useEffect(() => {
-    if (
-      answers &&
-      selectedOption &&
-      answers.get(questionId) === selectedOption.answer
-    ) {
-      setAnswerCorrect(true);
-    }
-  }, []);
+  //   const [answerCorrect, setAnswerCorrect] = useLocalStorage(
+  //     `answer_${questionId}`,
+  //     null
+  //   );
+//   useEffect(() => {
+//     if()
+//   }, []);
+    // useEffect(() => {
+    //   if (
+    //     answers &&
+    //     selectedOption &&
+    //     answers.get(questionId) === selectedOption.answer
+    //   ) {
+    //     setAnswerCorrect(true);
+    //   } else {
+    //     setAnswerCorrect(false);
+    //   }
+    // }, [render]);
   return (
     <FormControl sx={{ width: "100%" }}>
       <Typography variant="h5">{question}</Typography>
@@ -73,8 +72,10 @@ export const Question = ({
               <RadioButton
                 key={idx}
                 option={option}
-                answerCorrect={answerCorrect}
-                selectedOption={selectedOption ? selectedOption.answer : ""}
+                questionId={questionId}
+                // answerCorrect={answerCorrect}
+                // selectedOption={selectedOption ? selectedOption.answer : ""}
+                render={render}
               />
             );
           })}

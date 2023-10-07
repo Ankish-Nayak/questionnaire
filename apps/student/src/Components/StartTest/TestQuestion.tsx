@@ -9,9 +9,11 @@ type question = questionParams & { id: number; creatorId: string };
 export const TestQuestion = ({
   questionId,
   submit,
+  render
 }: {
   questionId: number;
   submit: boolean;
+  render: number;
 }) => {
   const [question, setQuestion] = useState<question>();
   const init = async () => {
@@ -51,6 +53,7 @@ export const TestQuestion = ({
             question.option4,
           ]}
           submit={submit}
+          render={render}
         />
       </CardContent>
     </Card>
