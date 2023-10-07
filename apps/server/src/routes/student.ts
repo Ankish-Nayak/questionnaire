@@ -294,9 +294,10 @@ router.post(
               });
             }
           );
-          Promise.all(promises).then(() =>
-            res.json({ message: "success", answers })
-          );
+          Promise.all(promises).then(() => {
+            console.log(answers);
+            res.json({ message: "success", answers });
+          });
         } else {
           res.status(403).json({ message: "Student dose not exists" });
         }

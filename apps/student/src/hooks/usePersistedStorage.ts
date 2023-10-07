@@ -1,4 +1,4 @@
-import { MutableSnapshot, useRecoilTransactionObserver_UNSTABLE } from "recoil";
+import { MutableSnapshot, useRecoilCallback, useRecoilTransactionObserver_UNSTABLE } from "recoil";
 import { questionCart } from "../store/atoms/questionCart";
 import { timeIntervals, timeOuts, timer } from "../store/atoms/timer";
 import { answers } from "../store/atoms/answers";
@@ -7,6 +7,7 @@ import { selectedOptionsStorageKeys } from "../store/atoms/selectedOptions";
 import { testActive } from "../store/atoms/testActive";
 
 // Serializing data in Recoil is an unstable feature, but it's still available in the published version. useRecoilTransactionObserver_UNSTABLE is a named export of the recoil package, and calls a function every time any Recoil state is changed.
+// hook subscribes a callback to be executed every time there is a change to Recoil atom state.
 export const usePersistStorage = () => {
   useRecoilTransactionObserver_UNSTABLE(async ({ snapshot }) => {
     processSnapshot(snapshot);
@@ -42,6 +43,7 @@ const generateData = async (snapshot) => {
 };
 const processSnapshot = async (snapshot: any) => {
   const data = await generateData(snapshot);
+  console.log(data);
   localStorage.setItem("questionnaire", JSON.stringify(data));
 };
 export const initState = (snapshot: MutableSnapshot) => {
@@ -87,7 +89,10 @@ export const setData = (data: any, set: MutableSnapshot["set"]) => {
     persistedAnswers &&
     typeof persistedAnswers[Symbol.iterator] === "function"
   ) {
-    set(answers, new Map(persistedAnswers));
+    console.log("persistedAnswers",persistedAnswers);
+    const newMap = new Map<number, string>(persistedAnswers);
+    // console.log("Persisted Storage", newMap);
+    set(answers, newMap);
   }
   // if(selectedOptions)
   set(submit, persistedSubmit);

@@ -40,6 +40,7 @@ export const TestQuestions = () => {
       show: true,
       startTime: new Date().getTime() / 1000,
       endTime: new Date().getTime() / 1000 + testQuestions.length * 60,
+      submitTime: 0,
     });
   };
   return (

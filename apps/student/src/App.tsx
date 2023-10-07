@@ -11,7 +11,7 @@ import { Appbar } from "./Components/Appbar";
 import { Questions } from "./Components/Questions";
 import { Question } from "./Components/Question";
 import { TestQuestions } from "./Components/TestQuestions";
-import { StartTest } from "./Components/StartTest";
+import { StartTest } from "./Components/StartTest/StartTest.tsx";
 import { initState, usePersistStorage } from "./hooks/usePersistedStorage";
 function App() {
   axios.defaults.withCredentials = true;
