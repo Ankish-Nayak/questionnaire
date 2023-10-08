@@ -16,6 +16,7 @@ import { testSummaryDialog as _testSummaryDialog } from "../store/atoms/testSumm
 import { useEffect, useState } from "react";
 import { testActive as _testActive } from "../store/atoms/testActive";
 import { questionCartArray } from "../store/selectors/questionCart";
+import { clearIntervalsAndTimeOuts } from "../helpers/clearTimeOutsAndTimeIntervals";
 
 const timeTaken = (time: { minutes: number; seconds: number }): string => {
   const plural = (n: number, s: string): string => {
@@ -43,29 +44,23 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function CustomizedDialogs({} // correctAnswersCount,
-// totalQuestionCount,
-: {
-  // correctAnswersCount: number;
-  // totalQuestionCount: number;
-}) {
+export default function CustomizedDialogs() {
   const [testSummaryDialog, setTestSummaryDialog] =
     useRecoilState(_testSummaryDialog);
   const [timeIntervals, setTimeIntervals] = useRecoilState(_timeIntervals);
   const [timeOuts, setTimeOuts] = useRecoilState(_timeOuts);
   const totalQuestionCount = useRecoilValue(questionCartArray);
   const handleClose = () => {
-    Promise.all(clearIntervals(timeIntervals)).then((msgs) =>
-      console.log(msgs)
+    clearIntervalsAndTimeOuts(
+      timeOuts,
+      setTimeOuts,
+      timeIntervals,
+      setTimeIntervals
     );
-    Promise.all(clearTimeouts(timeOuts)).then((msgs) => console.log(msgs));
-    setTimeIntervals([]);
-    setTimeOuts([]);
     setTestSummaryDialog({
       show: false,
       correctAnswersCount: testSummaryDialog.correctAnswersCount,
     });
-    // setOpen(testSummaryDialog.show);
   };
   const timer = useRecoilValue(_timer);
   const [time, setTime] = useState<{ minutes: number; seconds: number }>({
@@ -74,9 +69,13 @@ export default function CustomizedDialogs({} // correctAnswersCount,
   });
   const testActive = useRecoilValue(_testActive);
   useEffect(() => {
+    const timeInSeconds = Math.min(
+      timer.submitTime - timer.startTime,
+      timer.endTime - timer.startTime
+    );
     setTime({
-      minutes: Math.round((timer.submitTime - timer.startTime) / 60),
-      seconds: Math.round((timer.submitTime - timer.startTime) % 60),
+      minutes: Math.round(timeInSeconds / 60),
+      seconds: Math.round(timeInSeconds % 60),
     });
   }, [testActive]);
   useEffect(() => {
