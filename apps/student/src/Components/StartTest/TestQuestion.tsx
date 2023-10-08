@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../../config";
 import { Question } from "./Question";
-import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilCallback, useRecoilValue } from "recoil";
 import { testActive as _testActive } from "../../store/atoms/testActive";
 import { answers as _answers } from "../../store/atoms/answers";
 import { testQuestionFamily } from "../../store/atoms/questionCart";
@@ -20,9 +20,7 @@ export const TestQuestion = ({
   render: number;
 }) => {
   const [question, setQuestion] = useState<question>();
-  const [testQuestion, setTestQuestion] = useRecoilState(
-    testQuestionFamily(questionId)
-  );
+  const testQuestion = useRecoilValue(testQuestionFamily(questionId));
   const [cardColor, setCardColor] = useState<
     "nuetral" | "danger" | "success" | any
   >();

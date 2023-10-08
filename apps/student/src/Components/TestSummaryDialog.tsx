@@ -13,8 +13,9 @@ import { timeIntervals as _timeIntervals } from "../store/atoms/timer";
 import { testSummaryDialog as _testSummaryDialog } from "../store/atoms/testSummaryDialog";
 import { useEffect, useState } from "react";
 import { testActive as _testActive } from "../store/atoms/testActive";
-import { questionCartArray } from "../store/selectors/questionCart";
+import { questionCartArray as _questionCartArray } from "../store/selectors/questionCart";
 import { clearIntervalsAndTimeOuts } from "../helpers/clearTimeOutsAndTimeIntervals";
+import { submit as _submit } from "../store/atoms/submit";
 
 const timeTaken = (time: { minutes: number; seconds: number }): string => {
   const plural = (n: number, s: string): string => {
@@ -47,7 +48,7 @@ export default function CustomizedDialogs() {
     useRecoilState(_testSummaryDialog);
   const [timeIntervals, setTimeIntervals] = useRecoilState(_timeIntervals);
   const [timeOuts, setTimeOuts] = useRecoilState(_timeOuts);
-  const totalQuestionCount = useRecoilValue(questionCartArray);
+  const totalQuestionCount = useRecoilValue(_questionCartArray);
   const setTestActive = useSetRecoilState(_testActive);
   const handleClose = () => {
     clearIntervalsAndTimeOuts(
@@ -67,17 +68,19 @@ export default function CustomizedDialogs() {
     minutes: 0,
     seconds: 0,
   });
-  const testActive = useRecoilValue(_testActive);
+  const testQuestion = useRecoilValue(_questionCartArray);
+  const submit = useRecoilValue(_submit);
   useEffect(() => {
     const timeInSeconds = Math.min(
       timer.submitTime - timer.startTime,
-      timer.endTime - timer.startTime
+      testQuestion.length * 60
     );
+    console.log(timer);
     setTime({
       minutes: Math.round(timeInSeconds / 60),
       seconds: Math.round(timeInSeconds % 60),
     });
-  }, [testActive]);
+  }, [submit]);
   useEffect(() => {
     if (typeof testSummaryDialog.correctAnswersCount === "undefined") {
       console.log("error", testSummaryDialog);

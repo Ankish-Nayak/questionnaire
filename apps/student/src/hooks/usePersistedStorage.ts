@@ -1,7 +1,6 @@
 import {
   MutableSnapshot,
   Snapshot,
-  useRecoilCallback,
   useRecoilTransactionObserver_UNSTABLE,
 } from "recoil";
 import {
