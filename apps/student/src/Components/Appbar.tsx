@@ -21,7 +21,7 @@ import axios from "axios";
 import { BASE_URL } from "../config";
 import { clearIntervals } from "../helpers/clearIntervals";
 import { clearTimeouts } from "../helpers/clearTimeouts";
-import { useResetItems } from "./StartTest/TestQuestion";
+import { useResetItems } from "../store/hooks/hooks";
 export const Appbar = () => {
   const studentLoading = useRecoilValue(isStudentLoading);
   const studentName = useRecoilValue(studentEmailState);

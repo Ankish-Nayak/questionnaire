@@ -25,7 +25,7 @@ import { calculateCorrectAnswerCount } from "../helpers/calculateCorrectAnswerCo
 import { testCompleteDialog as _testCompleteDialog } from "../store/atoms/testCompleteDialog";
 import { useEffect } from "react";
 import { clearIntervalsAndTimeOuts } from "../helpers/clearTimeOutsAndTimeIntervals";
-import { useLoadItems, useUpdateItems } from "./StartTest/TestQuestion";
+import { useLoadItems, useUpdateItems } from "../store/hooks/hooks";
 import { questionCartArray } from "../store/selectors/questionCart";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
