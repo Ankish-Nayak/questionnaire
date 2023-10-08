@@ -4,7 +4,11 @@ import {
   useRecoilCallback,
   useRecoilTransactionObserver_UNSTABLE,
 } from "recoil";
-import { questionCart } from "../store/atoms/questionCart";
+import {
+  TestQuestionI,
+  questionCart,
+  testQuestionFamily,
+} from "../store/atoms/questionCart";
 import { timeIntervals, timeOuts, timer } from "../store/atoms/timer";
 import { answers } from "../store/atoms/answers";
 import { submit } from "../store/atoms/submit";
@@ -35,6 +39,12 @@ const generateData = async (snapshot) => {
     selectedOptionsStorageKeys
   );
   const persistedTestActive = await snapshot.getPromise(testActive);
+  const testQuestions = [];
+  for (let questionId of persistedQuestion.questions) {
+    testQuestions.push(
+      await snapshot.getPromise(testQuestionFamily(questionId))
+    );
+  }
   return {
     testQuestion: persistedQuestion,
     timer: persistedTimer,
@@ -44,6 +54,7 @@ const generateData = async (snapshot) => {
     testActive: persistedTestActive,
     timeIntervals: persistedTimeIntervals,
     timeOuts: persistedTimeOuts,
+    testQuestions,
   };
 };
 const processSnapshot = async (snapshot: Snapshot) => {
@@ -70,16 +81,25 @@ export const setData = (data: any, set: MutableSnapshot["set"]) => {
     selectedOptionsStorageKeys: persistedSelectedOptionsStorageKeys,
     timeIntervals: persistedTimeIntervals,
     timeOuts: persistedTimeOuts,
+    testQuestions: testQuestions,
   } = data;
-  if (persistedQuestion && persistedQuestion.questions)
+  if (persistedQuestion && persistedQuestion.questions) {
     set(questionCart, {
       isLoading: false,
       questions: persistedQuestion.questions.map((questionId: number) => {
         return questionId;
       }),
     });
+    // persistedQuestion.questions.forEach(questionId => {
+    //   set( testQuestionFamily(id), )
+    // });
+  }
+  testQuestions.forEach((testQuestion: TestQuestionI) => {
+    set(testQuestionFamily(testQuestion.questionId), testQuestion);
+  });
   set(testActive, persistedTestActive);
   set(timeIntervals, [...persistedTimeIntervals]);
+
   set(timeOuts, [...persistedTimeOuts]);
   if (persistedTimer && persistedTimer.show)
     set(timer, {

@@ -7,8 +7,6 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { answerParams } from "types";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { questionCartArray } from "../store/selectors/questionCart";
-import { useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../config";
 import {
@@ -27,6 +25,8 @@ import { calculateCorrectAnswerCount } from "../helpers/calculateCorrectAnswerCo
 import { testCompleteDialog as _testCompleteDialog } from "../store/atoms/testCompleteDialog";
 import { useEffect } from "react";
 import { clearIntervalsAndTimeOuts } from "../helpers/clearTimeOutsAndTimeIntervals";
+import { useLoadItems, useUpdateItems } from "./StartTest/TestQuestion";
+import { questionCartArray } from "../store/selectors/questionCart";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -42,27 +42,22 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 // and then call TestSummaryComponent
 
 export const TestCompleteDialog = () => {
-  const [submit, setSubmit] = useRecoilState(_submit);
+  const setSubmit = useSetRecoilState(_submit);
   const [timer, setTimer] = useRecoilState(_timer);
   const [timeOuts, setTimeOuts] = useRecoilState(_timeOuts);
   const [timeIntervals, setTimeIntervals] = useRecoilState(_timeIntervals);
-  const [selectedOptionsStorageKeys, setSelectedOptionsStorageKeys] =
-    useRecoilState(_selectedOptionsStorageKeys);
-  const [answers, setAnswers] = useRecoilState(_answers);
   const setTestActive = useSetRecoilState(_testActive);
   const setTestStestSummaryDialog = useSetRecoilState(_testSummaryDialog);
-  const [render, setRender] = useState<number>(new Date().getTime());
   const [testCompleteDialog, setTestCompleteDiolog] =
     useRecoilState(_testCompleteDialog);
-
+  const useUpdateAnwers = useUpdateItems();
+  const useLoadSelectedOptions = useLoadItems();
+  const testQuestions = useRecoilValue(questionCartArray);
   const handleSubmit = async () => {
-    const selectedAnswers: answerParams[] = [];
-    selectedOptionsStorageKeys.forEach((key) => {
-      const value: answerParams = JSON.parse(localStorage.getItem(key) || "");
-      selectedAnswers.push(value);
-    });
+    const selectedAnswers: answerParams[] = (await useLoadSelectedOptions(
+      testQuestions
+    )) as answerParams[];
     console.log(selectedAnswers);
-    setTestActive(false);
     setTimer({
       isLoading: false,
       show: false,
@@ -97,7 +92,7 @@ export const TestCompleteDialog = () => {
         const generateMap = (
           map: Map<number, string>
         ): Promise<Map<number, string>> => {
-          return new Promise<Map<number, string>>((res, rej) => {
+          return new Promise<Map<number, string>>((res) => {
             const promises = results.map(({ questionId, answer }) => {
               return new Promise<void>((res1) => {
                 console.log(questionId, answer);
@@ -105,14 +100,10 @@ export const TestCompleteDialog = () => {
                 res1();
               });
             });
-            Promise.all(promises).then(() => {
+            Promise.all(promises).then(async () => {
               console.log("promise", map);
-              setAnswers(() => {
-                console.log("set answers", map);
-                return map;
-              });
-              setRender(new Date().getTime());
-              res(map);
+              const response = await useUpdateAnwers(map, res);
+              console.log(response);
             });
           });
         };
@@ -154,7 +145,7 @@ export const TestCompleteDialog = () => {
     // make request to backend
     setTestCompleteDiolog(false);
     handleSubmit();
-    setTestActive(false);
+    setTestActive("ended");
   };
 
   return (

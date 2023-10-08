@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { selectedOptionsStorageKeys as _selectedOptionsStorageKeys } from "../../store/atoms/selectedOptions";
 import { answers as _answers } from "../../store/atoms/answers";
 import { testActive as _testActive } from "../../store/atoms/testActive";
-import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { useRecoilValue } from "recoil";
+import { testQuestionFamily } from "../../store/atoms/questionCart";
 // it has three states correct answer selected => greeen
 // selected button not correct => red
 // not selected  => blue default
@@ -16,18 +16,17 @@ export const RadioButton = ({
   option,
   questionId,
   render,
+  selected,
 }: {
   option: string;
   questionId: number;
   render: number;
+  selected: string | undefined;
 }) => {
   const [radioStyle, setRadioStyle] = useState<any>({});
-  const [selectedOption, setSelectedOption] = useLocalStorage(
-    `test_question_${questionId}`,
-    null
-  );
-  const answers = useRecoilValue(_answers);
-  const [answerCorrect, setAnswerCorrect] = useState<boolean>(false);
+  const testQuestion = useRecoilValue(testQuestionFamily(questionId));
+  const testActive = useRecoilValue(_testActive);
+
   const styleArray = new Map(
     [
       {
@@ -61,38 +60,37 @@ export const RadioButton = ({
     ].map((i) => [i.key, i.val])
   );
   const settingRadioStyle = (): void => {
-    if (selectedOption && selectedOption.answer === option) {
-      if (answers && answers.get(questionId) === option) {
-        setAnswerCorrect(true);
-        setRadioStyle(styleArray.get("correct"));
-      } else if (answers && answers.get(questionId) !== option) {
-        setRadioStyle(styleArray.get("selectedWrong"));
-      } else {
+    if (testQuestion.selectedOption === option) {
+      if (typeof testQuestion.correct === "undefined") {
         setRadioStyle(styleArray.get("notSelectedWrong"));
+      } else {
+        setRadioStyle(
+          testQuestion.correct
+            ? styleArray.get("correct")
+            : styleArray.get("selectedWrong")
+        );
       }
-    } else if (answers && answers.get(questionId) === option) {
-      setRadioStyle(styleArray.get("notSelectedRight"));
-    } else {
-      setRadioStyle(styleArray.get("notSelectedWrong"));
     }
   };
   useEffect(() => {
     settingRadioStyle();
-  }, [render]);
+  }, []);
   useEffect(() => {
     settingRadioStyle();
-  }, [answerCorrect]);
+  }, [testQuestion]);
   useEffect(() => {
-    settingRadioStyle();
+    if (testActive === "starts") {
+      setRadioStyle({});
+    } else {
+      settingRadioStyle();
+    }
     console.log(
       questionId,
       JSON.stringify(radioStyle),
       styleArray,
-      answerCorrect,
-      selectedOption,
-      answers
+      testQuestion
     );
-  }, [render]);
+  }, [testActive, selected, testQuestion]);
   useEffect(() => {
     console.log("render", render);
   }, [render]);

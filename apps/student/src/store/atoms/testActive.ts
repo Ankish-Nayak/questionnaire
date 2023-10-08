@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 
-export const testActive = atom<boolean>({
+export const testActive = atom<"starts" | "running" | "ended" | "undefined">({
   key: "testActive",
-  default: false,
+  default: undefined,
 });

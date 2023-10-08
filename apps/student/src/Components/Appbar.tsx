@@ -21,6 +21,7 @@ import axios from "axios";
 import { BASE_URL } from "../config";
 import { clearIntervals } from "../helpers/clearIntervals";
 import { clearTimeouts } from "../helpers/clearTimeouts";
+import { useResetItems } from "./StartTest/TestQuestion";
 export const Appbar = () => {
   const studentLoading = useRecoilValue(isStudentLoading);
   const studentName = useRecoilValue(studentEmailState);
@@ -28,10 +29,8 @@ export const Appbar = () => {
   const testQuestions = useRecoilValue(questionCartArray);
   const navigate = useNavigate();
   const [timer, setTimer] = useRecoilState(_timer);
-  const [submit, setSubmit] = useRecoilState(_submit);
+  const setSubmit = useSetRecoilState(_submit);
   const [testActive, setTestActive] = useRecoilState(_testActive);
-  const [selectedOptionsStorageKeys, setSelectedOptionsStorageKeys] =
-    useRecoilState(_selectedOptionsStorageKeys);
   const [timeIntervals, setTimeIntervals] = useRecoilState(_timeIntervals);
   const [timeOuts, setTimeOuts] = useRecoilState(_timeOuts);
   const handleLogout = async () => {
@@ -52,12 +51,10 @@ export const Appbar = () => {
       });
     }
   };
-
-  const handleStartTestDialog = () => {
-    selectedOptionsStorageKeys.forEach((key) => {
-      localStorage.removeItem(key);
-    });
-    setSelectedOptionsStorageKeys([]);
+  const updateSelectedOptions = useResetItems();
+  const handleStartTestDialog = async () => {
+    const response = await updateSelectedOptions(testQuestions);
+    console.log(response);
     Promise.all(clearIntervals(timeIntervals)).then((msgs) =>
       console.log(msgs)
     );
@@ -65,7 +62,7 @@ export const Appbar = () => {
     setTimeIntervals([]);
     setTimeOuts([]);
     setSubmit(false);
-    setTestActive(true);
+    setTestActive("running");
     setTimer({
       isLoading: false,
       show: true,
@@ -91,7 +88,7 @@ export const Appbar = () => {
             Student
           </Link>
         </Typography>
-        {!testActive && (
+        {testActive !== "running" && (
           <Button
             variant="outlined"
             size="large"
@@ -102,7 +99,7 @@ export const Appbar = () => {
             Test Questions {(testQuestions && testQuestions.length) || ""}
           </Button>
         )}
-        {!testActive && (
+        {testActive !== "running" && (
           <Button
             variant="outlined"
             size="large"
@@ -113,7 +110,7 @@ export const Appbar = () => {
             Questions
           </Button>
         )}
-        {!testActive &&
+        {testActive !== "running" &&
           testQuestions &&
           testQuestions.length > 0 &&
           !timer.show && (

@@ -7,11 +7,9 @@ import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { timeOuts as _timeOuts, timer as _timer } from "../store/atoms/timer";
 import { timeIntervals as _timeIntervals } from "../store/atoms/timer";
-import { clearIntervals } from "../helpers/clearIntervals";
-import { clearTimeouts } from "../helpers/clearTimeouts";
 import { testSummaryDialog as _testSummaryDialog } from "../store/atoms/testSummaryDialog";
 import { useEffect, useState } from "react";
 import { testActive as _testActive } from "../store/atoms/testActive";
@@ -50,6 +48,7 @@ export default function CustomizedDialogs() {
   const [timeIntervals, setTimeIntervals] = useRecoilState(_timeIntervals);
   const [timeOuts, setTimeOuts] = useRecoilState(_timeOuts);
   const totalQuestionCount = useRecoilValue(questionCartArray);
+  const setTestActive = useSetRecoilState(_testActive);
   const handleClose = () => {
     clearIntervalsAndTimeOuts(
       timeOuts,
@@ -57,6 +56,7 @@ export default function CustomizedDialogs() {
       timeIntervals,
       setTimeIntervals
     );
+    setTestActive("ended");
     setTestSummaryDialog({
       show: false,
       correctAnswersCount: testSummaryDialog.correctAnswersCount,
