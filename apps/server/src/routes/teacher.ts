@@ -1,5 +1,7 @@
 import express, { Request, Response } from "express";
 import {
+  profileParams,
+  profileTypes,
   questionParams,
   questionTypes,
   teacherLoginTypes,
@@ -346,31 +348,41 @@ router.get("/profile", authenticateJwt, async (req: Request, res: Response) => {
 router.put("/profile", authenticateJwt, async (req: Request, res: Response) => {
   if (typeof req.headers["teacher"] === "string") {
     const username: string = req.headers["teacher"];
-    const data: { firstname: string; lastname: string; username: string } =
-      req.body;
+    const parsedInputs = profileTypes.safeParse(req.body);
+    if (!parsedInputs.success) {
+      return res.status(411).json({ error: parsedInputs.error });
+    }
+    const data: profileParams = parsedInputs.data;
     try {
       const teacher = await prisma.teacher.findUnique({ where: { username } });
       if (teacher) {
-        const updatedTeacher = await prisma.teacher.update({
-          where: { id: teacher.id },
-          data: {
-            ...data,
-          },
+        const existingTeacher = await prisma.teacher.findUnique({
+          where: { username: data.username },
         });
-        if (updatedTeacher) {
-          const token: string = jwt.sign(
-            { username: updatedTeacher.username, role: "teacher" },
-            secret,
-            { expiresIn: "1h" }
-          );
-          const cookie = new Cookies(req, res);
-          cookie.set("teacher-token", token);
-          res.json({
-            message: "Updated successfully",
-            firstname: updatedTeacher.firstname,
-          });
+        if (existingTeacher && existingTeacher.id !== teacher.id) {
+          res.status(411).json({ message: "username taken" });
         } else {
-          res.status(403).json({ message: "Failed to update" });
+          const updatedTeacher = await prisma.teacher.update({
+            where: { id: teacher.id },
+            data: {
+              ...data,
+            },
+          });
+          if (updatedTeacher) {
+            const token: string = jwt.sign(
+              { username: updatedTeacher.username, role: "teacher" },
+              secret,
+              { expiresIn: "1h" }
+            );
+            const cookie = new Cookies(req, res);
+            cookie.set("teacher-token", token);
+            res.json({
+              message: "Updated successfully",
+              firstname: updatedTeacher.firstname,
+            });
+          } else {
+            res.status(403).json({ message: "Failed to update" });
+          }
         }
       } else {
         res.status(403).json({ message: "Teacher dose not exists" });

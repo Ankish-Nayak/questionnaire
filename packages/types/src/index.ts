@@ -34,6 +34,11 @@ export const answerTypes = z.object({
   answer: z.string().min(1),
 });
 export const answersTypes = z.array(answerTypes);
+export const profileTypes = z.object({
+  firstname: z.string().min(1),
+  lastname: z.string().min(1),
+  username: z.string().email(),
+});
 
 export type questionParams = z.infer<typeof questionTypes>;
 export type studentSignupParams = z.infer<typeof studentSignupTypes>;
@@ -41,3 +46,4 @@ export type teacherSignupParams = z.infer<typeof teacherSignupTypes>;
 export type studentLoginParams = z.infer<typeof studentLoginTypes>;
 export type teacherLoginParams = z.infer<typeof teacherLoginTypes>;
 export type answerParams = z.infer<typeof answerTypes>;
+export type profileParams = z.infer<typeof profileTypes>;

@@ -13,6 +13,9 @@ import { Question } from "./Components/Question";
 import { TestQuestions } from "./Components/TestQuestions";
 import { StartTest } from "./Components/StartTest/StartTest.tsx";
 import { initState, usePersistStorage } from "./hooks/usePersistedStorage";
+import { Profile, EditProfile } from "ui";
+// import { Profile } from "./Components/Profile.tsx";
+// import { EditProfile } from "./Components/EditProfile.tsx";
 function App() {
   axios.defaults.withCredentials = true;
   return (
@@ -28,6 +31,19 @@ function App() {
           <Route path={`/questions/view/:questionId`} element={<Question />} />
           <Route path={`/testQuestions/view`} element={<TestQuestions />} />
           <Route path={`/startTest`} element={<StartTest />} />
+          <Route
+            path={"/profile"}
+            element={<Profile href={`${BASE_URL}/student/profile`} />}
+          />
+          <Route
+            path={"/profile/edit"}
+            element={
+              <EditProfile
+                href={`${BASE_URL}/student/profile`}
+                userState={studentState}
+              />
+            }
+          />
         </Routes>
       </Router>
     </RecoilRoot>

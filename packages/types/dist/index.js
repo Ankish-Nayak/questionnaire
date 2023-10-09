@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.answersTypes = exports.answerTypes = exports.questionTypes = exports.teacherLoginTypes = exports.studentLoginTypes = exports.studentSignupTypes = exports.teacherSignupTypes = void 0;
+exports.profileTypes = exports.answersTypes = exports.answerTypes = exports.questionTypes = exports.teacherLoginTypes = exports.studentLoginTypes = exports.studentSignupTypes = exports.teacherSignupTypes = void 0;
 const zod_1 = require("zod");
 exports.teacherSignupTypes = zod_1.z.object({
     firstname: zod_1.z.string().min(1),
@@ -37,3 +37,8 @@ exports.answerTypes = zod_1.z.object({
     answer: zod_1.z.string().min(1),
 });
 exports.answersTypes = zod_1.z.array(exports.answerTypes);
+exports.profileTypes = zod_1.z.object({
+    firstname: zod_1.z.string().min(1),
+    lastname: zod_1.z.string().min(1),
+    username: zod_1.z.string().email(),
+});

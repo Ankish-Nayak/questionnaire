@@ -130,9 +130,14 @@ export const Appbar = () => {
             width: "15%",
           }}
         >
-          <Typography variant="h5" style={{}}>
-            {studentName}
-          </Typography>
+          <Link
+            to={"/profile"}
+            style={{ textDecoration: "none", color: "black" }}
+          >
+            <Typography variant="h5" style={{}}>
+              {studentName}
+            </Typography>
+          </Link>
           <Button variant="contained" onClick={handleLogout}>
             Logout
           </Button>

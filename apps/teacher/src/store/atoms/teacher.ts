@@ -1,8 +1,8 @@
 import { atom } from "recoil";
 
 export const teacherState = atom<{
-  isLoading: Boolean;
-  userEmail: String | null;
+  isLoading: boolean;
+  userEmail: string | null;
 }>({
   key: "teacherState",
   default: {

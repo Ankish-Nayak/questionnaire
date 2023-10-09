@@ -13,6 +13,7 @@ import { Question } from "./Components/Question";
 import { AddQuestion } from "./Components/AddQuestion";
 import { EditQuestion } from "./Components/EditQuestion";
 import { MyQuestions } from "./Components/MyQuestions";
+import { Profile, EditProfile } from "ui";
 
 function App() {
   axios.defaults.withCredentials = true;
@@ -37,6 +38,19 @@ function App() {
             />
             <Route path={"/questions/me"} element={<MyQuestions />} />
             <Route path={"/addQuestion"} element={<AddQuestion />} />
+            <Route
+              path={"/profile"}
+              element={<Profile href={`${BASE_URL}/teacher/profile`} />}
+            />
+            <Route
+              path={"/profile/edit"}
+              element={
+                <EditProfile
+                  href={`${BASE_URL}/teacher/profile`}
+                  userState={teacherState}
+                />
+              }
+            />
           </Routes>
         </Router>
       </RecoilRoot>

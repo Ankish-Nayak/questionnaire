@@ -2,6 +2,8 @@ import express, { Request, Response } from "express";
 import {
   answerParams,
   answersTypes,
+  profileParams,
+  profileTypes,
   studentLoginTypes,
   studentSignupTypes,
 } from "types";
@@ -198,35 +200,44 @@ router.get("/profile", authenticateJwt, async (req: Request, res: Response) => {
 router.put("/profile", authenticateJwt, async (req: Request, res: Response) => {
   if (typeof req.headers["student"] === "string") {
     const username: string = req.headers["student"];
+    const parsedInputs = profileTypes.safeParse(req.body);
+    if (!parsedInputs.success) {
+      return res.status(411).json({ error: parsedInputs.error });
+    }
     try {
       const student = await prisma.student.findUnique({ where: { username } });
       if (student) {
-        const data: { firstname: string; lastname: string; username: string } =
-          req.body;
-        const updatedStudent = await prisma.student.update({
-          where: { id: student.id },
-          data: {
-            ...data,
-          },
+        const data: profileParams = parsedInputs.data;
+        const existingStudent = await prisma.student.findUnique({
+          where: { username: data.username },
         });
-        if (updatedStudent) {
-          const token: string = jwt.sign(
-            { username: updatedStudent.username, role: "student" },
-            secret,
-            { expiresIn: "1h" }
-          );
-          const cookies = new Cookies(req, res);
-          cookies.set("student-token", token);
-          res.json({
-            message: "updated successfully",
-            firstname: updatedStudent.firstname,
-          });
+        if (existingStudent && existingStudent.id !== student.id) {
+          res.status(411).json({ message: "username taken" });
         } else {
-          res.status(403).json({ message: "Failed to update" });
+          const updatedStudent = await prisma.student.update({
+            where: { id: student.id },
+            data: {
+              ...data,
+            },
+          });
+          if (updatedStudent) {
+            const token: string = jwt.sign(
+              { username: updatedStudent.username, role: "student" },
+              secret,
+              { expiresIn: "1h" }
+            );
+            const cookies = new Cookies(req, res);
+            cookies.set("student-token", token);
+            res.json({
+              message: "updated successfully",
+              firstname: updatedStudent.firstname,
+            });
+          } else {
+            res.status(403).json({ message: "Failed to update" });
+          }
         }
       }
     } catch (e) {
-      console.log(e);
       res.status(404).json({ message: "db error" });
     }
   } else {
