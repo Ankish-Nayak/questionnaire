@@ -5,14 +5,14 @@ import axios from "axios";
 import { BASE_URL } from "./config";
 import { useEffect } from "react";
 import { Appbar } from "./Components/Appbar";
-import { Landing } from "./Components/Landing";
 import { Questions } from "./Components/Questions";
 import { Question } from "./Components/Question";
 import { AddQuestion } from "./Components/AddQuestion";
 import { EditQuestion } from "./Components/EditQuestion";
 import { MyQuestions } from "./Components/MyQuestions";
 import { Profile, EditProfile, Login, Signup } from "ui";
-
+import { Landing } from "ui";
+import { teacherEmailState } from "./store/selectors/teacher";
 function App() {
   axios.defaults.withCredentials = true;
   return (
@@ -22,7 +22,10 @@ function App() {
           <Init />
           <Appbar />
           <Routes>
-            <Route path={"/"} element={<Landing />} />
+            <Route
+              path={"/"}
+              element={<Landing userEmailState={teacherEmailState} />}
+            />
             <Route
               path={"/signup"}
               element={

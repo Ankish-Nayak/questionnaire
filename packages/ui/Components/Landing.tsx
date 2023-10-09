@@ -1,9 +1,12 @@
 import { Grid, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
-import { studentEmailState } from "../store/selectors/student";
-export const Landing = () => {
-  const studentName = useRecoilValue(studentEmailState);
+import { useRecoilValue, RecoilValueReadOnly } from "recoil";
+export const Landing = ({
+  userEmailState,
+}: {
+  userEmailState: RecoilValueReadOnly<string | null>;
+}) => {
+  const userName = useRecoilValue(userEmailState);
   const navigate = useNavigate();
   return (
     <div
@@ -27,7 +30,7 @@ export const Landing = () => {
           <Typography variant="h4">
             Place, where questions is to be solved.
           </Typography>
-          {!studentName && (
+          {!userName && (
             <div
               style={{
                 paddingTop: "4vh",

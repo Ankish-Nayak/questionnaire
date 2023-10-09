@@ -4,7 +4,6 @@ import { RecoilRoot, useSetRecoilState } from "recoil";
 import { studentState } from "./store/atoms/student";
 import { BASE_URL } from "./config";
 import { useEffect } from "react";
-import { Landing } from "./Components/Landing";
 import { Appbar } from "./Components/Appbar";
 import { Questions } from "./Components/Questions";
 import { Question } from "./Components/Question";
@@ -13,6 +12,8 @@ import { StartTest } from "./Components/StartTest/StartTest.tsx";
 import { initState, usePersistStorage } from "./hooks/usePersistedStorage";
 import { Profile, EditProfile, Login, Signup } from "ui";
 import { testActive as _testActive } from "./store/atoms/testActive.ts";
+import { Landing } from "ui";
+import { studentEmailState } from "./store/selectors/student.ts";
 function App() {
   axios.defaults.withCredentials = true;
   return (
@@ -21,7 +22,10 @@ function App() {
         <Init />
         <Appbar />
         <Routes>
-          <Route path={"/"} element={<Landing />} />
+          <Route
+            path={"/"}
+            element={<Landing userEmailState={studentEmailState} />}
+          />
           <Route
             path={"/signup"}
             element={

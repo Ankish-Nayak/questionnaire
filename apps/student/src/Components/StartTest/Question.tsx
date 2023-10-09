@@ -23,7 +23,8 @@ export const Question = ({
   );
   const testActive = useRecoilValue(_testActive);
   const [selected, setSelected] = useState<undefined | string>(
-    testActive === "starts" ? undefined : testQuestion.selectedOption
+    testActive === "running" ? testQuestion.selectedOption : undefined
+    // testActive === "starts" ? undefined : testQuestion.selectedOption
   );
   useEffect(() => {
     if (testActive === "starts") {
