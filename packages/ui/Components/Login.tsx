@@ -1,51 +1,63 @@
-import axios from "axios";
 import { useState } from "react";
-import { studentSignupParams } from "types";
-import { BASE_URL } from "../config";
-import { useSetRecoilState } from "recoil";
-import { studentState } from "../store/atoms/student";
-import { Card, Button, TextField } from "@mui/material";
-
-export const Signup = () => {
+import { teacherLoginParams } from "types";
+import { useSetRecoilState, RecoilState, useRecoilValue } from "recoil";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { Card, TextField, Button } from "@mui/material";
+export const Login = ({
+  href,
+  userState,
+  navigateTo,
+  _testActive,
+}: {
+  href: string;
+  userState: RecoilState<{
+    isLoading: boolean;
+    userEmail: string | null;
+  }>;
+  navigateTo?: string;
+  _testActive?: RecoilState<"undefined" | "starts" | "running" | "ended">;
+}) => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [firstname, setFirstname] = useState<string>("");
-  const [lastname, setLastname] = useState<string>("");
-  const setStudent = useSetRecoilState(studentState);
-
+  const setUser = useSetRecoilState(userState);
+  const navigate = useNavigate();
+  let testActive: undefined | "undefined" | "starts" | "running" | "ended";
+  if (_testActive) {
+    console.log("dfdf");
+    testActive = useRecoilValue(_testActive);
+  }
   const handleOnClick = async () => {
-    const parsedInputs: studentSignupParams = {
+    const loginInputs: teacherLoginParams = {
       username,
       password,
-      firstname,
-      lastname,
     };
-
     try {
-      const response = await axios.post(
-        `${BASE_URL}/student/signup`,
-        JSON.stringify(parsedInputs),
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.post(href, JSON.stringify(loginInputs), {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       const data = response.data;
       if (data.firstname) {
-        setStudent({
+        setUser({
           isLoading: false,
           userEmail: data.firstname,
         });
+        if (testActive) {
+          console.log("d");
+          navigate(testActive === "running" ? "/startTest" : "/questions/view");
+        } else {
+          navigate("/questions");
+        }
       } else {
-        setStudent({
+        setUser({
           isLoading: false,
           userEmail: null,
         });
       }
     } catch (e) {
-      console.log(e);
-      setStudent({
+      setUser({
         isLoading: false,
         userEmail: null,
       });
@@ -69,31 +81,13 @@ export const Signup = () => {
           justifyContent: "center",
           alignItems: "center",
           padding: "2vw",
-          width: "30vw",
+          width: "25vw",
         }}
       >
         <TextField
-          label="firstname"
-          value={firstname}
-          fullWidth={true}
-          margin={"dense"}
-          onChange={(e) => {
-            setFirstname(e.target.value);
-          }}
-        />
-        <TextField
-          label="lastname"
-          value={lastname}
-          margin={"dense"}
-          fullWidth={true}
-          onChange={(e) => {
-            setLastname(e.target.value);
-          }}
-        />
-        <TextField
           label="username"
+          margin="dense"
           value={username}
-          margin={"dense"}
           fullWidth={true}
           onChange={(e) => {
             setUsername(e.target.value);
@@ -102,8 +96,8 @@ export const Signup = () => {
         <TextField
           label="password"
           value={password}
-          type={"password"}
           margin="dense"
+          type={"password"}
           fullWidth={true}
           onChange={(e) => {
             setPassword(e.target.value);
@@ -111,7 +105,7 @@ export const Signup = () => {
         />
         <br />
         <Button variant="contained" size="large" onClick={handleOnClick}>
-          Signup
+          Login
         </Button>
       </Card>
     </div>

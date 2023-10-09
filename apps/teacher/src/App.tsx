@@ -5,15 +5,13 @@ import axios from "axios";
 import { BASE_URL } from "./config";
 import { useEffect } from "react";
 import { Appbar } from "./Components/Appbar";
-import { Signup } from "./Components/Signup";
 import { Landing } from "./Components/Landing";
-import { Login } from "./Components/Login";
 import { Questions } from "./Components/Questions";
 import { Question } from "./Components/Question";
 import { AddQuestion } from "./Components/AddQuestion";
 import { EditQuestion } from "./Components/EditQuestion";
 import { MyQuestions } from "./Components/MyQuestions";
-import { Profile, EditProfile } from "ui";
+import { Profile, EditProfile, Login, Signup } from "ui";
 
 function App() {
   axios.defaults.withCredentials = true;
@@ -25,8 +23,24 @@ function App() {
           <Appbar />
           <Routes>
             <Route path={"/"} element={<Landing />} />
-            <Route path={"/signup"} element={<Signup />} />
-            <Route path={"/login"} element={<Login />} />
+            <Route
+              path={"/signup"}
+              element={
+                <Signup
+                  href={`${BASE_URL}/teacher/signup`}
+                  userState={teacherState}
+                />
+              }
+            />
+            <Route
+              path={"/login"}
+              element={
+                <Login
+                  href={`${BASE_URL}/teacher/login`}
+                  userState={teacherState}
+                />
+              }
+            />
             <Route path={"/questions"} element={<Questions />} />
             <Route
               path={"/questions/view/:questionId"}

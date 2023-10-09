@@ -1,55 +1,59 @@
 import axios from "axios";
 import { useState } from "react";
-import { studentLoginParams } from "types";
-import { BASE_URL } from "../config";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { studentState } from "../store/atoms/student";
+import { studentSignupParams } from "types";
+import { useSetRecoilState, RecoilState } from "recoil";
 import { Card, Button, TextField } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { testActive as _testActive } from "../store/atoms/testActive";
-export const Login = () => {
+
+export const Signup = ({
+  href,
+  userState,
+}: {
+  href: string;
+  userState: RecoilState<{
+    isLoading: boolean;
+    userEmail: string | null;
+  }>;
+}) => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const setStudent = useSetRecoilState(studentState);
-  const navigate = useNavigate();
-  const testActive = useRecoilValue(_testActive);
+  const [firstname, setFirstname] = useState<string>("");
+  const [lastname, setLastname] = useState<string>("");
+  const serUser = useSetRecoilState(userState);
+
   const handleOnClick = async () => {
-    const parsedInputs: studentLoginParams = {
+    const parsedInputs: studentSignupParams = {
       username,
       password,
+      firstname,
+      lastname,
     };
 
     try {
-      const response = await axios.post(
-        `${BASE_URL}/student/login`,
-        JSON.stringify(parsedInputs),
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.post(href, JSON.stringify(parsedInputs), {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       const data = response.data;
       if (data.firstname) {
-        setStudent({
+        serUser({
           isLoading: false,
           userEmail: data.firstname,
         });
-        testActive ? navigate("/startTest") : navigate("/questions/view");
       } else {
-        setStudent({
+        serUser({
           isLoading: false,
           userEmail: null,
         });
       }
     } catch (e) {
-      setStudent({
+      console.log(e);
+      serUser({
         isLoading: false,
         userEmail: null,
       });
     }
   };
-
   return (
     <div
       style={{
@@ -68,13 +72,31 @@ export const Login = () => {
           justifyContent: "center",
           alignItems: "center",
           padding: "2vw",
-          width: "25vw",
+          width: "30vw",
         }}
       >
         <TextField
+          label="firstname"
+          value={firstname}
+          fullWidth={true}
+          margin={"dense"}
+          onChange={(e) => {
+            setFirstname(e.target.value);
+          }}
+        />
+        <TextField
+          label="lastname"
+          value={lastname}
+          margin={"dense"}
+          fullWidth={true}
+          onChange={(e) => {
+            setLastname(e.target.value);
+          }}
+        />
+        <TextField
           label="username"
-          margin="dense"
           value={username}
+          margin={"dense"}
           fullWidth={true}
           onChange={(e) => {
             setUsername(e.target.value);
@@ -83,8 +105,8 @@ export const Login = () => {
         <TextField
           label="password"
           value={password}
-          margin="dense"
           type={"password"}
+          margin="dense"
           fullWidth={true}
           onChange={(e) => {
             setPassword(e.target.value);
@@ -92,7 +114,7 @@ export const Login = () => {
         />
         <br />
         <Button variant="contained" size="large" onClick={handleOnClick}>
-          Login
+          Signup
         </Button>
       </Card>
     </div>
