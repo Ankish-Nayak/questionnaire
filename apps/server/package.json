@@ -4,7 +4,8 @@
   "description": "server for questionnaire",
   "main": "index.js",
   "scripts": {
-    "dev": "tsc -b && pm2 start dist/index.js",
+    "dev": "tsc -b && node dist/index.js",
+    "start": "tsc -b && pm2 start dist/index.js",
     "restart": "pm2 stop dist/index.js && tsc -b && pm2 start dist/index.js",
     "stop": "pm2 stop dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,8 +20,8 @@
     "@types/jsonwebtoken": "^9.0.3",
     "dotenv": "^16.3.1",
     "prisma": "*",
-    "tsc": "^2.0.4",
-    "types": "*"
+    "types": "*",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
     "cookies": "^0.8.0",
