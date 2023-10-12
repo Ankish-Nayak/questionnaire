@@ -5,5 +5,3 @@ node_modules
 ./apps/student/node_modules
 # specially server one because of prisma
 ./apps/teacher/node_modules
-# ignoring migrations
-./packages/prisma/migrations

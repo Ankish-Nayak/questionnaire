@@ -4,12 +4,16 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "dev:server:docker": "cd ./apps/server/ && npm run dev:docker",
+    "dev:student:docker": "cd ./apps/student/ && npm run dev:docker",
+    "dev:teacher:docker": "cd ./apps/teacher/ && npm run dev:docker",
+    "dev:frontend:docker": "(npm run dev:student:docker) & (npm run dev:teacher:docker)"
   },
   "devDependencies": {
     "eslint": "^8.48.0",
     "prettier": "^3.0.3",
-    "prisma-erd-generator": "^1.11.1" ,
+    "prisma-erd-generator": "^1.11.1",
     "tsconfig": "*",
     "turbo": "latest"
   },
