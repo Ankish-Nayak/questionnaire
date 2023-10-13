@@ -10,7 +10,6 @@ COPY ./tsconfig.json ./tsconfig.json
 # copying student and teacher jsons files
 COPY ./apps/student/package.json ./apps/student/package.json
 COPY  ./apps/teacher/package.json ./apps/teacher/package.json
-COPY ./apps/server/package.json  ./apps/server/package.json
 COPY ./packages/ui/package.json ./packages/ui/package.json
 COPY ./packages/ui/tsconfig.json ./packages/ui/tsconfig.json
 
@@ -23,16 +22,17 @@ COPY ./apps/teacher ./apps/teacher
 
 COPY ./packages/types ./packages/types
 COPY ./packages/ui   ./packages/ui 
+COPY ./bash_scripts/startFrontend.sh  ./bash_scripts/startFrontend.sh
 
 # defining base url for student and teacher frontend
 ARG SERVER_HOST 
 ARG SERVER_PORT
 RUN echo > ./apps/student/src/config.ts
-RUN echo "http//$SERVER_PORT:$SERVER_PORT" > ./apps/student/src/config.ts
+RUN echo "export const BASE_URL = 'http://$SERVER_HOST:$SERVER_PORT';" > ./apps/student/src/config.ts
 RUN echo > ./apps/teacher/src/config.ts
-RUN echo "http//$SERVER_PORT:$SERVER_PORT" > ./apps/teacher/src/config.ts
+RUN echo "export const BASE_URL = 'http://$SERVER_HOST:$SERVER_PORT';" > ./apps/teacher/src/config.ts
 
 
 EXPOSE 5173 5174
 
-CMD ["npm","run","dev:frontend:docker"]
+CMD ["sh","./bash_scripts/startFrontend.sh"]

@@ -20,22 +20,20 @@ services:
     restart: always
     ports:
       - "3000:3000"
-      # - "5173:5173"
-      # - "5174:5174"
-      # environment:
-      # - DATABASE_URL="postgresql://postgres:ankish@postgres:5432/test_questionnaire?schema=public"
     depends_on:
       - postgresdb
   frontend:
     build:
       context: ../
       dockerfile: ./docker/frontend.Dockerfile
-      args: 
-        - SERVER_HOST=api
+      args:
+        - SERVER_HOST=localhost
         - SERVER_PORT=3000
     ports:
       - "5173:5173"
       - "5174:5174"
+    depends_on:
+      - api
 
   linuxDistro:
     image: busybox:glibc
