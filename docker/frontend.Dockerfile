@@ -23,6 +23,7 @@ COPY ./apps/teacher ./apps/teacher
 COPY ./packages/types ./packages/types
 COPY ./packages/ui   ./packages/ui 
 COPY ./bash_scripts/startFrontend.sh  ./bash_scripts/startFrontend.sh
+COPY ./packages/tsconfig ./packages/tsconfig
 
 # defining base url for student and teacher frontend
 ARG SERVER_HOST 

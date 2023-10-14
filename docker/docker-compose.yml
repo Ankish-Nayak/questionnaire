@@ -22,6 +22,15 @@ services:
       - "3000:3000"
     depends_on:
       - postgresdb
+    volumes:
+      # binds 
+      # server 
+      - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/apps/server:/usr/src/app/apps/server:delegated"
+      # packages prisma folder 
+      - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/packages/prisma:/usr/src/app/packages/prisma:delegated"
+      # packages types folder 
+      - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/packages/types:/usr/src/app/packages/types:delegated"
+    tty: true
   frontend:
     build:
       context: ../
@@ -34,6 +43,17 @@ services:
       - "5174:5174"
     depends_on:
       - api
+    volumes:
+      # binds
+      # student frontend
+      - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/apps/student:/usr/src/app/apps/student:delegated"
+      # teacher frontend
+      - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/apps/teacher:/usr/src/app/apps/teacher:delegated"
+      # common packages ui 
+      - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/packages/ui:/usr/src/app/packages/ui:delegated"
+      # packages types folder 
+      - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/packages/types:/usr/src/app/packages/types:delegated"
+    tty: true
 
   linuxDistro:
     image: busybox:glibc
