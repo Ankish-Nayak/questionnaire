@@ -11,7 +11,7 @@ import { prisma } from "..";
 import Cookies from "cookies";
 export const router = express.Router();
 import jwt from "jsonwebtoken";
-import { authenticateJwt } from "../middlewares/auth";
+import { authenticateStudentJwt } from "../middlewares/auth";
 const secret: string = process.env.SECRET || "";
 console.log(secret);
 
@@ -88,7 +88,7 @@ router.post("/login", async (req: Request, res: Response) => {
 });
 
 // me route
-router.get("/me", authenticateJwt, async (req: Request, res: Response) => {
+router.get("/me", authenticateStudentJwt, async (req: Request, res: Response) => {
   if (typeof req.headers["student"] === "string") {
     const username: string = req.headers["student"];
     try {
@@ -110,7 +110,7 @@ router.get("/me", authenticateJwt, async (req: Request, res: Response) => {
 // get all questions
 router.get(
   "/questions",
-  authenticateJwt,
+  authenticateStudentJwt,
   async (req: Request, res: Response) => {
     if (typeof req.headers["student"] === "string") {
       const username: string = req.headers["student"];
@@ -137,7 +137,7 @@ router.get(
 // route for getting particular question
 router.get(
   "/questions/:questionId",
-  authenticateJwt,
+  authenticateStudentJwt,
   async (req: Request, res: Response) => {
     if (typeof req.headers["student"] === "string") {
       const username: string = req.headers["student"];
@@ -169,7 +169,7 @@ router.get(
 );
 
 // route for fetching profile
-router.get("/profile", authenticateJwt, async (req: Request, res: Response) => {
+router.get("/profile", authenticateStudentJwt, async (req: Request, res: Response) => {
   if (typeof req.headers["student"] === "string") {
     const username: string = req.headers["student"];
     try {
@@ -197,7 +197,7 @@ router.get("/profile", authenticateJwt, async (req: Request, res: Response) => {
 
 // route for updating profile
 
-router.put("/profile", authenticateJwt, async (req: Request, res: Response) => {
+router.put("/profile", authenticateStudentJwt, async (req: Request, res: Response) => {
   if (typeof req.headers["student"] === "string") {
     const username: string = req.headers["student"];
     const parsedInputs = profileTypes.safeParse(req.body);
@@ -248,7 +248,7 @@ router.put("/profile", authenticateJwt, async (req: Request, res: Response) => {
 // attempted question route
 router.post(
   `/attempt`,
-  authenticateJwt,
+  authenticateStudentJwt,
   async (req: Request, res: Response) => {
     if (typeof req.headers["student"] === "string") {
       const username: string = req.headers["student"];
@@ -321,7 +321,7 @@ router.post(
   }
 );
 
-router.post("/logout", authenticateJwt, async (req: Request, res: Response) => {
+router.post("/logout", authenticateStudentJwt, async (req: Request, res: Response) => {
   if (typeof req.headers["student"] === "string") {
     const username = req.headers["student"];
     try {

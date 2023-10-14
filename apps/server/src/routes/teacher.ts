@@ -11,7 +11,7 @@ import { prisma } from "..";
 export const router = express.Router();
 import jwt from "jsonwebtoken";
 import Cookies from "cookies";
-import { authenticateJwt } from "../middlewares/auth";
+import { authenticateTeacherJwt } from "../middlewares/auth";
 import dotenv from "dotenv";
 dotenv.config();
 const secret: string = process.env.SECRET || "";
@@ -82,7 +82,7 @@ router.post("/login", async (req: Request, res: Response) => {
 // create new question route
 router.post(
   "/questions",
-  authenticateJwt,
+  authenticateTeacherJwt,
   async (req: Request, res: Response) => {
     const parsedInput = questionTypes.safeParse(req.body);
     if (!parsedInput.success) {
@@ -130,7 +130,7 @@ router.post(
 // update question route
 router.put(
   "/questions/:questionId",
-  authenticateJwt,
+  authenticateTeacherJwt,
   async (req: Request, res: Response) => {
     const parsedInput = questionTypes.safeParse(req.body);
     if (!parsedInput.success) {
@@ -176,7 +176,7 @@ router.put(
 // get all questions from all teachers
 router.get(
   "/questions",
-  authenticateJwt,
+  authenticateTeacherJwt,
   async (req: Request, res: Response) => {
     // console.log(req.headers['teacher']);
     if (typeof req.headers["teacher"] === "string") {
@@ -207,7 +207,7 @@ router.get(
 // get questions from logged in teacher
 router.get(
   "/questions/me",
-  authenticateJwt,
+  authenticateTeacherJwt,
   async (req: Request, res: Response) => {
     if (typeof req.headers["teacher"] === "string") {
       const username: string = req.headers["teacher"];
@@ -238,7 +238,7 @@ router.get(
 // get questions from particular given id teacher
 router.get(
   "/:teacherId/questions",
-  authenticateJwt,
+  authenticateTeacherJwt,
   async (req: Request, res: Response) => {
     if (typeof req.headers["teacher"] === "string") {
       const username: string = req.headers["teacher"];
@@ -264,7 +264,7 @@ router.get(
 );
 
 // me route
-router.get("/me", authenticateJwt, async (req: Request, res: Response) => {
+router.get("/me", authenticateTeacherJwt, async (req: Request, res: Response) => {
   if (typeof req.headers["teacher"] === "string") {
     const username: string = req.headers["teacher"];
     try {
@@ -286,7 +286,7 @@ router.get("/me", authenticateJwt, async (req: Request, res: Response) => {
 // get particular question
 router.get(
   "/questions/:questionId",
-  authenticateJwt,
+  authenticateTeacherJwt,
   async (req: Request, res: Response) => {
     if (typeof req.headers["teacher"] === "string") {
       const username: string = req.headers["teacher"];
@@ -320,7 +320,7 @@ router.get(
 );
 
 // fetch teacher profile
-router.get("/profile", authenticateJwt, async (req: Request, res: Response) => {
+router.get("/profile", authenticateTeacherJwt, async (req: Request, res: Response) => {
   if (typeof req.headers["teacher"] === "string") {
     const username: string = req.headers["teacher"];
     try {
@@ -345,7 +345,7 @@ router.get("/profile", authenticateJwt, async (req: Request, res: Response) => {
 });
 
 // update teacher profile
-router.put("/profile", authenticateJwt, async (req: Request, res: Response) => {
+router.put("/profile", authenticateTeacherJwt, async (req: Request, res: Response) => {
   if (typeof req.headers["teacher"] === "string") {
     const username: string = req.headers["teacher"];
     const parsedInputs = profileTypes.safeParse(req.body);
@@ -397,7 +397,7 @@ router.put("/profile", authenticateJwt, async (req: Request, res: Response) => {
 });
 
 // logout router
-router.post("/logout", authenticateJwt, async (req: Request, res: Response) => {
+router.post("/logout", authenticateTeacherJwt, async (req: Request, res: Response) => {
   if (typeof req.headers["teacher"] === "string") {
     const username: string = req.headers["teacher"];
     try {
