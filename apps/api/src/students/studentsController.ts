@@ -5,51 +5,60 @@ import {
   Middlewares,
   Path,
   Post,
-  Query,
   Request,
   Response,
   Route,
-  Security,
-  SuccessResponse,
 } from "tsoa";
 import { StudentsService } from "./studentsService";
-// import { authenticateStudentJwt } from "../middleware/auth";
-// import { studentLoginParams, studentSignupParams } from "types";
-export type studentLoginParams = ReturnType<typeof studentLoginTypes.parse>;
-export type studentSignupParams = ReturnType<typeof studentSignupTypes.parse>;
-export type profileParams = ReturnType<typeof profileTypes.parse>;
-import { generateToken } from "../generateToken";
-import { profileTypes, studentLoginTypes, studentSignupTypes } from "types";
-import { TypeOf } from "zod";
+import { Question } from "@prisma/client";
+import { generateToken } from "../utils/generateToken";
 import { Student } from "@prisma/client";
 import { ApiError } from "../errors/ApiError";
+import { QuestionsService } from "../questions/questionsService";
+import { authenticateStudentJwt } from "../middleware/auth";
+import {
+  CustomStudentExpressRequest,
+  studentLoginParams,
+  studentSignupParams,
+  profileParams,
+} from "./student";
 @Route("students")
 export class UsersController extends Controller {
   private studentService;
+  private questionsService;
   constructor() {
     super();
     this.studentService = new StudentsService();
+    this.questionsService = new QuestionsService();
   }
-  @Security("jwt")
+  @Middlewares(authenticateStudentJwt)
   @Get("me")
-  public async getUsername(@Request() req: any): Promise<string> {
-    console.log(req.user);
-    const student = this.studentService.getByUsername(req.user.username);
+  public async getUsername(
+    @Request() req: CustomStudentExpressRequest
+  ): Promise<{ firstname: string }> {
+    const { studentId } = req.headers;
+    const student = this.studentService.getById(studentId);
     const studentData = await student;
     if (studentData) {
-      return studentData.firstname;
+      return { firstname: studentData.firstname };
     }
+
     throw new ApiError("UserNotFound", 403, "student dose not exists");
   }
   @Post("login")
   public async login(
     @Body() studentParams: studentLoginParams
   ): Promise<{ firstname: string }> {
-    const { firstname, id } =
+    const existingStudent =
       await this.studentService.authenticate(studentParams);
-    const token: string = generateToken(id, "student");
-    this.setHeader("Set-Cookie", `student-token=${token}; HttpOnly`);
-    return { firstname };
+    if (existingStudent) {
+      const { firstname, id } = existingStudent;
+      await this.studentService.authenticate(studentParams);
+      const token: string = generateToken(id, "student");
+      this.setHeader("Set-Cookie", `student-token=${token}; HttpOnly`);
+      return { firstname };
+    }
+    throw new ApiError("student", 403, "student dose not exists");
   }
   @Response(201, "Student created")
   @Post("signup")
@@ -66,42 +75,73 @@ export class UsersController extends Controller {
     this.setHeader("Set-Cookie", `student-token=${token}; HttpOnly`);
     return { firstname };
   }
-  @Security("jwt", ["student"])
+  @Middlewares(authenticateStudentJwt)
   @Get("profile")
-  public async getProfile(@Request() req: any) {
-    console.log(req.user);
-    const student = await this.studentService.getByUsername(req.user.username);
+  public async getProfile(
+    @Request() req: CustomStudentExpressRequest
+  ): Promise<{ student: Student }> {
+    const { studentId } = req.headers;
+    const student = await this.studentService.getById(studentId);
     if (student) {
-      return student;
+      return { student };
     }
     throw new ApiError("UserNotFound", 403, "student dose not exists");
   }
-  @Security("jwt", ["student"])
+  @Middlewares(authenticateStudentJwt)
   @Post("profile")
   public async updateProfile(
-    @Request() req: any,
+    @Request() req: CustomStudentExpressRequest,
     @Body() profileParams: profileParams
-  ) {
-    console.log(req.user);
+  ): Promise<{ student: Student }> {
+    const { studentId } = req.headers;
     const existingStudent = await this.studentService.getByUsername(
       profileParams.username
     );
-    if (existingStudent && existingStudent.id === req.user.id) {
+    if (
+      !existingStudent ||
+      (existingStudent && existingStudent.id === studentId)
+    ) {
       const student = await this.studentService.update(
-        req.user.id,
+        studentId,
         profileParams
       );
-      return student;
-    } else if (!existingStudent) {
-      throw new ApiError("UserNotFound", 403, "student dose not exists");
-    } else if (existingStudent && existingStudent.id !== req.user.id) {
+      return { student };
+    } else {
       throw new ApiError("student", 400, "username taken");
     }
   }
   @Response(200, "student logged out")
   @Post("logout")
-  @Security("jwt", ["student"])
-  public async logout() {
+  @Middlewares(authenticateStudentJwt)
+  public async logout(): Promise<void> {
     this.setHeader("Set-Cookie", undefined);
+  }
+  @Middlewares(authenticateStudentJwt)
+  @Route("questions")
+  @Get("{questionId}")
+  public async getQuestion(
+    @Request() req: CustomStudentExpressRequest,
+    @Path("questionId") questionId: number
+  ): Promise<{ question: Question }> {
+    const question = await this.questionsService.getByQuestionId(questionId);
+    if (question) {
+      return { question };
+    }
+    throw new ApiError("student", 403, "question dose not exists");
+  }
+  @Middlewares(authenticateStudentJwt)
+  @Get("questions")
+  public async getQuestions(
+    @Request() req: CustomStudentExpressRequest
+  ): Promise<{ questions: Omit<Question, "answer">[] }> {
+    const questions = await this.questionsService.getAllQuestions();
+    if (questions) {
+      const newQuestions = questions.map((question) => {
+        const { answer: _, ...newQuestion } = question;
+        return newQuestion;
+      });
+      return { questions: newQuestions };
+    }
+    throw new ApiError("student", 403, "student dose not exists");
   }
 }

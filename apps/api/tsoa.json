@@ -4,26 +4,9 @@
   "controllerPathGlobs": ["src/**/*Controller.ts"],
   "spec": {
     "outputDirectory": "build",
-    "specVersion": 3,
-    "securityDefinitions": {
-      "api_key": {
-        "type": "apiKey",
-        "name": "access_token",
-        "in": "query"
-      },
-      "tsoa_auth": {
-        "type": "oauth2",
-        "authorizationUrl": "http://swagger.io/api/oauth/dialog",
-        "flow": "implicit",
-        "scopes": {
-          "write:pets": "modify things",
-          "read:pets": "read things"
-        }
-      }
-    }
+    "specVersion": 3
   },
   "routes": {
-    "routesDir": "build",
-    "authenticationModule": "./src/middleware/auth.ts"
+    "routesDir": "build"
   }
 }

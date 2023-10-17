@@ -1,17 +1,12 @@
 import { Student } from "@prisma/client";
 import { prisma } from "../app";
 import { ApiError } from "../errors/ApiError";
-import {
-  //   studentLoginParams,
-  studentLoginTypes,
-  // //   studentSignupParams,
-  studentSignupTypes,
-} from "types";
+import { studentLoginTypes, studentSignupTypes } from "types";
 import {
   studentLoginParams,
   studentSignupParams,
   profileParams,
-} from "./studentsController";
+} from "./student";
 
 export type StudentCreationParams = {
   firstname: string;
@@ -65,7 +60,7 @@ export class StudentsService {
   }
   public async authenticate(
     studentLoginParams: studentLoginParams
-  ): Promise<{ firstname: string; id: number }> {
+  ): Promise<{ firstname: string; id: number } | null> {
     const parsedInput = studentLoginTypes.safeParse(studentLoginParams);
     if (!parsedInput.success) {
       throw new ApiError(
@@ -79,11 +74,7 @@ export class StudentsService {
       const student = await prisma.student.findUnique({
         where: { username, password },
       });
-      if (student) {
-        return { firstname: student.firstname, id: student.id };
-      } else {
-        throw new ApiError("student", 401, "student dose not exists");
-      }
+      return student;
     } catch (e) {
       if (e instanceof ApiError) {
         throw new ApiError("student", 401, "student dose not exists");
@@ -94,7 +85,7 @@ export class StudentsService {
   public async update(
     id: number,
     profileParams: profileParams
-  ): Promise<profileParams> {
+  ): Promise<Student> {
     try {
       const updatedStudent = await prisma.student.update({
         where: { id },

@@ -3,11 +3,12 @@ import { RegisterRoutes } from "../build/routes";
 import { PrismaClient } from "@prisma/client";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import errorHandler from 'api-error-handler';
+import { Response as ExResponse, Request as ExRequest } from "express";
+import swaggerUi from "swagger-ui-express";
+
 export const app = express();
 export const prisma = new PrismaClient();
 
-app.use(errorHandler());
 // Use body parser to read sent json payloads
 app.use(
   urlencoded({
@@ -22,5 +23,9 @@ app.use(
 );
 app.use(json());
 app.use(cookieParser());
-
+app.use("/docs", swaggerUi.serve, async (_req: ExRequest, res: ExResponse) => {
+  return res.send(
+    swaggerUi.generateHTML(await import("../build/swagger.json"))
+  );
+});
 RegisterRoutes(app);

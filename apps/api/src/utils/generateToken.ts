@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { ApiError } from "./errors/ApiError";
+import { ApiError } from "../errors/ApiError";
 
 export const generateToken = (id: number, role: string) => {
   if (typeof process.env.SECRET !== "string") {

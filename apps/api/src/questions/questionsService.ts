@@ -1,12 +1,17 @@
 import { questionTypes } from "types";
 import { ApiError } from "../errors/ApiError";
 import { prisma } from "../app";
-import { Question } from "@prisma/client";
+import { Prisma, Question } from "@prisma/client";
 import { questionParams } from "./question";
+import { error } from "console";
+import { Res, Response } from "tsoa";
 
 // interface questionsI = questionParams & {id:number}
 export class QuestionsService {
-  public async create(questionParams: questionParams, creatorId: number) {
+  public async create(
+    questionParams: questionParams,
+    creatorId: number
+  ): Promise<Question> {
     const parsedInput = questionTypes.safeParse(questionParams);
     if (!parsedInput.success) {
       throw new ApiError(
@@ -26,7 +31,7 @@ export class QuestionsService {
       return question;
     } catch (e) {
       console.log(e);
-      throw new ApiError("db error", 500, "db error");
+      throw new ApiError("db error", 500, JSON.stringify({ error: e }));
     }
   }
   public async getByQuestionId(questionId: number) {
@@ -37,7 +42,7 @@ export class QuestionsService {
       return question;
     } catch (e) {
       console.log(e);
-      throw new ApiError("db error", 500, "db error");
+      throw new ApiError("db error", 500, JSON.stringify({ error: e }));
     }
   }
   public async getQuestionsByCreatorId(
@@ -53,7 +58,7 @@ export class QuestionsService {
       return teacher?.questions;
     } catch (e) {
       console.log(e);
-      throw new ApiError("db error", 500, "db error");
+      throw new ApiError("db error", 500, JSON.stringify({ error: e }));
     }
   }
   public async getAllQuestions(): Promise<Question[]> {
@@ -62,7 +67,7 @@ export class QuestionsService {
       return questions;
     } catch (e) {
       console.log(e);
-      throw new ApiError("db error", 500, "db error");
+      throw new ApiError("db error", 500, JSON.stringify({ error: e }));
     }
   }
   public async update(
@@ -77,7 +82,7 @@ export class QuestionsService {
       return updatedQuestion;
     } catch (e) {
       console.log(e);
-      throw new ApiError("db error", 500, "db error");
+      throw new ApiError("db error", 500, JSON.stringify({ error: e }));
     }
   }
 }
