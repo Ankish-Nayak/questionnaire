@@ -1,5 +1,5 @@
-import { Student } from "@prisma/client";
 import { prisma } from "../app";
+import { Student } from "./student";
 import { ApiError } from "../errors/ApiError";
 import { studentLoginTypes, studentSignupTypes } from "types";
 import {

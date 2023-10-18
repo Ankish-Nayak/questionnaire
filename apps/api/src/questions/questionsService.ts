@@ -1,10 +1,9 @@
 import { questionTypes } from "types";
 import { ApiError } from "../errors/ApiError";
 import { prisma } from "../app";
-import { Prisma, Question } from "@prisma/client";
+// import { Prisma, Question } from "@prisma/client";
+import { Question } from "./question";
 import { questionParams } from "./question";
-import { error } from "console";
-import { Res, Response } from "tsoa";
 
 // interface questionsI = questionParams & {id:number}
 export class QuestionsService {

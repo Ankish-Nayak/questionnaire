@@ -1,7 +1,10 @@
 import {
   Body,
+  BodyProp,
   Controller,
+  Example,
   Get,
+  OperationId,
   Path,
   Post,
   Put,
@@ -19,7 +22,7 @@ import {
 } from "./teacher";
 import { TeachersService } from "./teachersService";
 import { ApiError } from "../errors/ApiError";
-import { Question, Teacher } from "@prisma/client";
+import { Question } from "../questions/question";
 import { generateToken } from "../utils/generateToken";
 import { QuestionsService } from "../questions/questionsService";
 import { questionParams } from "../questions/question";
@@ -38,6 +41,13 @@ export class TeachersController extends Controller {
     this.questionsService = new QuestionsService();
   }
   @Post("signup")
+  @OperationId("teacherSignup")
+  @Example({
+    firstname: "amber",
+    lastname: "nayak",
+    username: "ambernayak@gmail.com",
+    password: "12345678",
+  })
   public async signup(
     @Body() teacherSignParams: teacherSignupParams
   ): Promise<{ firstname: string }> {
@@ -53,8 +63,10 @@ export class TeachersController extends Controller {
     return { firstname: teacher.firstname };
   }
   @Post("login")
+  @OperationId("teacherLogin")
   public async login(
-    @Body() teacherLoginParams: teacherLoginParams
+    @Body()
+    teacherLoginParams: teacherLoginParams
   ): Promise<{ firstname: string }> {
     const teacher = await this.teachersService.authenticate(teacherLoginParams);
     if (!teacher) {
@@ -66,11 +78,10 @@ export class TeachersController extends Controller {
   }
   @Middlewares(authenticateTeacherJwt)
   @Get("me")
+  @OperationId("teacherGetUsername")
   public async getFirstname(@Request() req: CustomTeacherRequest) {
     const { teacherId } = req.headers;
-    const teacher = await this.teachersService.getById(
-      req.headers["teacherId"]
-    );
+    const teacher = await this.teachersService.getById(teacherId);
     if (teacher) {
       return { firstname: teacher.firstname };
     }
@@ -78,6 +89,7 @@ export class TeachersController extends Controller {
   }
   @Get("profile")
   @Middlewares(authenticateTeacherJwt)
+  @OperationId("teacherGetProfile")
   public async getProfile(
     @Request() req: CustomTeacherRequest
   ): Promise<profileParams> {
@@ -91,6 +103,12 @@ export class TeachersController extends Controller {
   }
   @Put("profile")
   @Middlewares(authenticateTeacherJwt)
+  @OperationId("teacherUpdateProfile")
+  @Example({
+    firstname: "ankish",
+    username: "ankishnayak@gmail.com",
+    lastname: "updated nayak",
+  })
   public async updateProfile(
     @Request() req: CustomTeacherRequest,
     @Body() teacherProfilParams: teacherProfileParams
@@ -117,16 +135,19 @@ export class TeachersController extends Controller {
   @Response(200, "teacher logged out")
   @Middlewares(authenticateTeacherJwt)
   @Post("logout")
+  @OperationId("teacherLogout")
   public async logout(@Request() req: ExRequest) {
     this.setHeader("Set-Cookie", undefined);
   }
   @Get("questions")
   @Middlewares(authenticateTeacherJwt)
+  @OperationId("teacherGetAllQuestions")
   public async getAllQuestions(): Promise<Question[]> {
     return await this.questionsService.getAllQuestions();
   }
   //   @Route("{:teacherId}")
   @Get("{:teacherId}/questions")
+  @OperationId("teacherGetAllQuestionsOfTeacher")
   public async getAllQuestionsParticularTeacher(
     @Query("teacherId") teacherId: number
   ): Promise<{ questions: Omit<questionParams, "answer">[] }> {
@@ -143,6 +164,7 @@ export class TeachersController extends Controller {
   }
   //   @Route("questions")
   @Get("questions/me")
+  @OperationId("teacherGetAllMyQuestions")
   @Middlewares(authenticateTeacherJwt)
   public async getAllQuestionsMe(
     @Request() req: CustomTeacherRequest
@@ -157,6 +179,17 @@ export class TeachersController extends Controller {
   }
   @Post("questions")
   @Middlewares(authenticateTeacherJwt)
+  @OperationId("teacherCreateQuestion")
+  @Example({
+    title: "title",
+    description: "describe title",
+    question: "what is your name?",
+    option1: "a",
+    option2: "b",
+    option3: "c",
+    option4: "d",
+    answer: "a",
+  })
   public async createQuestion(
     @Request() req: CustomTeacherRequest,
     @Body() questionParams: questionParams
@@ -167,6 +200,17 @@ export class TeachersController extends Controller {
   //   @Route("questions")
   @Post("questions/{questionId}")
   @Middlewares(authenticateTeacherJwt)
+  @OperationId("teacherUpdateQuestion")
+  @Example({
+    title: "updated title",
+    description: "describe title",
+    question: "what is your name?",
+    option1: "a",
+    option2: "b",
+    option3: "c",
+    option4: "d",
+    answer: "a",
+  })
   public async updateQuestion(
     @Path("questionId") questionId: number,
     @Body() questionParams: questionParams,

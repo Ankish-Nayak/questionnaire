@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Example,
   Get,
   Middlewares,
+  OperationId,
   Path,
   Post,
   Request,
@@ -10,9 +12,9 @@ import {
   Route,
 } from "tsoa";
 import { StudentsService } from "./studentsService";
-import { Question } from "@prisma/client";
 import { generateToken } from "../utils/generateToken";
-import { Student } from "@prisma/client";
+import { Question } from "../questions/question";
+import { Student } from "./student";
 import { ApiError } from "../errors/ApiError";
 import { QuestionsService } from "../questions/questionsService";
 import { authenticateStudentJwt } from "../middleware/auth";
@@ -23,7 +25,7 @@ import {
   profileParams,
 } from "./student";
 @Route("students")
-export class UsersController extends Controller {
+export class StudentsController extends Controller {
   private studentService;
   private questionsService;
   constructor() {
@@ -33,6 +35,7 @@ export class UsersController extends Controller {
   }
   @Middlewares(authenticateStudentJwt)
   @Get("me")
+  @OperationId("studentGetUsername")
   public async getUsername(
     @Request() req: CustomStudentExpressRequest
   ): Promise<{ firstname: string }> {
@@ -46,8 +49,14 @@ export class UsersController extends Controller {
     throw new ApiError("UserNotFound", 403, "student dose not exists");
   }
   @Post("login")
+  @OperationId("studentLogin")
+  @Example<studentLoginParams>({
+    username: "ambernayak@gmail.com",
+    password: "12345678",
+  })
   public async login(
-    @Body() studentParams: studentLoginParams
+    @Body()
+    studentParams: studentLoginParams
   ): Promise<{ firstname: string }> {
     const existingStudent =
       await this.studentService.authenticate(studentParams);
@@ -62,8 +71,16 @@ export class UsersController extends Controller {
   }
   @Response(201, "Student created")
   @Post("signup")
+  @OperationId("studentSignup")
   public async signup(
-    @Body() studentParams: studentSignupParams
+    @Body()
+    @Example({
+      firstname: "amber",
+      lastname: "nayak",
+      username: "ambernayak@gmail.com",
+      password: "12345678",
+    })
+    studentParams: studentSignupParams
   ): Promise<{ firstname: string }> {
     const existingFirstname =
       await this.studentService.authenticate(studentParams);
@@ -77,22 +94,32 @@ export class UsersController extends Controller {
   }
   @Middlewares(authenticateStudentJwt)
   @Get("profile")
+  @OperationId("studentGetProfile")
   public async getProfile(
     @Request() req: CustomStudentExpressRequest
-  ): Promise<{ student: Student }> {
+  ): Promise<{ student: Omit<Student, "password"> }> {
     const { studentId } = req.headers;
     const student = await this.studentService.getById(studentId);
     if (student) {
-      return { student };
+      const { password: _, ...newStudent } = student;
+      return { student: newStudent };
     }
     throw new ApiError("UserNotFound", 403, "student dose not exists");
   }
   @Middlewares(authenticateStudentJwt)
   @Post("profile")
+  @OperationId("studentUpdateProfile")
   public async updateProfile(
-    @Request() req: CustomStudentExpressRequest,
-    @Body() profileParams: profileParams
-  ): Promise<{ student: Student }> {
+    @Request()
+    req: CustomStudentExpressRequest,
+    @Body()
+    @Example({
+      firstname: "amber",
+      lastname: "updated nayak",
+      username: "ambernayak@gmail.com",
+    })
+    profileParams: profileParams
+  ): Promise<{ student: Omit<Student, "password"> }> {
     const { studentId } = req.headers;
     const existingStudent = await this.studentService.getByUsername(
       profileParams.username
@@ -105,7 +132,8 @@ export class UsersController extends Controller {
         studentId,
         profileParams
       );
-      return { student };
+      const { password: _, ...newStudent } = student;
+      return { student: newStudent };
     } else {
       throw new ApiError("student", 400, "username taken");
     }
@@ -113,24 +141,28 @@ export class UsersController extends Controller {
   @Response(200, "student logged out")
   @Post("logout")
   @Middlewares(authenticateStudentJwt)
+  @OperationId("studentLogout")
   public async logout(): Promise<void> {
     this.setHeader("Set-Cookie", undefined);
   }
   @Middlewares(authenticateStudentJwt)
   @Route("questions")
   @Get("{questionId}")
+  @OperationId("studentGetQuestion")
   public async getQuestion(
     @Request() req: CustomStudentExpressRequest,
     @Path("questionId") questionId: number
-  ): Promise<{ question: Question }> {
+  ): Promise<{ question: Omit<Question, "answer"> }> {
     const question = await this.questionsService.getByQuestionId(questionId);
     if (question) {
-      return { question };
+      const { answer: _, ...newQuestion } = question;
+      return { question: newQuestion };
     }
     throw new ApiError("student", 403, "question dose not exists");
   }
   @Middlewares(authenticateStudentJwt)
   @Get("questions")
+  @OperationId("studentGetAllQuestions")
   public async getQuestions(
     @Request() req: CustomStudentExpressRequest
   ): Promise<{ questions: Omit<Question, "answer">[] }> {

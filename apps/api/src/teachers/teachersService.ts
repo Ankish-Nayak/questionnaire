@@ -1,7 +1,7 @@
 import { teacherLoginTypes, profileTypes } from "types";
 import { ApiError } from "../errors/ApiError";
 import { prisma } from "../app";
-import { Teacher } from "@prisma/client";
+import { Teacher } from "./teacher";
 import {
   teacherLoginParams,
   teacherSignupParams,

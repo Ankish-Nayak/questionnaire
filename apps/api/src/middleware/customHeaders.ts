@@ -29,7 +29,7 @@
 //           "write:pets": "modify things",
 //           "read:pets": "read things"
 //         }
-//       } 
+//       }
 //     }
 //   },
 //   "routes": {
