@@ -9,8 +9,8 @@ import {
 } from "types";
 import { prisma } from "..";
 export const router = express.Router();
-import jwt from "jsonwebtoken";
-import Cookies from "cookies";
+import * as jwt from "jsonwebtoken";
+import * as Cookies from "cookies";
 import { authenticateTeacherJwt } from "../middlewares/auth";
 import dotenv from "dotenv";
 dotenv.config();
@@ -32,7 +32,7 @@ router.post("/signup", async (req: Request, res: Response) => {
       const token: string = jwt.sign({ username, role: "teacher" }, secret, {
         expiresIn: "1h",
       });
-      const cookies = new Cookies(req, res);
+      const cookies = new Cookies.default(req, res);
       cookies.set("teacher-token", token);
       const newTeacher = await prisma.teacher.create({
         data: {
@@ -65,7 +65,7 @@ router.post("/login", async (req: Request, res: Response) => {
       const token: string = jwt.sign({ username, role: "teacher" }, secret, {
         expiresIn: "1h",
       });
-      const cookie = new Cookies(req, res);
+      const cookie = new Cookies.default(req, res);
       cookie.set("teacher-token", token);
       res.json({
         message: "Teacher loggedIn successfully",
@@ -264,24 +264,30 @@ router.get(
 );
 
 // me route
-router.get("/me", authenticateTeacherJwt, async (req: Request, res: Response) => {
-  if (typeof req.headers["teacher"] === "string") {
-    const username: string = req.headers["teacher"];
-    try {
-      const teacher = await prisma.teacher.findUnique({ where: { username } });
-      if (teacher) {
-        res.json({ firstname: teacher.firstname });
-      } else {
-        res.status(403).json({ message: "Teacher dose not exists" });
+router.get(
+  "/me",
+  authenticateTeacherJwt,
+  async (req: Request, res: Response) => {
+    if (typeof req.headers["teacher"] === "string") {
+      const username: string = req.headers["teacher"];
+      try {
+        const teacher = await prisma.teacher.findUnique({
+          where: { username },
+        });
+        if (teacher) {
+          res.json({ firstname: teacher.firstname });
+        } else {
+          res.status(403).json({ message: "Teacher dose not exists" });
+        }
+      } catch (e) {
+        console.log(e);
+        res.status(404).json({ message: "db error" });
       }
-    } catch (e) {
-      console.log(e);
-      res.status(404).json({ message: "db error" });
+    } else {
+      res.status(403).json({ message: "Teacher does not exists" });
     }
-  } else {
-    res.status(403).json({ message: "Teacher does not exists" });
   }
-});
+);
 
 // get particular question
 router.get(
@@ -320,100 +326,118 @@ router.get(
 );
 
 // fetch teacher profile
-router.get("/profile", authenticateTeacherJwt, async (req: Request, res: Response) => {
-  if (typeof req.headers["teacher"] === "string") {
-    const username: string = req.headers["teacher"];
-    try {
-      const teacher = await prisma.teacher.findUnique({ where: { username } });
-      if (teacher) {
-        res.json({
-          firstname: teacher.firstname,
-          lastname: teacher.lastname,
-          createdAt: teacher.createdAt,
-          username: teacher.username,
+router.get(
+  "/profile",
+  authenticateTeacherJwt,
+  async (req: Request, res: Response) => {
+    if (typeof req.headers["teacher"] === "string") {
+      const username: string = req.headers["teacher"];
+      try {
+        const teacher = await prisma.teacher.findUnique({
+          where: { username },
         });
-      } else {
-        res.status(403).json({ message: "Student dose not exists" });
+        if (teacher) {
+          res.json({
+            firstname: teacher.firstname,
+            lastname: teacher.lastname,
+            createdAt: teacher.createdAt,
+            username: teacher.username,
+          });
+        } else {
+          res.status(403).json({ message: "Student dose not exists" });
+        }
+      } catch (e) {
+        console.log(e);
+        res.status(404).json({ message: "db error" });
       }
-    } catch (e) {
-      console.log(e);
-      res.status(404).json({ message: "db error" });
+    } else {
+      res.status(403).json({ message: "Teacher dose not exists" });
     }
-  } else {
-    res.status(403).json({ message: "Teacher dose not exists" });
   }
-});
+);
 
 // update teacher profile
-router.put("/profile", authenticateTeacherJwt, async (req: Request, res: Response) => {
-  if (typeof req.headers["teacher"] === "string") {
-    const username: string = req.headers["teacher"];
-    const parsedInputs = profileTypes.safeParse(req.body);
-    if (!parsedInputs.success) {
-      return res.status(411).json({ error: parsedInputs.error });
-    }
-    const data: profileParams = parsedInputs.data;
-    try {
-      const teacher = await prisma.teacher.findUnique({ where: { username } });
-      if (teacher) {
-        const existingTeacher = await prisma.teacher.findUnique({
-          where: { username: data.username },
-        });
-        if (existingTeacher && existingTeacher.id !== teacher.id) {
-          res.status(411).json({ message: "username taken" });
-        } else {
-          const updatedTeacher = await prisma.teacher.update({
-            where: { id: teacher.id },
-            data: {
-              ...data,
-            },
-          });
-          if (updatedTeacher) {
-            const token: string = jwt.sign(
-              { username: updatedTeacher.username, role: "teacher" },
-              secret,
-              { expiresIn: "1h" }
-            );
-            const cookie = new Cookies(req, res);
-            cookie.set("teacher-token", token);
-            res.json({
-              message: "Updated successfully",
-              firstname: updatedTeacher.firstname,
-            });
-          } else {
-            res.status(403).json({ message: "Failed to update" });
-          }
-        }
-      } else {
-        res.status(403).json({ message: "Teacher dose not exists" });
+router.put(
+  "/profile",
+  authenticateTeacherJwt,
+  async (req: Request, res: Response) => {
+    if (typeof req.headers["teacher"] === "string") {
+      const username: string = req.headers["teacher"];
+      const parsedInputs = profileTypes.safeParse(req.body);
+      if (!parsedInputs.success) {
+        return res.status(411).json({ error: parsedInputs.error });
       }
-    } catch (e) {
-      console.log(e);
-      res.status(404).json({ message: "db error" });
+      const data: profileParams = parsedInputs.data;
+      try {
+        const teacher = await prisma.teacher.findUnique({
+          where: { username },
+        });
+        if (teacher) {
+          const existingTeacher = await prisma.teacher.findUnique({
+            where: { username: data.username },
+          });
+          if (existingTeacher && existingTeacher.id !== teacher.id) {
+            res.status(411).json({ message: "username taken" });
+          } else {
+            const updatedTeacher = await prisma.teacher.update({
+              where: { id: teacher.id },
+              data: {
+                ...data,
+              },
+            });
+            if (updatedTeacher) {
+              const token: string = jwt.sign(
+                { username: updatedTeacher.username, role: "teacher" },
+                secret,
+                { expiresIn: "1h" }
+              );
+              const cookie = new Cookies.default(req, res);
+              cookie.set("teacher-token", token);
+              res.json({
+                message: "Updated successfully",
+                firstname: updatedTeacher.firstname,
+              });
+            } else {
+              res.status(403).json({ message: "Failed to update" });
+            }
+          }
+        } else {
+          res.status(403).json({ message: "Teacher dose not exists" });
+        }
+      } catch (e) {
+        console.log(e);
+        res.status(404).json({ message: "db error" });
+      }
+    } else {
+      res.status(403).json({ message: "Teacher dose not exists" });
     }
-  } else {
-    res.status(403).json({ message: "Teacher dose not exists" });
   }
-});
+);
 
 // logout router
-router.post("/logout", authenticateTeacherJwt, async (req: Request, res: Response) => {
-  if (typeof req.headers["teacher"] === "string") {
-    const username: string = req.headers["teacher"];
-    try {
-      const teacher = await prisma.teacher.findUnique({ where: { username } });
-      if (teacher) {
-        const cookie = new Cookies(req, res);
-        cookie.set("teacher-token", null);
-        res.json({ message: "Teacher logout successfully" });
-      } else {
-        res.status(403).json({ message: "Teacher dose not exists" });
+router.post(
+  "/logout",
+  authenticateTeacherJwt,
+  async (req: Request, res: Response) => {
+    if (typeof req.headers["teacher"] === "string") {
+      const username: string = req.headers["teacher"];
+      try {
+        const teacher = await prisma.teacher.findUnique({
+          where: { username },
+        });
+        if (teacher) {
+          const cookie = new Cookies.default(req, res);
+          cookie.set("teacher-token", null);
+          res.json({ message: "Teacher logout successfully" });
+        } else {
+          res.status(403).json({ message: "Teacher dose not exists" });
+        }
+      } catch (e) {
+        console.log(e);
+        res.status(404).json({ message: "db error" });
       }
-    } catch (e) {
-      console.log(e);
-      res.status(404).json({ message: "db error" });
+    } else {
+      res.status(403).json({ message: "Teacher dose not exists" });
     }
-  } else {
-    res.status(403).json({ message: "Teacher dose not exists" });
   }
-});
+);

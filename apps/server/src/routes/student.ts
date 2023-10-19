@@ -8,9 +8,9 @@ import {
   studentSignupTypes,
 } from "types";
 import { prisma } from "..";
-import Cookies from "cookies";
+import * as Cookies from "cookies";
 export const router = express.Router();
-import jwt from "jsonwebtoken";
+import * as jwt from "jsonwebtoken";
 import { authenticateStudentJwt } from "../middlewares/auth";
 const secret: string = process.env.SECRET || "";
 console.log(secret);
@@ -38,7 +38,7 @@ router.post("/signup", async (req: Request, res: Response) => {
         },
       });
       if (newTeacher) {
-        const cookie = new Cookies(req, res);
+        const cookie = new Cookies.default(req, res);
         const token = jwt.sign({ username, role: "student" }, secret, {
           expiresIn: "1h",
         });
@@ -72,7 +72,7 @@ router.post("/login", async (req: Request, res: Response) => {
       const token = jwt.sign({ username, role: "student" }, secret, {
         expiresIn: "1h",
       });
-      const cookie = new Cookies(req, res);
+      const cookie = new Cookies.default(req, res);
       cookie.set("student-token", token);
       res.json({
         message: "Student logged in successfully",
@@ -226,7 +226,7 @@ router.put("/profile", authenticateStudentJwt, async (req: Request, res: Respons
               secret,
               { expiresIn: "1h" }
             );
-            const cookies = new Cookies(req, res);
+            const cookies = new Cookies.default(req, res);
             cookies.set("student-token", token);
             res.json({
               message: "updated successfully",
@@ -327,7 +327,7 @@ router.post("/logout", authenticateStudentJwt, async (req: Request, res: Respons
     try {
       const student = await prisma.student.findUnique({ where: { username } });
       if (student) {
-        const cookie = new Cookies(req, res);
+        const cookie = new Cookies.default(req, res);
         cookie.set("student-token", null);
         res.json({ message: "Student logged out" });
       } else {

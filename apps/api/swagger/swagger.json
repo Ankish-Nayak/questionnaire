@@ -1,0 +1,262 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": { "200": { "description": "" } }
+      }
+    },
+    "/students/signup": {
+      "get": {
+        "operationId": "studentSignup",
+        "summary": "",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "" } }
+      }
+    },
+    "/students/login": {
+      "post": {
+        "operationId": "studentLogin",
+        "summary": "",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/StudentLoginDto" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "student logged in" } }
+      }
+    },
+    "/students/me": {
+      "get": {
+        "operationId": "StudentsController_getFirstname",
+        "parameters": [],
+        "responses": { "200": { "description": "" } }
+      }
+    },
+    "/students/profile": {
+      "get": {
+        "operationId": "StudentsController_getProfile",
+        "parameters": [],
+        "responses": { "200": { "description": "" } }
+      },
+      "post": {
+        "operationId": "StudentsController_updateProfile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentUpdateProfileDto"
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "" } }
+      }
+    },
+    "/students/questions/{questionId}": {
+      "get": {
+        "operationId": "StudentsController_getQuestion",
+        "parameters": [
+          {
+            "name": "questionId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": { "200": { "description": "" } }
+      }
+    },
+    "/students/questions": {
+      "get": {
+        "operationId": "StudentsController_getQuestions",
+        "parameters": [],
+        "responses": { "200": { "description": "" } }
+      }
+    },
+    "/teachers/signup": {
+      "get": {
+        "operationId": "teacherSignup",
+        "summary": "",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TeacherSignupDto" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "" } }
+      }
+    },
+    "/teachers/login": {
+      "post": {
+        "operationId": "teacherLogin",
+        "summary": "",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TeacherLoginDto" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "teacher logged in" } }
+      }
+    },
+    "/teachers/me": {
+      "get": {
+        "operationId": "TeachersController_getFirstname",
+        "parameters": [],
+        "responses": { "200": { "description": "" } }
+      }
+    },
+    "/teachers/profile": {
+      "get": {
+        "operationId": "TeachersController_getProfile",
+        "parameters": [],
+        "responses": { "200": { "description": "" } }
+      },
+      "post": {
+        "operationId": "TeachersController_updateProfile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeacherUpdateProfileDto"
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "" } }
+      }
+    },
+    "/teachers/questions": {
+      "get": {
+        "operationId": "TeachersController_getQuestions",
+        "parameters": [],
+        "responses": { "200": { "description": "" } }
+      },
+      "post": {
+        "operationId": "TeachersController_createQuestion",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/QuestionCreateDto" }
+            }
+          }
+        },
+        "responses": { "201": { "description": "" } }
+      }
+    },
+    "/teachers/questions/{questionId}": {
+      "get": {
+        "operationId": "TeachersController_getQuestion",
+        "parameters": [
+          {
+            "name": "questionId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": { "200": { "description": "" } }
+      }
+    },
+    "/teachers/{teacherId}/questions": {
+      "get": {
+        "operationId": "TeachersController_getParticularTeacherQuestions",
+        "parameters": [
+          {
+            "name": "teacherId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": { "200": { "description": "" } }
+      }
+    }
+  },
+  "info": {
+    "title": "Questionnaire Open Api",
+    "description": "Questionnaire api description",
+    "version": "3.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "StudentLoginDto": {
+        "type": "object",
+        "properties": {
+          "username": { "type": "string" },
+          "password": { "type": "string" }
+        },
+        "required": ["username", "password"]
+      },
+      "StudentUpdateProfileDto": {
+        "type": "object",
+        "properties": {
+          "username": { "type": "string" },
+          "firstname": { "type": "string" },
+          "lastname": { "type": "string" },
+          "password": { "type": "string" }
+        },
+        "required": ["username", "firstname", "lastname", "password"]
+      },
+      "TeacherSignupDto": {
+        "type": "object",
+        "properties": {
+          "firstname": { "type": "string" },
+          "lastname": { "type": "string" },
+          "username": { "type": "string" },
+          "password": { "type": "string" }
+        },
+        "required": ["firstname", "lastname", "username", "password"]
+      },
+      "TeacherLoginDto": {
+        "type": "object",
+        "properties": {
+          "username": { "type": "string" },
+          "password": { "type": "string" }
+        },
+        "required": ["username", "password"]
+      },
+      "TeacherUpdateProfileDto": {
+        "type": "object",
+        "properties": {
+          "username": { "type": "string" },
+          "firstname": { "type": "string" },
+          "lastname": { "type": "string" },
+          "password": { "type": "string" }
+        },
+        "required": ["username", "firstname", "lastname", "password"]
+      },
+      "QuestionCreateDto": { "type": "object", "properties": {} }
+    }
+  }
+}

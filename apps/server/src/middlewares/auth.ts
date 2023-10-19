@@ -1,13 +1,13 @@
-import Cookies from "cookies";
+import * as Cookies from "cookies";
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import * as jwt from "jsonwebtoken";
 // passes request when both tokens are correct student and teacher
 export const authenticateJwt = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const cookie = new Cookies(req, res);
+  const cookie = new Cookies.default(req, res);
   const secret: string = process.env.SECRET || "";
   console.log(secret);
   if (cookie.get("student-token") || cookie.get("teacher-token")) {
@@ -50,7 +50,7 @@ export const authenticateStudentJwt = (
   res: Response,
   next: NextFunction
 ) => {
-  const cookie = new Cookies(req, res);
+  const cookie = new Cookies.default(req, res);
   const token = cookie.get("student-token");
   const secret = process.env.SECRET;
   if (typeof token === "string" && typeof secret === "string") {
@@ -77,7 +77,7 @@ export const authenticateTeacherJwt = (
   res: Response,
   next: NextFunction
 ) => {
-  const cookie = new Cookies(req, res);
+  const cookie = new Cookies.default(req, res);
   const token = cookie.get("teacher-token");
   const secret = process.env.SECRET;
   if (typeof token === "string" && typeof secret === "string") {
