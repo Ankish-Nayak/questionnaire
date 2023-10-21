@@ -14,23 +14,40 @@ services:
       - postgresdb_data:/data/db
 
   api:
-    build:
+    build: 
       context: ../
-      dockerfile: ./docker/api.Dockerfile
-    restart: always
-    ports:
-      - "3000:3000"
+      dockerfile: ./docker/api.nestjs.Dockerfile
+    restart: unless-stopped
     depends_on:
       - postgresdb
+    ports:
+      - "3000:3000"
+      - "9229:9229"
     volumes:
-      # binds 
-      # server 
-      - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/apps/server:/usr/src/app/apps/server:delegated"
-      # packages prisma folder 
+      - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/apps/api:/usr/src/app/apps/api:delegated"
+      # packages prisma folder
       - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/packages/prisma:/usr/src/app/packages/prisma:delegated"
       # packages types folder 
       - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/packages/types:/usr/src/app/packages/types:delegated"
     tty: true
+  # api:
+  #   build:
+  #     context: ../
+  #     dockerfile: ./docker/api.Dockerfile
+  #   restart: always
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - postgresdb
+  #   volumes:
+  #     # binds 
+  #     # server 
+  #     - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/apps/server:/usr/src/app/apps/server:delegated"
+  #     # packages prisma folder 
+  #     - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/packages/prisma:/usr/src/app/packages/prisma:delegated"
+  #     # packages types folder 
+  #     - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/packages/types:/usr/src/app/packages/types:delegated"
+  #   tty: true
   frontend:
     build:
       context: ../

@@ -47,18 +47,15 @@ export class StudentsController {
     this.questionsService = new QuestionsService(this.prisma);
     this.studentsService = new StudentsService(this.prisma);
   }
-  @Get('signup')
+  @Post('signup')
   @ApiOperation({
     operationId: 'studentSignup',
-  })
-  @ApiBody({
-    type: studentSignupTypes.parse,
   })
   async signUp(
     @Body() signUpParam: StudentSignupDto,
     @Response() res: ExResponse,
     @Request() req: ExRequest,
-  ): Promise<{ firstname: string; message: string } | undefined> {
+  ) {
     const parsedInput = studentSignupTypes.safeParse(signUpParam);
     if (!parsedInput.success) {
       res.status(411).json({ error: parsedInput.error });
@@ -74,10 +71,10 @@ export class StudentsController {
         const token = generateToken(student.id, 'student');
         const cookies = new Cookies(req, res);
         cookies.set('student-token', token, { httpOnly: true });
-        return {
+        res.status(200).json({
           firstname: student.firstname,
           message: 'student created successfully',
-        };
+        });
       }
     }
   }
@@ -113,6 +110,9 @@ export class StudentsController {
   }
 
   @Get('me')
+  @ApiOperation({
+    operationId: 'studentGetFirstname',
+  })
   async getFirstname(@Req() req: StudentRequest, @Res() res: ExResponse) {
     const { studentId } = req.headers;
     const existingStudent = await this.studentsService.student({
@@ -126,6 +126,9 @@ export class StudentsController {
   }
 
   @Get('profile')
+  @ApiOperation({
+    operationId: 'studentGetProfile',
+  })
   async getProfile(@Req() req: StudentRequest, @Res() res: ExResponse) {
     const { studentId } = req.headers;
     console.log(studentId);
@@ -139,6 +142,9 @@ export class StudentsController {
   }
 
   @Post('profile')
+  @ApiOperation({
+    operationId: 'studentUpdateProfile',
+  })
   async updateProfile(
     @Req() req: StudentRequest,
     @Body() param: StudentUpdateProfileDto,
@@ -170,6 +176,9 @@ export class StudentsController {
   }
 
   @Get('questions/:questionId')
+  @ApiOperation({
+    operationId: 'studentGetQuestion',
+  })
   async getQuestion(
     @Req() req: StudentRequest,
     @Res() res: ExResponse,
@@ -185,11 +194,14 @@ export class StudentsController {
   }
 
   @Get('questions')
+  @ApiOperation({
+    operationId: 'studentGetQuestions',
+  })
   async getQuestions(@Res() res: ExResponse) {
     const questions = await this.questionsService.questions();
     const newQuestions = questions.map((question) => {
       const { answer: _, ...newQuestion } = question;
-      return newQuestion;
+      res.status(200).json({ question: newQuestion });
     });
     res.status(200).json({ questions: newQuestions });
   }

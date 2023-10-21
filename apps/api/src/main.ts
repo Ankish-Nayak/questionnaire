@@ -13,7 +13,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
   const path =
-    '/home/ankish20000nayak/Projects/personal-projects/questionnaire/apps/api/swagger/swagger.json';
+  `${__dirname}/swagger.json`;
+    // '/home/ankish20000nayak/Projects/personal-projects/questionnaire/apps/api/swagger/swagger.json';
   fs.writeFile(path, JSON.stringify(document), (err) => {
     if (err) {
       console.log('got error', err);
@@ -21,6 +22,7 @@ async function bootstrap() {
       console.log('written: ', path);
     }
   });
+
   await app.listen(3000);
 }
 bootstrap();

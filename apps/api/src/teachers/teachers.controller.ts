@@ -12,7 +12,12 @@ import {
   teacherSignupTypes,
   questionTypes,
 } from 'types';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiResponse,
+  OmitType,
+} from '@nestjs/swagger';
 import { generateToken } from 'src/common/utils/generateToken';
 import * as Cookies from 'cookies';
 import { IncomingHttpHeaders } from 'http2';
@@ -23,6 +28,7 @@ import {
 } from './dto/teachers.dto';
 import { QuestionCreateDto } from 'src/questions/dto/questions.dto';
 import { string } from 'zod';
+import { StudentLoginDto } from 'src/students/dto/students.dto';
 export interface TeacherRequest extends ExRequest {
   headers: IncomingHttpHeaders & { teacherId: number; role: string };
 }
@@ -37,7 +43,7 @@ export class TeachersController {
     this.questionsService = new QuestionsService(this.prisma);
   }
 
-  @Get('signup')
+  @Post('signup')
   @ApiOperation({
     operationId: 'teacherSignup',
   })
@@ -45,7 +51,7 @@ export class TeachersController {
     @Body() signUpParam: TeacherSignupDto,
     @Res() res: ExResponse,
     @Req() req: ExRequest,
-  ): Promise<{ firstname: string; message: string } | undefined> {
+  ) {
     const parsedInput = teacherSignupTypes.safeParse(signUpParam);
     if (!parsedInput.success) {
       res.status(411).json({ error: parsedInput.error });
@@ -61,10 +67,10 @@ export class TeachersController {
         const token = generateToken(teacher.id, 'teacher');
         const cookies = new Cookies(req, res);
         cookies.set('teacher-token', token, { httpOnly: true });
-        return {
+        res.status(200).json({
           firstname: teacher.firstname,
           message: 'teacher created successfully',
-        };
+        });
       }
     }
   }
@@ -100,6 +106,9 @@ export class TeachersController {
   }
 
   @Get('me')
+  @ApiOperation({
+    operationId: 'teacherGetFirstname',
+  })
   async getFirstname(@Req() req: TeacherRequest, @Res() res: ExResponse) {
     const { teacherId } = req.headers;
     const existingTeacher = await this.teachersService.teacher({
@@ -113,6 +122,9 @@ export class TeachersController {
   }
 
   @Get('profile')
+  @ApiOperation({
+    operationId: 'teacherGetProfile',
+  })
   async getProfile(@Req() req: TeacherRequest, @Res() res: ExResponse) {
     const { teacherId } = req.headers;
     const existingTeacher = await this.teachersService.teacher({
@@ -125,6 +137,9 @@ export class TeachersController {
   }
 
   @Post('profile')
+  @ApiOperation({
+    operationId: 'teacherUpdateProfile',
+  })
   async updateProfile(
     @Req() req: TeacherRequest,
     @Body() param: TeacherUpdateProfileDto,
@@ -157,17 +172,23 @@ export class TeachersController {
 
   // all teacher questions
   @Get('questions')
+  @ApiOperation({
+    operationId: 'teacherGetQuestions',
+  })
   async getQuestions(@Res() res: ExResponse) {
     const questions = await this.questionsService.questions();
     const newQuestions = questions.map((question) => {
       const { answer: _, ...newQuestion } = question;
-      return newQuestion;
+      res.status(200).json({ question: newQuestion });
     });
     res.status(200).json({ questions: newQuestions });
   }
 
   // particular question
   @Get('questions/:questionId')
+  @ApiOperation({
+    operationId: 'teacherGetQuestion',
+  })
   async getQuestion(
     @Param('questionId') questionId: number,
     @Res() res: ExResponse,
@@ -182,6 +203,9 @@ export class TeachersController {
 
   // particular teacher all questions
   @Get('/:teacherId/questions')
+  @ApiOperation({
+    operationId: 'teacherGetParticularTeacherQuestions',
+  })
   async getParticularTeacherQuestions(
     @Param('teacherId') teacherId: number,
     @Res() res: ExResponse,
@@ -196,7 +220,7 @@ export class TeachersController {
       if (teacherId !== req.headers.teacherId) {
         questions = teacher.questions.map((question) => {
           const { answer: _, ...newQuestion } = question;
-          return newQuestion;
+          res.status(200).json({ question: newQuestion });
         });
       } else {
         questions = teacher.questions;
@@ -207,11 +231,14 @@ export class TeachersController {
     }
   }
   @Post('questions')
+  @ApiOperation({
+    operationId: 'teacherCreateQuestion',
+  })
   async createQuestion(
     @Body() param: QuestionCreateDto,
     @Req() req: TeacherRequest,
     @Res() res: ExResponse,
-  ): Promise<{ message: string; questionId: number } | undefined> {
+  ) {
     const parsedInput = questionTypes.safeParse(param);
     if (!parsedInput.success) {
       res.status(411).json({ error: parsedInput.error });
@@ -226,10 +253,10 @@ export class TeachersController {
           data: data,
           creatorId: existingStudent.id,
         });
-        return {
+        res.status(200).json({
           message: 'question created successfully',
           questionId: question.id,
-        };
+        });
       }
     }
   }
