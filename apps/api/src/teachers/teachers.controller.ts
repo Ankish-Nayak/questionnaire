@@ -12,19 +12,24 @@ import {
   teacherSignupTypes,
   questionTypes,
 } from 'types';
-import {
-  ApiOkResponse,
-  ApiOperation,
-  ApiResponse,
-  OmitType,
-} from '@nestjs/swagger';
+
+import { ApiOkResponse, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { PickType, OmitType } from '@nestjs/mapped-types';
 import { generateToken } from 'src/common/utils/generateToken';
 import * as Cookies from 'cookies';
 import { IncomingHttpHeaders } from 'http2';
 import {
+  TeacherCreateQuestionR,
+  TeacherFirstnameR,
+  TeacherGetProfileR,
+  TeacherGetQuestionWithAnswerR,
+  TeacherGetQuestionsR,
   TeacherLoginDto,
+  TeacherLoginR,
+  TeacherLogoutR,
   TeacherSignupDto,
   TeacherUpdateProfileDto,
+  TeacherUpdateProfileR,
 } from './dto/teachers.dto';
 import { QuestionCreateDto } from 'src/questions/dto/questions.dto';
 import { string } from 'zod';
@@ -32,6 +37,7 @@ import { StudentLoginDto } from 'src/students/dto/students.dto';
 export interface TeacherRequest extends ExRequest {
   headers: IncomingHttpHeaders & { teacherId: number; role: string };
 }
+
 @Controller('teachers')
 export class TeachersController {
   private teachersService;
@@ -46,6 +52,9 @@ export class TeachersController {
   @Post('signup')
   @ApiOperation({
     operationId: 'teacherSignup',
+  })
+  @ApiOkResponse({
+    type: TeacherLoginR,
   })
   async signUp(
     @Body() signUpParam: TeacherSignupDto,
@@ -79,7 +88,9 @@ export class TeachersController {
   @ApiOperation({
     operationId: 'teacherLogin',
   })
-  @ApiResponse({ status: 200, description: 'teacher logged in' })
+  @ApiOkResponse({
+    type: TeacherLoginR,
+  })
   async login(
     @Body() loginParams: TeacherLoginDto,
     @Res() res: ExResponse,
@@ -109,6 +120,9 @@ export class TeachersController {
   @ApiOperation({
     operationId: 'teacherGetFirstname',
   })
+  @ApiOkResponse({
+    type: TeacherFirstnameR,
+  })
   async getFirstname(@Req() req: TeacherRequest, @Res() res: ExResponse) {
     const { teacherId } = req.headers;
     const existingTeacher = await this.teachersService.teacher({
@@ -125,6 +139,9 @@ export class TeachersController {
   @ApiOperation({
     operationId: 'teacherGetProfile',
   })
+  @ApiOkResponse({
+    type: TeacherGetProfileR,
+  })
   async getProfile(@Req() req: TeacherRequest, @Res() res: ExResponse) {
     const { teacherId } = req.headers;
     const existingTeacher = await this.teachersService.teacher({
@@ -139,6 +156,9 @@ export class TeachersController {
   @Post('profile')
   @ApiOperation({
     operationId: 'teacherUpdateProfile',
+  })
+  @ApiOkResponse({
+    type: TeacherUpdateProfileR,
   })
   async updateProfile(
     @Req() req: TeacherRequest,
@@ -175,6 +195,10 @@ export class TeachersController {
   @ApiOperation({
     operationId: 'teacherGetQuestions',
   })
+  @ApiOkResponse({
+    type: TeacherGetQuestionsR,
+    isArray: true,
+  })
   async getQuestions(@Res() res: ExResponse) {
     const questions = await this.questionsService.questions();
     const newQuestions = questions.map((question) => {
@@ -189,7 +213,10 @@ export class TeachersController {
   @ApiOperation({
     operationId: 'teacherGetQuestion',
   })
-  async getQuestion(
+  @ApiOkResponse({
+    type: TeacherGetQuestionWithAnswerR,
+  })
+  async getQuestionWithAnswer(
     @Param('questionId') questionId: number,
     @Res() res: ExResponse,
   ) {
@@ -234,6 +261,9 @@ export class TeachersController {
   @ApiOperation({
     operationId: 'teacherCreateQuestion',
   })
+  @ApiOkResponse({
+    type: TeacherCreateQuestionR,
+  })
   async createQuestion(
     @Body() param: QuestionCreateDto,
     @Req() req: TeacherRequest,
@@ -258,6 +288,27 @@ export class TeachersController {
           questionId: question.id,
         });
       }
+    }
+  }
+
+  @Post('logout')
+  @ApiOperation({
+    operationId: 'teacherLogout',
+  })
+  @ApiOkResponse({
+    type: TeacherLogoutR,
+  })
+  async logout(@Req() req: TeacherRequest, @Res() res: ExResponse) {
+    const { teacherId } = req.headers;
+    const existingTeacher = await this.teachersService.teacher({
+      id: teacherId,
+    });
+    if (existingTeacher) {
+      const cookies = new Cookies(req, res);
+      cookies.set('teacher-token', null);
+      res.status(200).json({ message: 'teacher logged out' });
+    } else {
+      res.status(403).json({ message: 'teacher dose not exists' });
     }
   }
 }

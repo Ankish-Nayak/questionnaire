@@ -35,7 +35,7 @@ WORKDIR /usr/src/app
 COPY ./apps/api ./apps/api
 COPY ./packages/types/ ./packages/types/
 COPY ./packages/tsconfig  ./packages/tsconfig
-
+COPY ./packages/node-client ./packages/node-client
 EXPOSE 3000 9229
 WORKDIR /usr/src/app/apps/api
 

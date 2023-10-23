@@ -11,11 +11,14 @@ import {
 } from "@mui/material";
 import { profileParams } from "types";
 import { useSetRecoilState, RecoilState } from "recoil";
+import { api } from "../api/api";
 export const EditProfile = ({
-  href,
+  user,
+  // href,
   userState,
 }: {
-  href: string;
+  user: "student" | "teacher";
+  // href: string;
   userState: RecoilState<{
     isLoading: boolean;
     userEmail: string | null;
@@ -40,20 +43,37 @@ export const EditProfile = ({
       username,
     };
     try {
-      const response = await axios.put(href, JSON.stringify(parsedInputs), {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = response.data;
-      if (data.firstname) {
+      if (user === "student") {
+        const res = await api.studentUpdateProfile(parsedInputs);
         setOpen(true);
         setResult("success");
         setUser({
           isLoading: false,
-          userEmail: firstname,
+          userEmail: res.data.firstname,
+        });
+      } else {
+        const res = await api.teacherUpdateProfile(parsedInputs);
+        setOpen(true);
+        setResult("success");
+        setUser({
+          isLoading: false,
+          userEmail: res.data.firstname,
         });
       }
+      // const response = await axios.put(href, JSON.stringify(parsedInputs), {
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // });
+      // const data = response.data;
+      // if (data.firstname) {
+      //   setOpen(true);
+      //   setResult("success");
+      //   setUser({
+      //     isLoading: false,
+      //     userEmail: firstname,
+      //   });
+      // }
     } catch (e: any) {
       if (
         e.response &&
@@ -68,13 +88,17 @@ export const EditProfile = ({
   };
   const init = async () => {
     try {
-      const response = await axios.get(href);
-      const data = response.data;
-      if (data.firstname) {
-        setFirstname(data.firstname);
-        setLastname(data.lastname);
-        setUsername(data.username);
-      }
+      const res = await api.studentGetProfile();
+      setFirstname(res.data.firstname);
+      setLastname(res.data.lastname);
+      setUsername(res.data.username);
+      // const response = await axios.get(href);
+      // const data = response.data;
+      // if (data.firstname) {
+      //   setFirstname(data.firstname);
+      //   setLastname(data.lastname);
+      //   setUsername(data.username);
+      // }
     } catch (e) {
       console.log(e);
     }

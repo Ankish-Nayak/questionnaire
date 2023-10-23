@@ -29,6 +29,8 @@ services:
       - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/packages/prisma:/usr/src/app/packages/prisma:delegated"
       # packages types folder 
       - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/packages/types:/usr/src/app/packages/types:delegated"
+      # package node client
+      - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/packages/node-client:/usr/src/app/packages/node-client:delegated"
     tty: true
   # api:
   #   build:
@@ -70,6 +72,8 @@ services:
       - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/packages/ui:/usr/src/app/packages/ui:delegated"
       # packages types folder 
       - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/packages/types:/usr/src/app/packages/types:delegated"
+      # packages node-client folder
+      - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/packages/node-client:/usr/src/app/packages/node-client:delegated"
     tty: true
 
   linuxDistro:

@@ -13,7 +13,10 @@ import {
 } from "@mui/material";
 import { useRecoilState } from "recoil";
 import { questionCart } from "../store/atoms/questionCart";
-type question = questionParams & { id: number } & { creatorId: number };
+import { api } from "../api/api";
+type question = Omit<questionParams, "answer"> & { id: number } & {
+  creatorId: number;
+};
 export const Question = () => {
   const { questionId } = useParams();
   const [question, setQuestion] = useState<question>();
@@ -22,8 +25,8 @@ export const Question = () => {
   const init1 = async (): Promise<question> => {
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}/teacher/questions/${questionId}`,
+        const response = await api.studentGetQuestion(
+          parseInt(questionId as string),
           {
             headers: {
               "Content-Type": "application/json",
@@ -32,8 +35,8 @@ export const Question = () => {
         );
         const data = response.data;
         if (data.question) {
-          setQuestion(data.question);
-          resolve(data.question);
+          setQuestion(data);
+          resolve(data);
         }
       } catch (e) {
         const errObj = {

@@ -4,13 +4,14 @@ import { useSetRecoilState, RecoilState, useRecoilValue } from "recoil";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Card, TextField, Button } from "@mui/material";
+import { api } from "../api/api";
 export const Login = ({
-  href,
+  user,
   userState,
   navigateTo,
   _testActive,
 }: {
-  href: string;
+  user: "student" | "teacher";
   userState: RecoilState<{
     isLoading: boolean;
     userEmail: string | null;
@@ -33,16 +34,31 @@ export const Login = ({
       password,
     };
     try {
-      const response = await axios.post(href, JSON.stringify(loginInputs), {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = response.data;
-      if (data.firstname) {
+      if (user === "student") {
+        const res = await api.studentLogin(loginInputs);
+        // const res = await api.studentLogin({
+        //   studentLoginDto: loginInputs,
+        // });
+        const data = res.data;
+        if (data.firstname) {
+          setUser({
+            isLoading: false,
+            userEmail: data.firstname,
+          });
+          if (testActive) {
+            console.log("d");
+            navigate(
+              testActive === "running" ? "/startTest" : "/questions/view"
+            );
+          } else {
+            navigate("/questions");
+          }
+        }
+      } else {
+        const res = await api.teacherLogin(loginInputs);
         setUser({
           isLoading: false,
-          userEmail: data.firstname,
+          userEmail: res.data.firstname,
         });
         if (testActive) {
           console.log("d");
@@ -50,12 +66,30 @@ export const Login = ({
         } else {
           navigate("/questions");
         }
-      } else {
-        setUser({
-          isLoading: false,
-          userEmail: null,
-        });
       }
+      // const response = await axios.post(href, JSON.stringify(loginInputs), {
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // });
+      // const data = response.data;
+      // if (data.firstname) {
+      //   setUser({
+      //     isLoading: false,
+      //     userEmail: data.firstname,
+      //   });
+      //   if (testActive) {
+      //     console.log("d");
+      //     navigate(testActive === "running" ? "/startTest" : "/questions/view");
+      //   } else {
+      //     navigate("/questions");
+      //   }
+      // } else {
+      //   setUser({
+      //     isLoading: false,
+      //     userEmail: null,
+      //   });
+      // }
     } catch (e) {
       setUser({
         isLoading: false,

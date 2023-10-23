@@ -14,6 +14,7 @@ import { Profile, EditProfile, Login, Signup } from "ui";
 import { testActive as _testActive } from "./store/atoms/testActive.ts";
 import { Landing } from "ui";
 import { studentEmailState } from "./store/selectors/student.ts";
+import { api } from "./api/api.ts";
 function App() {
   axios.defaults.withCredentials = true;
   return (
@@ -31,7 +32,8 @@ function App() {
             element={
               <Signup
                 userState={studentState}
-                href={`${BASE_URL}/student/signup`}
+                user="student"
+                // href={`${BASE_URL}/student/signup`}
               />
             }
           />
@@ -39,7 +41,8 @@ function App() {
             path={"/login"}
             element={
               <Login
-                href={`${BASE_URL}/student/login`}
+                user="student"
+                // href={`${BASE_URL}/student/login`}
                 userState={studentState}
                 _testActive={_testActive}
               />
@@ -57,7 +60,8 @@ function App() {
             path={"/profile/edit"}
             element={
               <EditProfile
-                href={`${BASE_URL}/student/profile`}
+                user="student"
+                // href={`${BASE_URL}/student/profile`}
                 userState={studentState}
               />
             }
@@ -75,23 +79,11 @@ export const Init = () => {
   usePersistStorage();
   const init = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/student/me`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const res = await api.studentGetFirstname();
+      setStudent({
+        isLoading: false,
+        userEmail: res.data.firstname,
       });
-      const data = response.data;
-      if (data.firstname) {
-        setStudent({
-          isLoading: false,
-          userEmail: data.firstname,
-        });
-      } else {
-        setStudent({
-          isLoading: false,
-          userEmail: null,
-        });
-      }
     } catch (e) {
       console.log(e);
       setStudent({

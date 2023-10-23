@@ -3,12 +3,19 @@ import { useState } from "react";
 import { studentSignupParams } from "types";
 import { useSetRecoilState, RecoilState } from "recoil";
 import { Card, Button, TextField } from "@mui/material";
+import { api } from "../api/api";
+import {
+  assertParamExists,
+  setApiKeyToObject,
+} from "../../node-client/openapi/common";
 
 export const Signup = ({
-  href,
+  user,
+  // href,
   userState,
 }: {
-  href: string;
+  // href: string;
+  user: "student" | "teacher";
   userState: RecoilState<{
     isLoading: boolean;
     userEmail: string | null;
@@ -18,7 +25,7 @@ export const Signup = ({
   const [password, setPassword] = useState<string>("");
   const [firstname, setFirstname] = useState<string>("");
   const [lastname, setLastname] = useState<string>("");
-  const serUser = useSetRecoilState(userState);
+  const setUser = useSetRecoilState(userState);
 
   const handleOnClick = async () => {
     const parsedInputs: studentSignupParams = {
@@ -29,26 +36,39 @@ export const Signup = ({
     };
 
     try {
-      const response = await axios.post(href, JSON.stringify(parsedInputs), {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = response.data;
-      if (data.firstname) {
-        serUser({
+      if (user === "student") {
+        const res = await api.studentSignup(parsedInputs);
+        setUser({
           isLoading: false,
-          userEmail: data.firstname,
+          userEmail: res.data.firstname,
         });
       } else {
-        serUser({
+        const res = await api.teacherSignup(parsedInputs);
+        setUser({
           isLoading: false,
-          userEmail: null,
+          userEmail: res.data.firstname,
         });
       }
+      // const vresponse = await axios.post(href, JSON.stringify(parsedInputs), {
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // });
+      // const data = response.data;
+      // if (data.firstname) {
+      //   serUser({
+      //     isLoading: false,
+      //     userEmail: data.firstname,
+      //   });
+      // } else {
+      //   serUser({
+      //     isLoading: false,
+      //     userEmail: null,
+      //   });
+      // }
     } catch (e) {
       console.log(e);
-      serUser({
+      setUser({
         isLoading: false,
         userEmail: null,
       });

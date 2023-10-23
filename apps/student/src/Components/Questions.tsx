@@ -12,20 +12,23 @@ import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../config";
 import { useRecoilState } from "recoil";
 import { questionCart } from "../store/atoms/questionCart";
-type question = questionParams & { id: number };
+import { api } from "../api/api";
+type question = Omit<questionParams, "answer"> & { id: number };
 export const Questions = () => {
   const [questions, setQuestions] = useState<question[]>();
   const init = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/student/questions`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = response.data;
-      if (data.questions) {
-        setQuestions(data.questions);
-      }
+      const res = await api.studentGetQuestions();
+      setQuestions(res.data.questions);
+      // const response = await axios.get(`${BASE_URL}/student/questions`, {
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // });
+      // const data = response.data;
+      // if (data.questions) {
+      //   setQuestions(data.questions);
+      // }
     } catch (e) {
       console.log(e);
       // setQuestions()

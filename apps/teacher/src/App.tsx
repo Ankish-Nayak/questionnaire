@@ -13,8 +13,9 @@ import { MyQuestions } from "./Components/MyQuestions";
 import { Profile, EditProfile, Login, Signup } from "ui";
 import { Landing } from "ui";
 import { teacherEmailState } from "./store/selectors/teacher";
+import { api } from "./api/api";
 function App() {
-  axios.defaults.withCredentials = true;
+  // axios.defaults.withCredentials = true;
   return (
     <>
       <RecoilRoot>
@@ -30,7 +31,8 @@ function App() {
               path={"/signup"}
               element={
                 <Signup
-                  href={`${BASE_URL}/teacher/signup`}
+                  user="teacher"
+                  // href={`${BASE_URL}/teacher/signup`}
                   userState={teacherState}
                 />
               }
@@ -39,7 +41,8 @@ function App() {
               path={"/login"}
               element={
                 <Login
-                  href={`${BASE_URL}/teacher/login`}
+                  user="teacher"
+                  // href={`${BASE_URL}/teacher/login`}
                   userState={teacherState}
                 />
               }
@@ -63,7 +66,8 @@ function App() {
               path={"/profile/edit"}
               element={
                 <EditProfile
-                  href={`${BASE_URL}/teacher/profile`}
+                  user="teacher"
+                  // href={`${BASE_URL}/teacher/profile`}
                   userState={teacherState}
                 />
               }
@@ -82,7 +86,10 @@ export const Init = () => {
 
   const init = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/teacher/me`);
+      const response = await api.studentGetFirstname({
+        // withCredentials: true
+      });
+      // const response = await axios.get(`${BASE_URL}/teacher/me`);
       const data = response.data;
       if (data.firstname) {
         setTeacher({

@@ -19,6 +19,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.16.0",
     "recoil": "^0.7.7",
+    "node-client" : "*",
     "ui": "*"
   },
   "devDependencies": {

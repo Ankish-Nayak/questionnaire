@@ -8,6 +8,8 @@ import { Typography, Button } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
 import { BASE_URL } from "../config";
 import axios from "axios";
+import { api } from "../api/api";
+
 export const Appbar = () => {
   const teacherLoading = useRecoilValue(isTeacherLoading);
   const teacherName = useRecoilValue(teacherEmailState);
@@ -20,13 +22,19 @@ export const Appbar = () => {
     });
     navigate("/");
     try {
-      const response = await axios.post(`${BASE_URL}/teacher/logout`);
-      const data = response.data;
-      console.log(data.message);
+      const res = await api.teacherLogout();
       setTeacher({
         isLoading: false,
-        userEmail: null,
+        userEmail: null
       });
+      console.log(res)
+      // const response = await axios.post(`${BASE_URL}/teacher/logout`);
+      // const data = response.data;
+      // console.log(data.message);
+      // setTeacher({
+      //   isLoading: false,
+      //   userEmail: null,
+      // });
     } catch (e) {
       console.log(e);
     }

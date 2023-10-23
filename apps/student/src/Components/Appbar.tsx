@@ -22,6 +22,7 @@ import { BASE_URL } from "../config";
 import { clearIntervals } from "../helpers/clearIntervals";
 import { clearTimeouts } from "../helpers/clearTimeouts";
 import { useResetItems } from "../store/hooks/hooks";
+import { api } from "../api/api";
 export const Appbar = () => {
   const studentLoading = useRecoilValue(isStudentLoading);
   const studentName = useRecoilValue(studentEmailState);
@@ -40,9 +41,11 @@ export const Appbar = () => {
     });
     navigate("/");
     try {
-      const response = await axios.post(`${BASE_URL}/student/logout`);
-      const data = response.data;
-      console.log(data.message);
+      const res = await api.studentLogout();
+      console.log(res);
+      // const response = await axios.post(`${BASE_URL}/student/logout`);
+      // const data = response.data;
+      // console.log(data.message);
     } catch (e) {
       console.log(e);
       setStudent({

@@ -10,7 +10,12 @@ import {
   Res,
   Param,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiOkResponse,
+} from '@nestjs/swagger';
 import { Request as ExRequest, Response as ExResponse } from 'express';
 import {
   profileParams,
@@ -29,9 +34,18 @@ import * as Cookies from 'cookies';
 import { QuestionsService } from 'src/questions/questions/questions.service';
 import * as jwt from 'jsonwebtoken';
 import {
+  StudentGetFirstnameR,
   StudentLoginDto,
+  StudentLoginR,
   StudentSignupDto,
+  StudentSignupR,
   StudentUpdateProfileDto,
+  StudentGetProfileR,
+  StudentUpdateProfileR,
+  StudentGetQuestion,
+  StudentLogoutR,
+  StudentGetQuestionsR,
+  StudentAttemptsB,
 } from './dto/students.dto';
 export interface StudentRequest extends ExRequest {
   headers: IncomingHttpHeaders & { studentId: number; role: string };
@@ -50,6 +64,9 @@ export class StudentsController {
   @Post('signup')
   @ApiOperation({
     operationId: 'studentSignup',
+  })
+  @ApiOkResponse({
+    type: StudentSignupR,
   })
   async signUp(
     @Body() signUpParam: StudentSignupDto,
@@ -83,7 +100,9 @@ export class StudentsController {
   @ApiOperation({
     operationId: 'studentLogin',
   })
-  @ApiResponse({ status: 200, description: 'student logged in' })
+  @ApiOkResponse({
+    type: StudentLoginR,
+  })
   async login(
     @Body() loginParams: StudentLoginDto,
     @Response() res: ExResponse,
@@ -113,6 +132,9 @@ export class StudentsController {
   @ApiOperation({
     operationId: 'studentGetFirstname',
   })
+  @ApiOkResponse({
+    type: StudentGetFirstnameR,
+  })
   async getFirstname(@Req() req: StudentRequest, @Res() res: ExResponse) {
     const { studentId } = req.headers;
     const existingStudent = await this.studentsService.student({
@@ -129,6 +151,9 @@ export class StudentsController {
   @ApiOperation({
     operationId: 'studentGetProfile',
   })
+  @ApiOkResponse({
+    type: StudentUpdateProfileR,
+  })
   async getProfile(@Req() req: StudentRequest, @Res() res: ExResponse) {
     const { studentId } = req.headers;
     console.log(studentId);
@@ -144,6 +169,9 @@ export class StudentsController {
   @Post('profile')
   @ApiOperation({
     operationId: 'studentUpdateProfile',
+  })
+  @ApiOkResponse({
+    type: StudentGetProfileR,
   })
   async updateProfile(
     @Req() req: StudentRequest,
@@ -179,6 +207,9 @@ export class StudentsController {
   @ApiOperation({
     operationId: 'studentGetQuestion',
   })
+  @ApiResponse({
+    type: StudentGetQuestion,
+  })
   async getQuestion(
     @Req() req: StudentRequest,
     @Res() res: ExResponse,
@@ -197,6 +228,9 @@ export class StudentsController {
   @ApiOperation({
     operationId: 'studentGetQuestions',
   })
+  @ApiResponse({
+    type: StudentGetQuestionsR,
+  })
   async getQuestions(@Res() res: ExResponse) {
     const questions = await this.questionsService.questions();
     const newQuestions = questions.map((question) => {
@@ -204,5 +238,52 @@ export class StudentsController {
       res.status(200).json({ question: newQuestion });
     });
     res.status(200).json({ questions: newQuestions });
+  }
+
+  @Post('logout')
+  @ApiOperation({
+    operationId: 'studentLogout',
+  })
+  @ApiOkResponse({
+    type: StudentLogoutR,
+  })
+  async logout(@Req() req: StudentRequest, @Res() res: ExResponse) {
+    const { studentId } = req.headers;
+    const existingStudent = await this.studentsService.student({
+      id: studentId,
+    });
+    if (existingStudent) {
+      const cookies = new Cookies(req, res);
+      cookies.set('student-token', null);
+      res.status(200).json({ message: 'student logged out' });
+    } else {
+      res.status(403).json({ message: 'student dose not exists' });
+    }
+  }
+
+  @Post('attempt')
+  @ApiOperation({
+    operationId: 'studentAttempt',
+  })
+  @ApiOkResponse({
+    type: '',
+  })
+  async attemptQuestion(
+    @Req() req: StudentRequest,
+    @Res() res: ExResponse,
+    @Body() attemptedQuestions: StudentAttemptsB,
+  ) {
+    const answers: { questionId: number; answer: string } =
+      attemptedQuestions.questions.map(async ({ questionId, answer }) => {
+        const existingQuestion = await this.questionsService.question({
+          id: questionId,
+        });
+        if (existingQuestion) {
+          return existingQuestion.answer;
+        } else {
+          res.status(403).json({ message: 'questionId was wrong' });
+        }
+      });
+    res.status(200).json({ answers });
   }
 }
