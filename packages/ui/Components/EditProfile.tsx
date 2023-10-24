@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import {
   Card,
@@ -14,11 +13,9 @@ import { useSetRecoilState, RecoilState } from "recoil";
 import { api } from "../api/api";
 export const EditProfile = ({
   user,
-  // href,
   userState,
 }: {
   user: "student" | "teacher";
-  // href: string;
   userState: RecoilState<{
     isLoading: boolean;
     userEmail: string | null;
@@ -60,20 +57,6 @@ export const EditProfile = ({
           userEmail: res.data.firstname,
         });
       }
-      // const response = await axios.put(href, JSON.stringify(parsedInputs), {
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      // });
-      // const data = response.data;
-      // if (data.firstname) {
-      //   setOpen(true);
-      //   setResult("success");
-      //   setUser({
-      //     isLoading: false,
-      //     userEmail: firstname,
-      //   });
-      // }
     } catch (e: any) {
       if (
         e.response &&
@@ -92,13 +75,6 @@ export const EditProfile = ({
       setFirstname(res.data.firstname);
       setLastname(res.data.lastname);
       setUsername(res.data.username);
-      // const response = await axios.get(href);
-      // const data = response.data;
-      // if (data.firstname) {
-      //   setFirstname(data.firstname);
-      //   setLastname(data.lastname);
-      //   setUsername(data.username);
-      // }
     } catch (e) {
       console.log(e);
     }

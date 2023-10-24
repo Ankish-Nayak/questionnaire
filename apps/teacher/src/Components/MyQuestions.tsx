@@ -1,7 +1,4 @@
 import { useState, useEffect } from "react";
-import { questionParams } from "types";
-import axios from "axios";
-import { BASE_URL } from "../config";
 import {
   Card,
   Button,
@@ -10,20 +7,18 @@ import {
   CardActions,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-type question = questionParams & { id: number; creatorId: number };
+import { api } from "../api/api";
+import { TeacherGetQuestionsR } from "node-client/openapi/api";
+type question = TeacherGetQuestionsR;
 export const MyQuestions = () => {
   const [questions, setQuestions] = useState<question[]>();
 
   const init = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/teacher/questions/me`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await api.teacherGetQuestions();
       const data = response.data;
-      if (data.questions) {
-        setQuestions(data.questions);
+      if (data) {
+        setQuestions(data);
       }
     } catch (e) {
       console.log(e);

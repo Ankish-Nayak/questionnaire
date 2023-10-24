@@ -1,7 +1,5 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { BASE_URL } from "../config";
 import { questionParams } from "types";
 import {
   Grid,
@@ -58,11 +56,7 @@ export const Question = () => {
       setAdd(false);
     }
     try {
-      const response = await axios.get(`${BASE_URL}/teacher/questions/me`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await api.studentGetQuestions();
       const data = response.data;
       if (data.questions) {
         const questions = data.questions;

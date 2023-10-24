@@ -1,8 +1,6 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { questionCartArray } from "../store/selectors/questionCart";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { BASE_URL } from "../config";
 import {
   Card,
   Typography,
@@ -11,13 +9,13 @@ import {
   Stack,
   Paper,
 } from "@mui/material";
-import { questionParams } from "types";
 import { styled } from "@mui/material/styles";
 import { StartTestDialog } from "./StartTestDialog";
 import { timer } from "../store/atoms/timer";
 import { submit } from "../store/atoms/submit";
 import { selectedOptionsStorageKeys as _selectedOptionsStorageKeys } from "../store/atoms/selectedOptions";
-
+import { api } from "../api/api";
+import { StudentGetQuestionR } from "node-client/openapi/api";
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
@@ -66,24 +64,16 @@ export const TestQuestions = () => {
   );
 };
 
-type question = questionParams & { id: Number; creatorId: string };
-
-export const TestQuestion = ({ questionId }: { questionId: Number }) => {
+type question = StudentGetQuestionR;
+export const TestQuestion = ({ questionId }: { questionId: number }) => {
   const [question, setQuestion] = useState<question>();
 
   const init = async () => {
     try {
-      const response = await axios.get(
-        `${BASE_URL}/student/questions/${questionId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await api.studentGetQuestion(questionId);
       const data = response.data;
-      if (data.question) {
-        setQuestion(data.question);
+      if (data) {
+        setQuestion(data);
       }
     } catch (e) {}
   };

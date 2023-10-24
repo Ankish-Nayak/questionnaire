@@ -1,15 +1,14 @@
 import { Card, CardContent } from "@mui/joy";
-import { questionParams } from "types";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { BASE_URL } from "../../config";
 import { Question } from "./Question";
 import { useRecoilValue } from "recoil";
 import { testActive as _testActive } from "../../store/atoms/testActive";
 import { answers as _answers } from "../../store/atoms/answers";
 import { testQuestionFamily } from "../../store/atoms/questionCart";
+import { api } from "../../api/api";
+import { StudentGetQuestionR } from "node-client/openapi/api";
 
-type question = questionParams & { id: number; creatorId: string };
+type question = StudentGetQuestionR;
 export const TestQuestion = ({
   questionId,
   submit,
@@ -26,17 +25,10 @@ export const TestQuestion = ({
   >();
   const init = async () => {
     try {
-      const response = await axios.get(
-        `${BASE_URL}/student/questions/${questionId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await api.studentGetQuestion(questionId);
       const data = response.data;
-      if (data.question) {
-        setQuestion(data.question);
+      if (data) {
+        setQuestion(data);
       }
     } catch (e) {
       console.log(e);

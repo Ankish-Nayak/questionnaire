@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { questionParams } from "types";
-import { BASE_URL } from "../config";
-import axios from "axios";
 import {
   Card,
   TextField,
@@ -11,6 +9,7 @@ import {
   CardActions,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { api } from "../api/api";
 export const AddQuestion = () => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -36,15 +35,11 @@ export const AddQuestion = () => {
     };
     if (optionArray.includes(answer)) {
       try {
-        const response = await axios.post(
-          `${BASE_URL}/teacher/questions`,
-          JSON.stringify(questionInput),
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
+        const response = await api.teacherCreateQuestion(questionInput,{
+          headers: {
+            'Content-Type' : 'application/json'
           }
-        );
+        });
         const data = response.data;
         if (data.questionId) {
           alert("Question has been added");

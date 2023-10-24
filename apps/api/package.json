@@ -13,6 +13,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "codegen": "rm -rf ../../packages/node-client/openapi; openapi-generator-cli generate -i ./dist/swagger.json -o ../../packages/node-client/openapi -g typescript-axios --additional-properties=supportsES6=true,npmVersion=9.8.0,typescriptThreePlus=true",
+    "test:codegen": "bash generateNodeClient.sh",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",

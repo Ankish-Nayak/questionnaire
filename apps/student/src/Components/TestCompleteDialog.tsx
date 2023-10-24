@@ -7,8 +7,6 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { answerParams } from "types";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import axios from "axios";
-import { BASE_URL } from "../config";
 import {
   timer as _timer,
   timeIntervals as _timeIntervals,
@@ -27,6 +25,7 @@ import { useEffect } from "react";
 import { clearIntervalsAndTimeOuts } from "../helpers/clearTimeOutsAndTimeIntervals";
 import { useLoadItems, useUpdateItems } from "../store/hooks/hooks";
 import { questionCartArray } from "../store/selectors/questionCart";
+import { api } from "../api/api";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -73,9 +72,8 @@ export const TestCompleteDialog = () => {
     );
     // make request to backend
     try {
-      const response = await axios.post(
-        `${BASE_URL}/student/attempt`,
-        JSON.stringify(selectedAnswers),
+      const response = await api.studentAttempt(
+        { questions: selectedAnswers },
         {
           headers: {
             "Content-Type": "application/json",

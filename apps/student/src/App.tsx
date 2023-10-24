@@ -2,7 +2,6 @@ import axios from "axios";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { RecoilRoot, useSetRecoilState } from "recoil";
 import { studentState } from "./store/atoms/student";
-import { BASE_URL } from "./config";
 import { useEffect } from "react";
 import { Appbar } from "./Components/Appbar";
 import { Questions } from "./Components/Questions";
@@ -29,20 +28,13 @@ function App() {
           />
           <Route
             path={"/signup"}
-            element={
-              <Signup
-                userState={studentState}
-                user="student"
-                // href={`${BASE_URL}/student/signup`}
-              />
-            }
+            element={<Signup userState={studentState} user="student" />}
           />
           <Route
             path={"/login"}
             element={
               <Login
                 user="student"
-                // href={`${BASE_URL}/student/login`}
                 userState={studentState}
                 _testActive={_testActive}
               />
@@ -52,19 +44,10 @@ function App() {
           <Route path={`/questions/view/:questionId`} element={<Question />} />
           <Route path={`/testQuestions/view`} element={<TestQuestions />} />
           <Route path={`/startTest`} element={<StartTest />} />
-          <Route
-            path={"/profile"}
-            element={<Profile href={`${BASE_URL}/student/profile`} />}
-          />
+          <Route path={"/profile"} element={<Profile user="student" />} />
           <Route
             path={"/profile/edit"}
-            element={
-              <EditProfile
-                user="student"
-                // href={`${BASE_URL}/student/profile`}
-                userState={studentState}
-              />
-            }
+            element={<EditProfile user="student" userState={studentState} />}
           />
         </Routes>
       </Router>

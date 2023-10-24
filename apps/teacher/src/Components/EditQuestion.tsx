@@ -9,8 +9,7 @@ import {
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { questionParams } from "types";
-import axios from "axios";
-import { BASE_URL } from "../config";
+import { api } from "../api/api";
 export const EditQuestion = () => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -25,17 +24,11 @@ export const EditQuestion = () => {
 
   const init = async () => {
     try {
-      const response = await axios.get(
-        `${BASE_URL}/teacher/questions/${questionId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const response = await api.teacherGetQuestion(
+        parseInt(questionId as string)
       );
-      const data = response.data;
-      if (data.question) {
-        const question = data.question;
+      const question = response.data;
+      if (question) {
         setTitle(question.title);
         setDescription(question.description);
         setAnswer(question.answer);
@@ -70,9 +63,9 @@ export const EditQuestion = () => {
         question,
       };
       try {
-        const response = await axios.put(
-          `${BASE_URL}/teacher/questions/${questionId}`,
-          JSON.stringify(questionInputs),
+        const response = await api.teacherUpdateQuestion(
+          parseInt(questionId as string),
+          questionInputs,
           {
             headers: {
               "Content-Type": "application/json",

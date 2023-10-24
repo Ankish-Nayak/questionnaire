@@ -1,4 +1,4 @@
-import { ApiProperty, OmitType, PickType } from '@nestjs/swagger';
+import { ApiOperation, ApiProperty, OmitType, PickType } from '@nestjs/swagger';
 import { QuestionCreateDto } from 'src/questions/dto/questions.dto';
 export class TeacherSignupDto {
   @ApiProperty()
@@ -47,13 +47,14 @@ export class TeacherUpdateProfileR extends TeacherUpdateProfileDto {
   message: string;
 }
 
+export class TeacherGetQuestionR extends OmitType(QuestionCreateDto, [
+  'answer',
+] as const) {}
 export class TeacherGetQuestionsR extends OmitType(QuestionCreateDto, [
   'answer',
 ] as const) {
-  @ApiProperty()
-  createdAt: Date;
-  @ApiProperty()
-  id: number;
+  @ApiProperty({ type: [TeacherGetQuestionR] })
+  questions: TeacherGetQuestionR[];
 }
 
 export class TeacherGetQuestionWithAnswerR extends QuestionCreateDto {
@@ -72,7 +73,15 @@ export class TeacherCreateQuestionR {
   message: string;
 }
 
-export class TeacherLogoutR { 
+export class TeacherLogoutR {
+  @ApiProperty()
+  message: string;
+}
+
+export class TeacherUpdateQuestionB extends QuestionCreateDto {}
+export class TeacherUpdateQuestionR {
+  @ApiProperty()
+  questionId: number;
   @ApiProperty()
   message: string;
 }

@@ -8,8 +8,9 @@ import {
   Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { api } from "../api/api";
 
-export const Profile = ({ href }: { href: string }) => {
+export const Profile = ({ user }: { user: "student" | "teacher" }) => {
   const [firstname, setFirstname] = useState<string>("");
   const [lastname, setLastname] = useState<string>("");
   const [username, setUsername] = useState<string>("");
@@ -19,12 +20,19 @@ export const Profile = ({ href }: { href: string }) => {
   };
   const init = async () => {
     try {
-      const response = await axios.get(href);
-      const data = response.data;
-      if (data.firstname) {
-        setFirstname(data.firstname);
-        setLastname(data.lastname);
-        setUsername(data.username);
+      if (user === "student") {
+        const response = await api.studentGetProfile();
+        const { firstname, lastname, username } = response.data;
+        setFirstname(firstname);
+        setLastname(lastname);
+        setUsername(username);
+      } else {
+        // user ==> teacher
+        const response = await api.teacherGetProfile();
+        const { firstname, lastname, username } = response.data;
+        setFirstname(firstname);
+        setLastname(lastname);
+        setUsername(username);
       }
     } catch (e) {
       console.log(e);

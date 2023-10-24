@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { TeachersService } from './teachers/teachers.service';
 import { Response as ExResponse, Request as ExRequest } from 'express';
 import { QuestionsService } from 'src/questions/questions/questions.service';
@@ -30,6 +40,8 @@ import {
   TeacherSignupDto,
   TeacherUpdateProfileDto,
   TeacherUpdateProfileR,
+  TeacherUpdateQuestionB,
+  TeacherUpdateQuestionR,
 } from './dto/teachers.dto';
 import { QuestionCreateDto } from 'src/questions/dto/questions.dto';
 import { string } from 'zod';
@@ -197,7 +209,6 @@ export class TeachersController {
   })
   @ApiOkResponse({
     type: TeacherGetQuestionsR,
-    isArray: true,
   })
   async getQuestions(@Res() res: ExResponse) {
     const questions = await this.questionsService.questions();
@@ -307,6 +318,46 @@ export class TeachersController {
       const cookies = new Cookies(req, res);
       cookies.set('teacher-token', null);
       res.status(200).json({ message: 'teacher logged out' });
+    } else {
+      res.status(403).json({ message: 'teacher dose not exists' });
+    }
+  }
+
+  @Put('questions')
+  @ApiOperation({
+    operationId: 'teacherUpdateQuestion',
+  })
+  @ApiOkResponse({
+    type: TeacherUpdateQuestionR,
+  })
+  async updateQuestion(
+    @Req() req: TeacherRequest,
+    @Res() res: ExResponse,
+    @Query('questionId') questionId: number,
+    @Body() params: TeacherUpdateQuestionB,
+  ) {
+    const existingTeacher = await this.teachersService.teacher({
+      id: req.headers.teacherId,
+    });
+    if (existingTeacher) {
+      const existingQuestion = await this.questionsService.question({
+        id: questionId,
+      });
+      if (existingQuestion) {
+        const updatedQuestion = await this.questionsService.updateQuestion(
+          {
+            id: questionId,
+          },
+          params,
+        );
+        if (updatedQuestion) {
+          res.status(200).json({ questionId, message: 'question updated' });
+        } else {
+          res.status(403).json({ message: 'failed to updated question' });
+        }
+      } else {
+        res.status(403).json({ message: 'question dose not exists' });
+      }
     } else {
       res.status(403).json({ message: 'teacher dose not exists' });
     }

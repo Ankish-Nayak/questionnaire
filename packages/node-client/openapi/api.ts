@@ -81,6 +81,51 @@ export interface QuestionCreateDto {
 /**
  * 
  * @export
+ * @interface StudentAttemptB
+ */
+export interface StudentAttemptB {
+    /**
+     * 
+     * @type {number}
+     * @memberof StudentAttemptB
+     */
+    'questionId': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof StudentAttemptB
+     */
+    'answer': string;
+}
+/**
+ * 
+ * @export
+ * @interface StudentAttemptsB
+ */
+export interface StudentAttemptsB {
+    /**
+     * 
+     * @type {Array<StudentAttemptB>}
+     * @memberof StudentAttemptsB
+     */
+    'questions': Array<StudentAttemptB>;
+}
+/**
+ * 
+ * @export
+ * @interface StudentAttemptsR
+ */
+export interface StudentAttemptsR {
+    /**
+     * 
+     * @type {Array<StudentAttemptB>}
+     * @memberof StudentAttemptsR
+     */
+    'answers': Array<StudentAttemptB>;
+}
+/**
+ * 
+ * @export
  * @interface StudentGetFirstnameR
  */
 export interface StudentGetFirstnameR {
@@ -125,67 +170,67 @@ export interface StudentGetProfileR {
 /**
  * 
  * @export
- * @interface StudentGetQuestion
+ * @interface StudentGetQuestionR
  */
-export interface StudentGetQuestion {
+export interface StudentGetQuestionR {
     /**
      * 
      * @type {string}
-     * @memberof StudentGetQuestion
+     * @memberof StudentGetQuestionR
      */
     'description': string;
     /**
      * 
      * @type {string}
-     * @memberof StudentGetQuestion
+     * @memberof StudentGetQuestionR
      */
     'title': string;
     /**
      * 
      * @type {string}
-     * @memberof StudentGetQuestion
+     * @memberof StudentGetQuestionR
      */
     'question': string;
     /**
      * 
      * @type {string}
-     * @memberof StudentGetQuestion
+     * @memberof StudentGetQuestionR
      */
     'option1': string;
     /**
      * 
      * @type {string}
-     * @memberof StudentGetQuestion
+     * @memberof StudentGetQuestionR
      */
     'option2': string;
     /**
      * 
      * @type {string}
-     * @memberof StudentGetQuestion
+     * @memberof StudentGetQuestionR
      */
     'option3': string;
     /**
      * 
      * @type {string}
-     * @memberof StudentGetQuestion
+     * @memberof StudentGetQuestionR
      */
     'option4': string;
     /**
      * 
      * @type {number}
-     * @memberof StudentGetQuestion
+     * @memberof StudentGetQuestionR
      */
     'id': number;
     /**
      * 
      * @type {string}
-     * @memberof StudentGetQuestion
+     * @memberof StudentGetQuestionR
      */
     'createdAt': string;
     /**
      * 
      * @type {number}
-     * @memberof StudentGetQuestion
+     * @memberof StudentGetQuestionR
      */
     'creatorId': number;
 }
@@ -197,10 +242,10 @@ export interface StudentGetQuestion {
 export interface StudentGetQuestionsR {
     /**
      * 
-     * @type {Array<StudentGetQuestion>}
+     * @type {Array<StudentGetQuestionR>}
      * @memberof StudentGetQuestionsR
      */
-    'questions': Array<StudentGetQuestion>;
+    'questions': Array<StudentGetQuestionR>;
 }
 /**
  * 
@@ -431,6 +476,55 @@ export interface TeacherGetProfileR {
 /**
  * 
  * @export
+ * @interface TeacherGetQuestionR
+ */
+export interface TeacherGetQuestionR {
+    /**
+     * 
+     * @type {string}
+     * @memberof TeacherGetQuestionR
+     */
+    'description': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TeacherGetQuestionR
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TeacherGetQuestionR
+     */
+    'question': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TeacherGetQuestionR
+     */
+    'option1': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TeacherGetQuestionR
+     */
+    'option2': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TeacherGetQuestionR
+     */
+    'option3': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TeacherGetQuestionR
+     */
+    'option4': string;
+}
+/**
+ * 
+ * @export
  * @interface TeacherGetQuestionWithAnswerR
  */
 export interface TeacherGetQuestionWithAnswerR {
@@ -551,16 +645,10 @@ export interface TeacherGetQuestionsR {
     'option4': string;
     /**
      * 
-     * @type {string}
+     * @type {Array<TeacherGetQuestionR>}
      * @memberof TeacherGetQuestionsR
      */
-    'createdAt': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof TeacherGetQuestionsR
-     */
-    'id': number;
+    'questions': Array<TeacherGetQuestionR>;
 }
 /**
  * 
@@ -700,6 +788,80 @@ export interface TeacherUpdateProfileR {
      */
     'message': string;
 }
+/**
+ * 
+ * @export
+ * @interface TeacherUpdateQuestionB
+ */
+export interface TeacherUpdateQuestionB {
+    /**
+     * 
+     * @type {string}
+     * @memberof TeacherUpdateQuestionB
+     */
+    'description': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TeacherUpdateQuestionB
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TeacherUpdateQuestionB
+     */
+    'question': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TeacherUpdateQuestionB
+     */
+    'option1': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TeacherUpdateQuestionB
+     */
+    'option2': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TeacherUpdateQuestionB
+     */
+    'option3': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TeacherUpdateQuestionB
+     */
+    'option4': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TeacherUpdateQuestionB
+     */
+    'answer': string;
+}
+/**
+ * 
+ * @export
+ * @interface TeacherUpdateQuestionR
+ */
+export interface TeacherUpdateQuestionR {
+    /**
+     * 
+     * @type {number}
+     * @memberof TeacherUpdateQuestionR
+     */
+    'questionId': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof TeacherUpdateQuestionR
+     */
+    'message': string;
+}
 
 /**
  * DefaultApi - axios parameter creator
@@ -730,6 +892,42 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary 
+         * @param {StudentAttemptsB} studentAttemptsB 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        studentAttempt: async (studentAttemptsB: StudentAttemptsB, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'studentAttemptsB' is not null or undefined
+            assertParamExists('studentAttempt', 'studentAttemptsB', studentAttemptsB)
+            const localVarPath = `/students/attempt`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(studentAttemptsB, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -1330,6 +1528,49 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary 
+         * @param {number} questionId 
+         * @param {TeacherUpdateQuestionB} teacherUpdateQuestionB 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        teacherUpdateQuestion: async (questionId: number, teacherUpdateQuestionB: TeacherUpdateQuestionB, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'questionId' is not null or undefined
+            assertParamExists('teacherUpdateQuestion', 'questionId', questionId)
+            // verify required parameter 'teacherUpdateQuestionB' is not null or undefined
+            assertParamExists('teacherUpdateQuestion', 'teacherUpdateQuestionB', teacherUpdateQuestionB)
+            const localVarPath = `/teachers/questions`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (questionId !== undefined) {
+                localVarQueryParameter['questionId'] = questionId;
+            }
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(teacherUpdateQuestionB, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -1347,6 +1588,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async appControllerGetHello(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.appControllerGetHello(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary 
+         * @param {StudentAttemptsB} studentAttemptsB 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async studentAttempt(studentAttemptsB: StudentAttemptsB, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StudentAttemptsR>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.studentAttempt(studentAttemptsB, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -1376,7 +1628,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async studentGetQuestion(questionId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StudentGetQuestion>> {
+        async studentGetQuestion(questionId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StudentGetQuestionR>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.studentGetQuestion(questionId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1492,7 +1744,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async teacherGetQuestions(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TeacherGetQuestionsR>>> {
+        async teacherGetQuestions(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TeacherGetQuestionsR>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.teacherGetQuestions(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1539,6 +1791,18 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.teacherUpdateProfile(teacherUpdateProfileDto, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
+        /**
+         * 
+         * @summary 
+         * @param {number} questionId 
+         * @param {TeacherUpdateQuestionB} teacherUpdateQuestionB 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async teacherUpdateQuestion(questionId: number, teacherUpdateQuestionB: TeacherUpdateQuestionB, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TeacherUpdateQuestionR>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.teacherUpdateQuestion(questionId, teacherUpdateQuestionB, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
     }
 };
 
@@ -1556,6 +1820,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         appControllerGetHello(options?: any): AxiosPromise<void> {
             return localVarFp.appControllerGetHello(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary 
+         * @param {StudentAttemptsB} studentAttemptsB 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        studentAttempt(studentAttemptsB: StudentAttemptsB, options?: any): AxiosPromise<StudentAttemptsR> {
+            return localVarFp.studentAttempt(studentAttemptsB, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1582,7 +1856,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        studentGetQuestion(questionId: number, options?: any): AxiosPromise<StudentGetQuestion> {
+        studentGetQuestion(questionId: number, options?: any): AxiosPromise<StudentGetQuestionR> {
             return localVarFp.studentGetQuestion(questionId, options).then((request) => request(axios, basePath));
         },
         /**
@@ -1687,7 +1961,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        teacherGetQuestions(options?: any): AxiosPromise<Array<TeacherGetQuestionsR>> {
+        teacherGetQuestions(options?: any): AxiosPromise<TeacherGetQuestionsR> {
             return localVarFp.teacherGetQuestions(options).then((request) => request(axios, basePath));
         },
         /**
@@ -1729,6 +2003,17 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         teacherUpdateProfile(teacherUpdateProfileDto: TeacherUpdateProfileDto, options?: any): AxiosPromise<TeacherUpdateProfileR> {
             return localVarFp.teacherUpdateProfile(teacherUpdateProfileDto, options).then((request) => request(axios, basePath));
         },
+        /**
+         * 
+         * @summary 
+         * @param {number} questionId 
+         * @param {TeacherUpdateQuestionB} teacherUpdateQuestionB 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        teacherUpdateQuestion(questionId: number, teacherUpdateQuestionB: TeacherUpdateQuestionB, options?: any): AxiosPromise<TeacherUpdateQuestionR> {
+            return localVarFp.teacherUpdateQuestion(questionId, teacherUpdateQuestionB, options).then((request) => request(axios, basePath));
+        },
     };
 };
 
@@ -1747,6 +2032,18 @@ export class DefaultApi extends BaseAPI {
      */
     public appControllerGetHello(options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).appControllerGetHello(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary 
+     * @param {StudentAttemptsB} studentAttemptsB 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public studentAttempt(studentAttemptsB: StudentAttemptsB, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).studentAttempt(studentAttemptsB, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1955,6 +2252,19 @@ export class DefaultApi extends BaseAPI {
      */
     public teacherUpdateProfile(teacherUpdateProfileDto: TeacherUpdateProfileDto, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).teacherUpdateProfile(teacherUpdateProfileDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary 
+     * @param {number} questionId 
+     * @param {TeacherUpdateQuestionB} teacherUpdateQuestionB 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public teacherUpdateQuestion(questionId: number, teacherUpdateQuestionB: TeacherUpdateQuestionB, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).teacherUpdateQuestion(questionId, teacherUpdateQuestionB, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

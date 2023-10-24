@@ -1,8 +1,5 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { BASE_URL } from "../config";
-import { questionParams } from "types";
 import {
   Grid,
   Card,
@@ -13,7 +10,9 @@ import {
   CardActions,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-type question = questionParams & { id: Number } & { creatorId: Number };
+import { api } from "../api/api";
+import { TeacherGetQuestionWithAnswerR } from "node-client/openapi/api";
+type question = TeacherGetQuestionWithAnswerR;
 export const Question = () => {
   const { questionId } = useParams();
   const [question, setQuestion] = useState<question>();
@@ -22,18 +21,11 @@ export const Question = () => {
   const init1 = async (): Promise<question> => {
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}/teacher/questions/${questionId}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await api.teacherGetQuestion(parseInt(questionId as string));
         const data = response.data;
-        if (data.question) {
-          setQuestion(data.question);
-          resolve(data.question);
+        if (data) {
+          setQuestion(data);
+          resolve(data);
         }
       } catch (e) {
         const errObj = {
@@ -47,14 +39,10 @@ export const Question = () => {
   };
   const init2 = async (question: question) => {
     try {
-      const response = await axios.get(`${BASE_URL}/teacher/questions/me`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await api.teacherGetQuestions();
       const data = response.data;
-      if (data.questions) {
-        const questions = data.questions;
+      if (data) {
+        const questions = data;
         console.log("creatorId", question.creatorId);
         console.log(questions);
         setShow(false);

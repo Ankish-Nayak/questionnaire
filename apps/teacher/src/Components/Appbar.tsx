@@ -6,8 +6,6 @@ import {
 import { teacherState } from "../store/atoms/teacher";
 import { Typography, Button } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
-import { BASE_URL } from "../config";
-import axios from "axios";
 import { api } from "../api/api";
 
 export const Appbar = () => {
@@ -28,13 +26,6 @@ export const Appbar = () => {
         userEmail: null
       });
       console.log(res)
-      // const response = await axios.post(`${BASE_URL}/teacher/logout`);
-      // const data = response.data;
-      // console.log(data.message);
-      // setTeacher({
-      //   isLoading: false,
-      //   userEmail: null,
-      // });
     } catch (e) {
       console.log(e);
     }

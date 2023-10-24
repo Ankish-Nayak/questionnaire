@@ -17,8 +17,6 @@ import {
 import { submit as _submit } from "../store/atoms/submit";
 import { testActive as _testActive } from "../store/atoms/testActive";
 import { selectedOptionsStorageKeys as _selectedOptionsStorageKeys } from "../store/atoms/selectedOptions";
-import axios from "axios";
-import { BASE_URL } from "../config";
 import { clearIntervals } from "../helpers/clearIntervals";
 import { clearTimeouts } from "../helpers/clearTimeouts";
 import { useResetItems } from "../store/hooks/hooks";
@@ -43,9 +41,6 @@ export const Appbar = () => {
     try {
       const res = await api.studentLogout();
       console.log(res);
-      // const response = await axios.post(`${BASE_URL}/student/logout`);
-      // const data = response.data;
-      // console.log(data.message);
     } catch (e) {
       console.log(e);
       setStudent({

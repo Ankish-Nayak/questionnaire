@@ -7,9 +7,7 @@ import {
   CardContent,
   CardActions,
 } from "@mui/material";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { BASE_URL } from "../config";
 import { useRecoilState } from "recoil";
 import { questionCart } from "../store/atoms/questionCart";
 import { api } from "../api/api";
@@ -20,18 +18,8 @@ export const Questions = () => {
     try {
       const res = await api.studentGetQuestions();
       setQuestions(res.data.questions);
-      // const response = await axios.get(`${BASE_URL}/student/questions`, {
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      // });
-      // const data = response.data;
-      // if (data.questions) {
-      //   setQuestions(data.questions);
-      // }
     } catch (e) {
       console.log(e);
-      // setQuestions()
     }
   };
 

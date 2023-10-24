@@ -18,8 +18,8 @@ export class AuthenticateTeacherJwtMiddleware implements NestMiddleware {
         }
         req.headers['teacherId'] = user.id;
         req.headers['role'] = user.role;
+        next();
       });
-      next();
     } else {
       res.status(403).json({ message: 'auth failed' });
     }

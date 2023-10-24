@@ -42,10 +42,11 @@ import {
   StudentUpdateProfileDto,
   StudentGetProfileR,
   StudentUpdateProfileR,
-  StudentGetQuestion,
   StudentLogoutR,
   StudentGetQuestionsR,
   StudentAttemptsB,
+  StudentAttemptsR,
+  StudentGetQuestionR,
 } from './dto/students.dto';
 export interface StudentRequest extends ExRequest {
   headers: IncomingHttpHeaders & { studentId: number; role: string };
@@ -208,7 +209,7 @@ export class StudentsController {
     operationId: 'studentGetQuestion',
   })
   @ApiResponse({
-    type: StudentGetQuestion,
+    type: StudentGetQuestionR,
   })
   async getQuestion(
     @Req() req: StudentRequest,
@@ -266,24 +267,45 @@ export class StudentsController {
     operationId: 'studentAttempt',
   })
   @ApiOkResponse({
-    type: '',
+    type: StudentAttemptsR,
   })
   async attemptQuestion(
     @Req() req: StudentRequest,
     @Res() res: ExResponse,
     @Body() attemptedQuestions: StudentAttemptsB,
   ) {
-    const answers: { questionId: number; answer: string } =
-      attemptedQuestions.questions.map(async ({ questionId, answer }) => {
-        const existingQuestion = await this.questionsService.question({
-          id: questionId,
-        });
-        if (existingQuestion) {
-          return existingQuestion.answer;
-        } else {
-          res.status(403).json({ message: 'questionId was wrong' });
-        }
+    const generateResult = (): Promise<
+      { questionId: number; answer: string }[]
+    > => {
+      return new Promise(async (res1) => {
+        const promises: Promise<{ questionId: number; answer: string }>[] =
+          attemptedQuestions.questions.map(
+            async ({
+              questionId,
+              answer,
+            }): Promise<{ questionId: number; answer: string }> => {
+              return new Promise(async (res2) => {
+                const existingQuestion = await this.questionsService.question({
+                  id: questionId,
+                });
+                if (existingQuestion) {
+                  res2({ questionId, answer: existingQuestion.answer });
+                } else {
+                  res
+                    .status(403)
+                    .json({ message: 'question id dose not exists' });
+                  res2({ questionId, answer: 'notExists' });
+                }
+              });
+            },
+          );
+        const answers: { questionId: number; answer: string }[] =
+          await Promise.all(promises);
+        res1(answers);
       });
+    };
+    const answers: { questionId: number; answer: string }[] =
+      await generateResult();
     res.status(200).json({ answers });
   }
 }

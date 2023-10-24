@@ -1,20 +1,13 @@
-import axios from "axios";
 import { useState } from "react";
 import { studentSignupParams } from "types";
 import { useSetRecoilState, RecoilState } from "recoil";
 import { Card, Button, TextField } from "@mui/material";
 import { api } from "../api/api";
-import {
-  assertParamExists,
-  setApiKeyToObject,
-} from "../../node-client/openapi/common";
 
 export const Signup = ({
   user,
-  // href,
   userState,
 }: {
-  // href: string;
   user: "student" | "teacher";
   userState: RecoilState<{
     isLoading: boolean;
@@ -49,23 +42,6 @@ export const Signup = ({
           userEmail: res.data.firstname,
         });
       }
-      // const vresponse = await axios.post(href, JSON.stringify(parsedInputs), {
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      // });
-      // const data = response.data;
-      // if (data.firstname) {
-      //   serUser({
-      //     isLoading: false,
-      //     userEmail: data.firstname,
-      //   });
-      // } else {
-      //   serUser({
-      //     isLoading: false,
-      //     userEmail: null,
-      //   });
-      // }
     } catch (e) {
       console.log(e);
       setUser({

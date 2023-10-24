@@ -1,8 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useSetRecoilState, RecoilRoot } from "recoil";
 import { teacherState } from "./store/atoms/teacher";
-import axios from "axios";
-import { BASE_URL } from "./config";
 import { useEffect } from "react";
 import { Appbar } from "./Components/Appbar";
 import { Questions } from "./Components/Questions";
@@ -15,7 +13,6 @@ import { Landing } from "ui";
 import { teacherEmailState } from "./store/selectors/teacher";
 import { api } from "./api/api";
 function App() {
-  // axios.defaults.withCredentials = true;
   return (
     <>
       <RecoilRoot>
@@ -58,19 +55,10 @@ function App() {
             />
             <Route path={"/questions/me"} element={<MyQuestions />} />
             <Route path={"/addQuestion"} element={<AddQuestion />} />
-            <Route
-              path={"/profile"}
-              element={<Profile href={`${BASE_URL}/teacher/profile`} />}
-            />
+            <Route path={"/profile"} element={<Profile user="teacher" />} />
             <Route
               path={"/profile/edit"}
-              element={
-                <EditProfile
-                  user="teacher"
-                  // href={`${BASE_URL}/teacher/profile`}
-                  userState={teacherState}
-                />
-              }
+              element={<EditProfile user="teacher" userState={teacherState} />}
             />
           </Routes>
         </Router>
@@ -86,10 +74,7 @@ export const Init = () => {
 
   const init = async () => {
     try {
-      const response = await api.studentGetFirstname({
-        // withCredentials: true
-      });
-      // const response = await axios.get(`${BASE_URL}/teacher/me`);
+      const response = await api.studentGetFirstname();
       const data = response.data;
       if (data.firstname) {
         setTeacher({

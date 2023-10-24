@@ -80,7 +80,7 @@ export class StudentUpdateProfileR extends StudentUpdateProfileDto {
   message: string;
 }
 
-export class StudentGetQuestion extends OmitType(QuestionCreateDto, [
+export class StudentGetQuestionR extends OmitType(QuestionCreateDto, [
   'answer',
 ] as const) {
   @ApiProperty()
@@ -97,8 +97,8 @@ export class StudentLogoutR {
 }
 
 export class StudentGetQuestionsR {
-  @ApiProperty({ type: [StudentGetQuestion] })
-  questions: StudentGetQuestion[];
+  @ApiProperty({ type: [StudentGetQuestionR] })
+  questions: StudentGetQuestionR[];
 }
 
 export class StudentAttemptB {
@@ -110,4 +110,9 @@ export class StudentAttemptB {
 export class StudentAttemptsB {
   @ApiProperty({ type: [StudentAttemptB] })
   questions: StudentAttemptB[];
+}
+
+export class StudentAttemptsR {
+  @ApiProperty({ type: [StudentAttemptB] })
+  answers: StudentAttemptB[];
 }

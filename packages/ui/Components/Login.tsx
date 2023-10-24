@@ -67,29 +67,6 @@ export const Login = ({
           navigate("/questions");
         }
       }
-      // const response = await axios.post(href, JSON.stringify(loginInputs), {
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      // });
-      // const data = response.data;
-      // if (data.firstname) {
-      //   setUser({
-      //     isLoading: false,
-      //     userEmail: data.firstname,
-      //   });
-      //   if (testActive) {
-      //     console.log("d");
-      //     navigate(testActive === "running" ? "/startTest" : "/questions/view");
-      //   } else {
-      //     navigate("/questions");
-      //   }
-      // } else {
-      //   setUser({
-      //     isLoading: false,
-      //     userEmail: null,
-      //   });
-      // }
     } catch (e) {
       setUser({
         isLoading: false,
