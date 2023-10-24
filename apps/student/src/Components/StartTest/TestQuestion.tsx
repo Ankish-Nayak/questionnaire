@@ -29,6 +29,7 @@ export const TestQuestion = ({
       const data = response.data;
       if (data) {
         setQuestion(data);
+        console.log(data); 
       }
     } catch (e) {
       console.log(e);

@@ -10,9 +10,9 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../api/api";
 import {
   TeacherGetQuestionWithAnswerR,
-  TeacherGetQuestionsR,
+  TeacherGetQuestionR,
 } from "node-client/openapi/api";
-type question = TeacherGetQuestionsR;
+type question = TeacherGetQuestionR;
 export const Questions = () => {
   const [questions, setQuestions] = useState<question[]>();
 
@@ -20,8 +20,8 @@ export const Questions = () => {
     try {
       const response = await api.teacherGetQuestions();
       const data = response.data;
-      if (data) {
-        setQuestions(data);
+      if (data.questions) {
+        setQuestions(data.questions);
       }
     } catch (e) {
       console.log(e);

@@ -214,7 +214,7 @@ export class TeachersController {
     const questions = await this.questionsService.questions();
     const newQuestions = questions.map((question) => {
       const { answer: _, ...newQuestion } = question;
-      res.status(200).json({ question: newQuestion });
+      return newQuestion;
     });
     res.status(200).json({ questions: newQuestions });
   }
@@ -258,8 +258,10 @@ export class TeachersController {
       if (teacherId !== req.headers.teacherId) {
         questions = teacher.questions.map((question) => {
           const { answer: _, ...newQuestion } = question;
-          res.status(200).json({ question: newQuestion });
+          return newQuestion;
+          // res.status(200).json({ question: newQuestion });
         });
+        res.status(200).json({ questions });
       } else {
         questions = teacher.questions;
       }

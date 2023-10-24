@@ -8,8 +8,11 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/api";
-import { TeacherGetQuestionsR } from "node-client/openapi/api";
-type question = TeacherGetQuestionsR;
+import {
+  TeacherGetQuestionsR,
+  TeacherGetQuestionR,
+} from "node-client/openapi/api";
+type question = TeacherGetQuestionR;
 export const MyQuestions = () => {
   const [questions, setQuestions] = useState<question[]>();
 
@@ -18,7 +21,7 @@ export const MyQuestions = () => {
       const response = await api.teacherGetQuestions();
       const data = response.data;
       if (data) {
-        setQuestions(data);
+        setQuestions(data.questions);
       }
     } catch (e) {
       console.log(e);

@@ -74,8 +74,11 @@ export const TestQuestion = ({ questionId }: { questionId: number }) => {
       const data = response.data;
       if (data) {
         setQuestion(data);
+        console.log(data);
       }
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   };
   useEffect(() => {
     init();

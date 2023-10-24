@@ -23,6 +23,7 @@ services:
     ports:
       - "3000:3000"
       - "9229:9229"
+      - "9997:9997"
     volumes:
       - "/home/ankish20000nayak/Projects/personal-projects/questionnaire/apps/api:/usr/src/app/apps/api:delegated"
       # packages prisma folder

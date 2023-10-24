@@ -1,9 +1,9 @@
 {
-  "name": "node-client",
+  "name": "openapi",
   "version": "1.0.0",
-  "description": "",
-  "main": "./openapi/index.ts",
-  "types": "./openapi/index.ts",
+  "description": "node client",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

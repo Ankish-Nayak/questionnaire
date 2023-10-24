@@ -214,9 +214,9 @@ export class StudentsController {
   async getQuestion(
     @Req() req: StudentRequest,
     @Res() res: ExResponse,
-    @Param('questionId') questionId: number,
+    @Param('questionId') questionId: string,
   ) {
-    const question = await this.questionsService.question({ id: questionId });
+    const question = await this.questionsService.question({ id: parseInt(questionId)});
     if (question) {
       const { answer: _, ...resQuestion } = question;
       res.status(200).json({ question: resQuestion });
@@ -236,7 +236,7 @@ export class StudentsController {
     const questions = await this.questionsService.questions();
     const newQuestions = questions.map((question) => {
       const { answer: _, ...newQuestion } = question;
-      res.status(200).json({ question: newQuestion });
+      return newQuestion;
     });
     res.status(200).json({ questions: newQuestions });
   }

@@ -49,7 +49,14 @@ export class TeacherUpdateProfileR extends TeacherUpdateProfileDto {
 
 export class TeacherGetQuestionR extends OmitType(QuestionCreateDto, [
   'answer',
-] as const) {}
+] as const) {
+  @ApiProperty()
+  createdAt: Date;
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  creatorId: number;
+}
 export class TeacherGetQuestionsR extends OmitType(QuestionCreateDto, [
   'answer',
 ] as const) {

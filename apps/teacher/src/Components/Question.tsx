@@ -42,7 +42,7 @@ export const Question = () => {
       const response = await api.teacherGetQuestions();
       const data = response.data;
       if (data) {
-        const questions = data;
+        const questions = data.questions;
         console.log("creatorId", question.creatorId);
         console.log(questions);
         setShow(false);

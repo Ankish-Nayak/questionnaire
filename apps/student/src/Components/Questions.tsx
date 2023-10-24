@@ -17,7 +17,9 @@ export const Questions = () => {
   const init = async () => {
     try {
       const res = await api.studentGetQuestions();
+      console.log(res.data);
       setQuestions(res.data.questions);
+      console.log(res.data.questions);
     } catch (e) {
       console.log(e);
     }

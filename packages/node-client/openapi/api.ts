@@ -521,6 +521,24 @@ export interface TeacherGetQuestionR {
      * @memberof TeacherGetQuestionR
      */
     'option4': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TeacherGetQuestionR
+     */
+    'createdAt': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof TeacherGetQuestionR
+     */
+    'id': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TeacherGetQuestionR
+     */
+    'creatorId': number;
 }
 /**
  * 
